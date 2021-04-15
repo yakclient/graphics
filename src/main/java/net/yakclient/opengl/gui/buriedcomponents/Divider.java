@@ -2,56 +2,63 @@ package net.yakclient.opengl.gui.buriedcomponents;
 
 import net.yakclient.opengl.gui.BuriedGUIComponent;
 import net.yakclient.opengl.gui.GUIProperties;
-import net.yakclient.opengl.util.VerticeCollection;
-import net.yakclient.opengl.util.VerticeCollection2;
-import net.yakclient.opengl.util.YakGLUtils;
+import net.yakclient.opengl.render.GLRenderingContext;
+import net.yakclient.opengl.render.GLRenderingData;
+import net.yakclient.opengl.util.*;
 import org.lwjgl.input.Mouse;
 
-import static org.lwjgl.opengl.GL11.*;
+import java.io.IOException;
+
+import static org.lwjgl.opengl.GL11.GL_QUADS;
 
 public class Divider extends BuriedGUIComponent {
     @Override
-    public void glRender(GUIProperties properties) {
+    public GLRenderingContext[] glRender(GUIProperties properties) {
+        try {
+            final PropertyManager manager = this.manageProps(properties);
 
-        final double width = properties.get("width");
-        final double height = properties.get("height");
-        final double x = properties.get("x");
-        final double y = properties.get("y");
+//        final GUIOrigin origin = manager.requireProp(PropertyFactory.ORIGIN_INDEX);
+            final double width = manager.requireProp("width");
+            final double height = manager.requireProp("height");
+            final double x = manager.<Double>requireProp("x");
+            final double y = manager.<Double>requireProp("y");
+            final Runnable onHover = manager.requestProp("onHover", () -> {
+            });
 
-        final VerticeCollection2 collection = new VerticeCollection2()
-                .addVertice(x, y)
-                .addVertice(x + width, y)
-                .addVertice(x + width, y + height)
-                .addVertice(x, y + height);
+            final VerticeAggregation collection = new VerticeAggregation()
+                    .add(x, y)
+                    .add(x + width, y)
+                    .add(x + width, y + height)
+                    .add(x, y + height);
 
-        final VerticeCollection2 colorsDefault = new VerticeCollection2()
-                .addColor3f(1,0,0)
-                .addColor3f(0,1,0)
-                .addColor3f(0,0,1)
-                .addColor3f(1,1,1);
+            final ColorAggregation colorsDefault = new ColorAggregation()
+                    .add(0, 0, 0)
+                    .add(0, 0, 0)
+                    .add(1, 0, 0)
+                    .add(1, 1, 1);
 
-        final VerticeCollection2 colorsHover = new VerticeCollection2()
-                .addColor3f(1,1,1)
-                .addColor3f(1,0,0)
-                .addColor3f(0,1,0)
-                .addColor3f(0,0,1);
+            final ColorAggregation colorsHover = new ColorAggregation()
+                    .add(0.5f, 0.5f, 0.5f)
+                    .add(0.5f, 0.5f, 0.5f)
+                    .add(0.5f, 0.5f, 0.5f)
+                    .add(0.5f, 0.5f, 0.5f);
+
+            final ColorAggregation aggregation = ColorFunction.applyColorEffect(0, collection, ColorCodes.CRIMSON);
+            final boolean hovering = this.rectBounding(Mouse.getX(), Mouse.getY(), y, x, x + width, y + height);
+            if (hovering) onHover.run();
+
+            final TexAggregation texs = new TexAggregation();
+            texs.add(0, 0).add(1, 0).add(1, 0).add(0, 1);
+
+            final GLRenderingData data = GLRenderingData.create(TextureFactory.createTex(getClass().getResourceAsStream("/wood.png"))).addTexs(texs).addVertices(collection).addColors(hovering ? aggregation : colorsDefault).build();
 
 
-        if (this.rectBounding(Mouse.getX(), Mouse.getY(), y, x, x + width, y + height)) collection.combine(colorsHover);
-        else collection.combine(colorsDefault);
 
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
-
-        glVertexPointer(2, 0, YakGLUtils.flipBuf(collection.verticesAsBuffer()));
-        glColorPointer(4, 0, YakGLUtils.flipBuf(collection.colorsAsBuffer()));
-
-        glDrawArrays(GL_QUADS, 0, 4);
-
-        glDisableClientState(GL_COLOR_ARRAY);
-        glDisableClientState(GL_VERTEX_ARRAY);
-
-        this.renderChildren(properties);
+            return this.combineContexts(new GLRenderingContext.ContextBuilder(GL_QUADS, data).build(), this.renderChildren(properties));
+        } catch (IOException e) {
+            System.out.println("Failed to create texture wood");
+        }
+        return new GLRenderingContext[0];
     }
 
     private boolean rectBounding(double x, double y, double top, double left, double bottom, double right) {

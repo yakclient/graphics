@@ -11,15 +11,11 @@ public class PropertyFactory {
     public static final int CHILDREN_INDEX = 0;
     public static final String CHILD_NAME = "children";
 
-    public static final int PARENT_INDEX = 1;
-    public static final String PARENT_NAME = "parent";
-
     private final Map<GUIProperties.PropertyNode, Object> props;
     private int latestID;
 
     private PropertyFactory() {
         this.props = new HashMap<>();
-        this.latestID = PARENT_INDEX;
     }
 
     public static PropertyFactory create() {
@@ -38,14 +34,9 @@ public class PropertyFactory {
 
     private PropertyFactory addProp(String name, int id, Object value) throws IllegalPropertyException {
         if (id == CHILDREN_INDEX)
-            throw new IllegalPropertyException("the ID of " + CHILDREN_INDEX +" is reserved for children, please use another ID!");
+            throw new IllegalPropertyException("the ID of " + CHILDREN_INDEX + " is reserved for children, please use another ID!");
         if (name.equalsIgnoreCase(CHILD_NAME))
             throw new IllegalPropertyException("The name " + CHILD_NAME + " is reserved for children of components!");
-
-        if (id == PARENT_INDEX)
-            throw new IllegalPropertyException("the ID of " + PARENT_INDEX +" is reserved for the parent, please use another ID!");
-        if (name.equalsIgnoreCase(PARENT_NAME))
-            throw new IllegalPropertyException("The name " + PARENT_NAME + " is reserved for the parent of that component!");
 
         for (GUIProperties.PropertyNode node : props.keySet()) {
             if (node.getId() == id)
@@ -71,8 +62,6 @@ public class PropertyFactory {
         if (!(children instanceof List)) throw new IllegalPropertyException("Children type MUST be a list!");
         return (List<ComponentRenderingContext<?>>) children;
     }
-
-//    public
 
     @Contract(pure = true)
     public GUIProperties build() {

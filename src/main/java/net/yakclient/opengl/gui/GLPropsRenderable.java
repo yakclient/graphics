@@ -1,5 +1,9 @@
 package net.yakclient.opengl.gui;
 
+import net.yakclient.opengl.render.GLRenderingContext;
+import org.jetbrains.annotations.Contract;
+
 public interface GLPropsRenderable {
-    void glRender(GUIProperties properties);
+    @Contract(pure = true)
+    GLRenderingContext[] glRender(GUIProperties properties);
 }

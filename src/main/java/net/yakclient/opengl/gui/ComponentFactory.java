@@ -4,7 +4,7 @@ public class ComponentFactory<T extends GLPropsRenderable> {
     private final T component;
     private final PropertyFactory properties;
 
-    private ComponentFactory(T component, PropertyFactory properties) {
+    public ComponentFactory(T component, PropertyFactory properties) {
         this.component = component;
         this.properties = properties;
     }
@@ -32,13 +32,13 @@ public class ComponentFactory<T extends GLPropsRenderable> {
 //        return this;
 //    }
 
-    public ComponentFactory<T> addChild(ComponentRenderingContext<?> component) {
-        this.properties.addChild(component);
+    public ComponentFactory<T> addChild(ComponentFactory<?> factory) {
+        this.properties.addChild(factory.build());
         return this;
     }
 
-    public ComponentFactory<T> addChild(ComponentRenderingContext<?> component, Boolean condition) {
-        if (condition != null && condition) this.properties.addChild(component);
+    public ComponentFactory<T> addChild(ComponentFactory<?> factory, Boolean condition) {
+        if (condition != null && condition) this.addChild(factory);
         return this;
     }
 

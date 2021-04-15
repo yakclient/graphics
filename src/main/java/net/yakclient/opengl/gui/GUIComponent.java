@@ -1,23 +1,25 @@
 package net.yakclient.opengl.gui;
 
+import net.yakclient.opengl.render.GLRenderingContext;
+import org.jetbrains.annotations.Contract;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class GUIComponent extends BuriedGUIComponent {
     private final Map<Integer, BuriedGUIComponent> renderedComponents;
-//    private boolean hasRendered = false;
 
     public GUIComponent() {
         this.renderedComponents = new HashMap<>();
     }
 
+    @Contract(pure = true)
     public abstract ComponentRenderingContext<?> render(GUIProperties properties);
 
     @Override
-    public final void glRender(GUIProperties properties) {
-//        this.hasRendered = true;
-        this.needsReRender = false;
-        (this.lastRender = this.render(properties)).glRender();
+    @Contract(pure = true)
+    public final GLRenderingContext[] glRender(GUIProperties properties) {
+        return this.render(properties).glRender();
     }
 
     @SuppressWarnings("unchecked")
@@ -27,4 +29,6 @@ public abstract class GUIComponent extends BuriedGUIComponent {
             throw new IllegalPropertyException("Given component has a collision of id's with: " + component);
         return (T) this.renderedComponents.get(id);
     }
+
+
 }
