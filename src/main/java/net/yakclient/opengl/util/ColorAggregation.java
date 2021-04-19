@@ -21,11 +21,11 @@ public class ColorAggregation implements Aggregation<ColorNode> {
 
     @Override
     public @NotNull AggregationIterator<ColorNode> iterator() {
-        final ColorNode[] nodes = new ColorNode[this.colors.size() / COLOR_INDEX_SIZE];
+        final var nodes = new ColorNode[this.colors.size() / COLOR_INDEX_SIZE];
         int nodesIndex = 0;
         int index = 0;
 
-        final float[] coords = new float[]{0, 0, 0, DEFAULT_ALPHA};
+        final var coords = new float[]{0, 0, 0, DEFAULT_ALPHA};
         for (Float normal : this.colors) {
             coords[index++] = normal;
             if (index == COLOR_INDEX_SIZE) {

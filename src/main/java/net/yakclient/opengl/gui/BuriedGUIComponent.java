@@ -91,7 +91,7 @@ public abstract class BuriedGUIComponent implements GLPropsRenderable {
      */
     @NotNull
     public final ComponentRenderingContext<?>[] getChildren(GUIProperties properties) {
-        final List<ComponentRenderingContext<?>> children = properties.get(PropertyFactory.CHILDREN_INDEX);
+        final List<ComponentRenderingContext<?>> children = properties.get(PropertyFactory.CHILD_NAME);
 
         return children == null ? new ComponentRenderingContext[0] :
                 children.toArray(new ComponentRenderingContext[0]);
@@ -132,11 +132,32 @@ public abstract class BuriedGUIComponent implements GLPropsRenderable {
     }
 
     /**
+     * Returns and stores a state for the given object, note
+     * this is not necessary and you can instead just use member
+     * variables. However state provides the best possible way
+     * to update values from passed lambdas(either in props or
+     * just in general)
      *
-     * @param initial
-     * @param key
-     * @param <T>
-     * @return
+     * Example:
+     * <p>
+     *     {@code
+     *      final Stateful<String> name = this.useState("My name is Bob!", 0);
+     *      final Stateful<Boolean> nameSet = this.useState(false, 1);
+     *
+     *      //... component rendering
+     *      .addProp("onHover", ()->name.set("No my name is actually Jerry"));
+     *      .addProp("onFocus", ()-> name.setIf(nameSet.get(), "Since we've hovered my name is Bob again"));
+     *     }
+     * </p>
+     *
+     * The one draw back of this method is that state has to be stored
+     * by ID due to speed and the fact that it would be extremely hard
+     * to try to figure out which state is which on re-renders.
+     *
+     * @param initial The initial value of the state.
+     * @param key The key to identify the given state by.
+     * @param <T> The state type.
+     * @return the computed and stored state.
      */
     @NotNull
     @SuppressWarnings("unchecked")
@@ -156,13 +177,8 @@ public abstract class BuriedGUIComponent implements GLPropsRenderable {
     }
 
     @NotNull
-    public final <T> T requestProp(@Nullable T property, @NotNull T defaultVal) {
-        return property == null ? defaultVal : property;
-    }
-
-    @NotNull
-    public final <T> T requestProp(@Nullable T property, @NotNull Supplier<T> defaultVal) {
-        return property == null ? defaultVal.get() : property;
+    public final <T> Optional<T> requestProp(@Nullable T property) {
+        return Optional.ofNullable(property);
     }
 
     /**
@@ -191,8 +207,7 @@ public abstract class BuriedGUIComponent implements GLPropsRenderable {
      * {@code
      * final PropertyManager manager = this.manageProps(props) //Assuming properties are provided in the render method
      * final int x = manager.requireProp("x-coord"); //Will through a exception if the property is not specified
-     * final byte color = manager.requestProp("color", 0x0100); //Will substitute the second parameter in for the default value if the prop is null
-     * final String name = manager.requestProp("name", ()->"My name"); //Will use the supplier to do the same as PropertyManager#requireProp(String)
+     * final byte color = manager.requestProp("color").or(Optional.of(0x01)).get(); //Will return an optional of the value which then you can or and get to provide a default
      * <p>
      * //Your component...
      * <p>
@@ -216,31 +231,8 @@ public abstract class BuriedGUIComponent implements GLPropsRenderable {
             return prop;
         }
 
-        public <T> T requireProp(int index) {
-            final T prop = this.properties.get(index);
-            if (prop == null)
-                throw new IllegalPropertyException("Failed to provide property: '" + index + "' in component: '" + this.getClass().getName() + "'");
-            return prop;
-        }
-
         public <T> Optional<T> requestProp(String name) {
             return Optional.ofNullable(this.properties.get(name));
         }
-
-//        public <T> T requestProp(String name, Supplier<T> defaultVal) {
-//            return this.requestProp(this.properties.<T>get(name), defaultVal);
-//        }
-
-        public <T> Optional<T> requestProp(int index) {
-            return Optional.ofNullable(this.properties.get(index));
-        }
-
-//        public <T> T requestProp(int index, T defaultVal) {
-//            return this.requestProp(this.properties.<T>get(index), () -> defaultVal);
-//        }
-//
-//        private <T> Opt requestProp(T prop) {
-//            return prop == null ? defaultVal.get() : prop;
-//        }
     }
 }

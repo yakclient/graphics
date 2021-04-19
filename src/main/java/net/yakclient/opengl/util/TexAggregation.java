@@ -20,11 +20,11 @@ public class TexAggregation implements Aggregation<TexAggregation.TexNode> {
 
     @Override
     public @NotNull AggregationIterator<TexNode> iterator() {
-        final TexNode[] nodes = new TexNode[this.texs.size() / VERTICE_SIZE];
+        final var nodes = new TexNode[this.texs.size() / VERTICE_SIZE];
         int nodesIndex = 0;
         int index = 0;
 
-        final float[] coords = new float[]{0, 0, DEFAULT_R};
+        final var coords = new float[]{0, 0, DEFAULT_R};
         for (Float normal : this.texs) {
             coords[index++] = normal;
             if (index == VERTICE_SIZE) {

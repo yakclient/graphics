@@ -22,11 +22,11 @@ public class NormalAggregation implements Aggregation<NormalNode> {
 
     @Override
     public @NotNull AggregationIterator<NormalNode> iterator() {
-        final NormalNode[] nodes = new NormalNode[this.normals.size() / NORMAL_INDEX_SIZE];
+        final var nodes = new NormalNode[this.normals.size() / NORMAL_INDEX_SIZE];
         int nodesIndex = 0;
         int index = 0;
 
-        final double[] coords = new double[]{0, 0, 0};
+        final var coords = new double[]{0, 0, 0};
         for (Double normal : this.normals) {
             coords[index++] = normal;
             if (index == NORMAL_INDEX_SIZE) {

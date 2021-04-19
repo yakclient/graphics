@@ -8,11 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 public class PropertyFactory {
-    public static final int CHILDREN_INDEX = 0;
     public static final String CHILD_NAME = "children";
 
-    private final Map<GUIProperties.PropertyNode, Object> props;
-    private int latestID;
+    private final Map<String, Object> props;
 
     private PropertyFactory() {
         this.props = new HashMap<>();
@@ -23,29 +21,23 @@ public class PropertyFactory {
     }
 
     private PropertyFactory innit() {
-        this.props.put(new GUIProperties.PropertyNode(CHILD_NAME, CHILDREN_INDEX), new ArrayList<>());
+        this.props.put(CHILD_NAME, new ArrayList<>());
         return this;
     }
 
     public PropertyFactory addProp(String name, Object value) throws IllegalPropertyException {
-        return this.addProp(name, ++latestID, value);
-    }
-
-
-    private PropertyFactory addProp(String name, int id, Object value) throws IllegalPropertyException {
-        if (id == CHILDREN_INDEX)
-            throw new IllegalPropertyException("the ID of " + CHILDREN_INDEX + " is reserved for children, please use another ID!");
         if (name.equalsIgnoreCase(CHILD_NAME))
             throw new IllegalPropertyException("The name " + CHILD_NAME + " is reserved for children of components!");
 
-        for (GUIProperties.PropertyNode node : props.keySet()) {
-            if (node.getId() == id)
-                throw new IllegalPropertyException(name, "You have a duplicate ID of: " + id);
-            else if (node.getName().equalsIgnoreCase(name))
-                throw new IllegalPropertyException(name, "You have a duplicate name of: " + name);
-        }
+        this.props.put(name, value);
+//        for (String node : props.keySet()) {
+//            if (node.getId() == id)
+//                throw new IllegalPropertyException(name, "You have a duplicate ID of: " + id);
+//            else if (node.getName().equalsIgnoreCase(name))
+//                throw new IllegalPropertyException(name, "You have a duplicate name of: " + name);
+//        }
 
-        this.props.put(new GUIProperties.PropertyNode(name, id), value);
+//        this.props.put(new GUIProperties.PropertyNode(name, id), value);
         return this;
     }
 
@@ -56,10 +48,11 @@ public class PropertyFactory {
 
     @SuppressWarnings("unchecked")
     private List<ComponentRenderingContext<?>> retrieveChildren() {
-        final GUIProperties.PropertyNode node = new GUIProperties.PropertyNode(CHILD_NAME, CHILDREN_INDEX);
-        if (!this.props.containsKey(node)) this.props.put(node, new ArrayList<ComponentRenderingContext<?>>());
-        final Object children = this.props.get(node);
-        if (!(children instanceof List)) throw new IllegalPropertyException("Children type MUST be a list!");
+//        final GUIProperties.PropertyNode node = new GUIProperties.PropertyNode(CHILD_NAME, CHILDREN_INDEX);
+//        if (!this.props.containsKey(node)) this.props.put(node, new ArrayList<ComponentRenderingContext<?>>());
+//        final Object children = this.props.get(node);
+//        if (!(children instanceof List)) throw new IllegalPropertyException("Children type MUST be a list!");
+        final Object children = this.props.get(CHILD_NAME);
         return (List<ComponentRenderingContext<?>>) children;
     }
 

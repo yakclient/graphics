@@ -11,8 +11,8 @@ public abstract class TemplatedException extends RuntimeException {
     }
 
     protected final String fillTemplate(String template, String identifier, Object @NotNull ... values) {
-        String last = template;
-        for (Object value : values) {
+        var last = template;
+        for (var value : values) {
             last = last.replaceFirst(identifier, value.toString());
         }
         return last;

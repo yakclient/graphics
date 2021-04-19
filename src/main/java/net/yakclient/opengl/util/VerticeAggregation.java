@@ -35,11 +35,11 @@ public class VerticeAggregation implements Aggregation<Vertice> {
 
     @Override
     public @NotNull AggregationIterator<Vertice> iterator() {
-        final Vertice[] nodes = new Vertice[this.vertices.size() / VERTICE_SIZE];
+        final var nodes = new Vertice[this.vertices.size() / VERTICE_SIZE];
         int nodesIndex = 0;
         int index = 0;
 
-        final double[] coords = new double[]{0, 0, Z_INDEX_2D};
+        final var coords = new double[]{0, 0, Z_INDEX_2D};
         for (Double normal : this.vertices) {
             coords[index++] = normal;
             if (index == VERTICE_SIZE) {

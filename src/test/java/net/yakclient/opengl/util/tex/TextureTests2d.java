@@ -16,7 +16,8 @@ import java.io.IOException;
 import static org.lwjgl.opengl.GL11.*;
 
 public class TextureTests2d {
-    //-Djava.library.path=/Users/durgan/IdeaProjects/YakClient/YakOpenGLAPI/lib/natives/osx
+    //For OSX: -Djava.library.path=/Users/durgan/IdeaProjects/YakClient/YakOpenGLAPI/lib/natives/osx
+    //For windows: -Djava.library.path=/Users/durgan/IdeaProjects/YakClient/YakOpenGLAPI/lib/natives/windows
     public static void main(String[] args) throws IOException {
         OpenGLSetup.setupAndStart(() -> {
             try {

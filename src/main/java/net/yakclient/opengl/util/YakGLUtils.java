@@ -15,7 +15,7 @@ public class YakGLUtils {
     }
 
     public static double[] toPrimitiveArray(Double[] initial) {
-        final double[] allocation = new double[initial.length];
+        final var allocation = new double[initial.length];
         for (int i = 0; i < initial.length; i++) {
             allocation[i] = initial[i];
         }
@@ -23,7 +23,7 @@ public class YakGLUtils {
     }
 
     public static float[] toPrimitiveArray(Float[] initial) {
-        final float[] allocation = new float[initial.length];
+        final var allocation = new float[initial.length];
         for (int i = 0; i < initial.length; i++) {
             allocation[i] = initial[i];
         }
@@ -31,7 +31,7 @@ public class YakGLUtils {
     }
 
     public static char[] toPrimitiveArray(Character[] initial) {
-        final char[] allocation = new char[initial.length];
+        final var allocation = new char[initial.length];
         for (int i = 0; i < initial.length; i++) {
             allocation[i] = initial[i];
         }
@@ -39,7 +39,7 @@ public class YakGLUtils {
     }
 
     public static short[] toPrimitiveArray(Short[] initial) {
-        final short[] allocation = new short[initial.length];
+        final var allocation = new short[initial.length];
         for (int i = 0; i < initial.length; i++) {
             allocation[i] = initial[i];
         }
@@ -47,7 +47,7 @@ public class YakGLUtils {
     }
 
     public static int[] toPrimitiveArray(Integer[] initial) {
-        final int[] allocation = new int[initial.length];
+        final var allocation = new int[initial.length];
         for (int i = 0; i < initial.length; i++) {
             allocation[i] = initial[i];
         }
@@ -55,7 +55,7 @@ public class YakGLUtils {
     }
 
     public static long[] toPrimitiveArray(Long[] initial) {
-        final long[] allocation = new long[initial.length];
+        final var allocation = new long[initial.length];
         for (int i = 0; i < initial.length; i++) {
             allocation[i] = initial[i];
         }
@@ -63,12 +63,10 @@ public class YakGLUtils {
     }
 
     public static boolean[] toPrimitiveArray(Boolean[] initial) {
-        final boolean[] allocation = new boolean[initial.length];
+        final var allocation = new boolean[initial.length];
         for (int i = 0; i < initial.length; i++) {
             allocation[i] = initial[i];
         }
         return allocation;
     }
-
-
 }

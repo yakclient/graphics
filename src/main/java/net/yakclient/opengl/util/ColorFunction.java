@@ -25,7 +25,7 @@ public interface ColorFunction {
             }
         }
 
-        final int[] pointMappings = new int[vertices.size()];
+        final var pointMappings = new int[vertices.size()];
         for (int color = 0; color < colors.length; color++) {
             final int initialSize = vertices.size() / colors.length;
             final int colorSize = color + 1 == colors.length ? (vertices.size() - (initialSize * colors.length)) + initialSize : initialSize;
