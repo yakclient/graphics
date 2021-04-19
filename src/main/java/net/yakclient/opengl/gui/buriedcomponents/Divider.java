@@ -8,6 +8,7 @@ import net.yakclient.opengl.util.*;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 
@@ -22,8 +23,7 @@ public class Divider extends BuriedGUIComponent {
             final double height = manager.requireProp("height");
             final double x = manager.<Double>requireProp("x");
             final double y = manager.<Double>requireProp("y");
-            final Runnable onHover = manager.requestProp("onHover", () -> {
-            });
+            final var onHover = manager.<Runnable>requestProp("onHover");
 
             final VerticeAggregation collection = new VerticeAggregation()
                     .add(x, y)
@@ -45,7 +45,7 @@ public class Divider extends BuriedGUIComponent {
 
             final ColorAggregation aggregation = ColorFunction.applyColorEffect(0, collection, ColorCodes.CRIMSON);
             final boolean hovering = this.rectBounding(Mouse.getX(), Mouse.getY(), y, x, x + width, y + height);
-            if (hovering) onHover.run();
+            if (hovering) onHover.ifPresent(Runnable::run);
 
             final TexAggregation texs = new TexAggregation();
             texs.add(0, 0).add(1, 0).add(1, 0).add(0, 1);

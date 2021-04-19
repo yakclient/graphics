@@ -29,6 +29,7 @@ public class GUIProperties {
      * @throws IllegalPropertyException If the value cannot be found.
      */
     @SuppressWarnings("unchecked")
+    @Nullable
     public <T> T get(String value) throws IllegalPropertyException {
         return (T) this.retrieve(new NamePartialNode(value));
     }

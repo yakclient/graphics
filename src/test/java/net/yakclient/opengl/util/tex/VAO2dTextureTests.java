@@ -9,6 +9,8 @@ import org.newdawn.slick.opengl.TextureLoader;
 import java.io.IOException;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class VAO2dTextureTests {
     public static void main(String[] args) {
@@ -37,6 +39,8 @@ public class VAO2dTextureTests {
                 GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
                 GL11.glEnable(GL11.GL_TEXTURE_2D);
                 tex.bind();
+
+                var optional = Optional.ofNullable("");
 
                 GL11.glVertexPointer(2, 0, vertices);
                 GL11.glTexCoordPointer(2,0, texs);

@@ -6,6 +6,7 @@ import net.yakclient.opengl.util.state.Stateful;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -222,24 +223,24 @@ public abstract class BuriedGUIComponent implements GLPropsRenderable {
             return prop;
         }
 
-        public <T> T requestProp(String name, T defaultVal) {
-            return this.requestProp(this.properties.<T>get(name), () -> defaultVal);
+        public <T> Optional<T> requestProp(String name) {
+            return Optional.ofNullable(this.properties.get(name));
         }
 
-        public <T> T requestProp(String name, Supplier<T> defaultVal) {
-            return this.requestProp(this.properties.<T>get(name), defaultVal);
+//        public <T> T requestProp(String name, Supplier<T> defaultVal) {
+//            return this.requestProp(this.properties.<T>get(name), defaultVal);
+//        }
+
+        public <T> Optional<T> requestProp(int index) {
+            return Optional.ofNullable(this.properties.get(index));
         }
 
-        public <T> T requestProp(int index, Supplier<T> defaultVal) {
-            return this.requestProp(this.properties.<T>get(index), defaultVal);
-        }
-
-        public <T> T requestProp(int index, T defaultVal) {
-            return this.requestProp(this.properties.<T>get(index), () -> defaultVal);
-        }
-
-        private <T> T requestProp(T prop, Supplier<T> defaultVal) {
-            return prop == null ? defaultVal.get() : prop;
-        }
+//        public <T> T requestProp(int index, T defaultVal) {
+//            return this.requestProp(this.properties.<T>get(index), () -> defaultVal);
+//        }
+//
+//        private <T> Opt requestProp(T prop) {
+//            return prop == null ? defaultVal.get() : prop;
+//        }
     }
 }
