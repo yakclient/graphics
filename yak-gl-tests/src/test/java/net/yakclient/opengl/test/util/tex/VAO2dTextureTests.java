@@ -7,24 +7,28 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
-import java.util.Optional;
+
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 
 public class VAO2dTextureTests {
     public static void main(String[] args) {
         OpenGLSetup.setupAndStart(() -> {
             try {
-                final Texture tex = TextureLoader.getTexture("PNG", BasicTextureTests.class.getResourceAsStream("/wood.png"));
+                final var resource = BasicTextureTests.class.getResourceAsStream("/wood.png");
+                if (resource == null) throw new NullPointerException("Texture resource is null");
+                final var tex = TextureLoader.getTexture("PNG", resource);
 
-                final DoubleBuffer vertices = BufferUtils.createDoubleBuffer(8);
+                final var vertices = BufferUtils.createDoubleBuffer(8);
                 vertices.put(new double[]{
                         10, 10,
                         10 + tex.getTextureWidth(), 10,
                         10 + tex.getTextureWidth(), 10 + tex.getTextureHeight(),
                         10, 10 + tex.getTextureHeight()});
 
-                final FloatBuffer texs = BufferUtils.createFloatBuffer(8);
+                final var texs = BufferUtils.createFloatBuffer(8);
                 texs.put(new float[]{
                         0, 0,
                         1, 0,
@@ -35,40 +39,23 @@ public class VAO2dTextureTests {
                 vertices.flip();
                 texs.flip();
 
-                GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-                GL11.glEnable(GL11.GL_TEXTURE_2D);
                 tex.bind();
 
-                var optional = Optional.ofNullable("");
+
+                GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+                GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+
+                GL11.glEnable(GL11.GL_TEXTURE_2D);
 
                 GL11.glVertexPointer(2, 0, vertices);
                 GL11.glTexCoordPointer(2,0, texs);
-                GL11.glTexCoordPointer(2, 0, texs);
 
                 GL11.glDrawArrays(GL11.GL_QUADS, 0, 4);
 
                 tex.release();
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
                 GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-
-//                final Texture texture = TextureLoader.getTexture("PNG", BasicTextureTests.class.getResourceAsStream("/wood.png"));
-//                texture.bind();
-//                GL11.glEnable(GL_TEXTURE_2D);
-//
-//                GL11.glBegin(GL11.GL_QUADS);
-//                GL11.glVertex2f(100, 100);
-//                GL11.glTexCoord2f(0, 0);
-//
-//                GL11.glVertex2f(100 + texture.getTextureWidth(), 100);
-//                GL11.glTexCoord2f(1, 0);
-//
-//                GL11.glVertex2f(100 + texture.getTextureWidth(), 100 + texture.getTextureHeight());
-//                GL11.glTexCoord2f(1, 1);
-//
-//                GL11.glVertex2f(100, 100 + texture.getTextureHeight());
-//
-//                GL11.glTexCoord2f(0, 1);
-//                GL11.glEnd();
+                GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 
             } catch (IOException e) {
                 System.out.println("IO exception");
