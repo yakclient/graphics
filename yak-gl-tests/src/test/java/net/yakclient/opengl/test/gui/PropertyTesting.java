@@ -1,5 +1,8 @@
-package net.yakclient.opengl.gui;
+package net.yakclient.opengl.test.gui;
 
+import net.yakclient.opengl.api.gui.GUIProperties;
+import net.yakclient.opengl.api.gui.IllegalPropertyException;
+import net.yakclient.opengl.api.gui.PropertyFactory;
 import org.junit.jupiter.api.Test;
 
 public class PropertyTesting {

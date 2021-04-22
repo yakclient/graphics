@@ -1,7 +1,10 @@
-package net.yakclient.opengl.gui;
+package net.yakclient.opengl.test.gui;
 
-import net.yakclient.opengl.gui.buriedcomponents.Divider;
-import net.yakclient.opengl.gui.state.Stateful;
+import net.yakclient.opengl.api.gui.ComponentRenderingContext;
+import net.yakclient.opengl.api.gui.GUIComponent;
+import net.yakclient.opengl.api.gui.GUIProperties;
+import net.yakclient.opengl.api.gui.state.Stateful;
+import net.yakclient.opengl.components.Divider;
 
 public class TestComponent extends GUIComponent {
     @Override

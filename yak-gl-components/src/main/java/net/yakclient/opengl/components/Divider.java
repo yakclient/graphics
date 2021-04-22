@@ -1,15 +1,16 @@
-package net.yakclient.opengl.gui.buriedcomponents;
+package net.yakclient.opengl.components;
 
-import net.yakclient.opengl.gui.BuriedGUIComponent;
-import net.yakclient.opengl.gui.GUIProperties;
-import net.yakclient.opengl.render.GLRenderingContext;
-import net.yakclient.opengl.render.GLRenderingData;
+
+import net.yakclient.opengl.api.gui.BuriedGUIComponent;
+import net.yakclient.opengl.api.gui.GUIProperties;
+import net.yakclient.opengl.api.render.GLRenderingContext;
+import net.yakclient.opengl.api.render.GLRenderingData;
 import net.yakclient.opengl.util.*;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 
-import static org.lwjgl.opengl.GL11.GL_QUADS;
 
 public class Divider extends BuriedGUIComponent {
     @Override
@@ -49,12 +50,12 @@ public class Divider extends BuriedGUIComponent {
             final TexAggregation texs = new TexAggregation();
             texs.add(0, 0).add(1, 0).add(1, 0).add(0, 1);
 
-            final GLRenderingData data = GLRenderingData.create(TextureFactory.createTex(getClass().getResourceAsStream("/wood.png"))).addTexs(texs).addVertices(collection).addColors(hovering ? aggregation : colorsDefault).build();
+            final GLRenderingData data = GLRenderingData.create().addTexs(texs).addVertices(collection).addColors(hovering ? aggregation : colorsDefault).build();
 
 
 
-            return this.combineContexts(new GLRenderingContext.ContextBuilder(GL_QUADS, data).build(), this.renderChildren(properties));
-        } catch (IOException e) {
+            return this.combineContexts(new GLRenderingContext.ContextBuilder(GL11.GL_QUADS, data).build(), this.renderChildren(properties));
+        } catch (Exception e) {
             System.out.println("Failed to create texture wood");
         }
         return new GLRenderingContext[0];

@@ -1,11 +1,13 @@
-package net.yakclient.opengl.gui;
+package net.yakclient.opengl.test.gui;
 
-import net.yakclient.opengl.OpenGLSetup;
-import net.yakclient.opengl.render.GLRenderingContext;
+import net.yakclient.opengl.api.gui.GUIComponent;
+import net.yakclient.opengl.api.gui.PropertyFactory;
+import net.yakclient.opengl.api.render.GLRenderingContext;
+import net.yakclient.opengl.test.OpenGLSetup;
 
 public class ComponentTesting {
     public static void main(String[] args) {
-        final var component = new TestComponent();
+        final GUIComponent component = new TestComponent();
         OpenGLSetup.setupAndStart(() -> {
         }, () -> {
            GLRenderingContext[] contexts = component.glRender(PropertyFactory.create().build());

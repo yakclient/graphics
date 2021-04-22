@@ -1,4 +1,4 @@
-package net.yakclient.opengl.util.state;
+package net.yakclient.opengl.gui.state;
 
 public class GUIState<T> implements Stateful<T> {
     private T value;

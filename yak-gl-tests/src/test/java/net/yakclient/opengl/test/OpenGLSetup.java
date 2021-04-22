@@ -1,4 +1,4 @@
-package net.yakclient.opengl;
+package net.yakclient.opengl.test;
 
 
 import org.lwjgl.LWJGLException;

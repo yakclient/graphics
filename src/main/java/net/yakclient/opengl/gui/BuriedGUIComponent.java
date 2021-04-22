@@ -1,15 +1,13 @@
 package net.yakclient.opengl.gui;
 
 import net.yakclient.opengl.render.GLRenderingContext;
-import net.yakclient.opengl.util.state.GUIState;
-import net.yakclient.opengl.util.state.Stateful;
+import net.yakclient.opengl.gui.state.GUIState;
+import net.yakclient.opengl.gui.state.Stateful;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * The base component for doing any rendering to openGL. This class
