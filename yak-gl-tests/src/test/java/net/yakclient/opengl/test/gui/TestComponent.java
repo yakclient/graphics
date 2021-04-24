@@ -26,6 +26,7 @@ public class TestComponent extends GUIComponent {
 //               .<Runnable>addProp("onmouseover", ()-> System.out.println("Mouse Over"))
 //               .<Runnable>addProp("onmousemove", ()-> System.out.println("Mouse Move"))
                .<Consumer<Integer>>addProp("onkeydown", (key)-> System.out.println("Key Down: " + key))
+               .<Consumer<Integer>>addProp("onkeyup", (key)-> System.out.println("Key Up: " + key))
                .addProp("backgroundimage", getClass().getResourceAsStream("/wood.png"))
 
                .addChild(create(this.useComponent(new OtherTestComponent(), 1))).build();

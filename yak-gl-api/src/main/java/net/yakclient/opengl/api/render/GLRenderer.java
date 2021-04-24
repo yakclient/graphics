@@ -28,6 +28,8 @@ public abstract class GLRenderer implements Renderer {
         if (data.hasTexs()) GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 
         GL11.glEnable(this.context.getTextureType());
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         data.getTexture().bind();
 
@@ -35,8 +37,10 @@ public abstract class GLRenderer implements Renderer {
 
         GL11.glDrawArrays(this.context.getDrawType(), 0, data.getVerticeCount());
 
+
         data.getTexture().release();
 
+        GL11.glDisable(GL11.GL_BLEND);
         GL11.glDisable(this.context.getTextureType());
 
         if (data.hasTexs()) GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);

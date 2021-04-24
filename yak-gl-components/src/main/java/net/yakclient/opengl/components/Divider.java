@@ -49,6 +49,7 @@ public class Divider extends BuriedGUIComponent {
             final var lastTickMousePos = this.useState(new Vertice(Mouse.getX(), Mouse.getY()), 2);
             final var focused = this.useState(false, 3);
             final var lastKeyDown = this.useState(YakGLUtils.CHAR_NONE, 4);
+            final var wasLastTickKeyDown = this.useState(false, 5);
 
 
             final boolean lmbDown = Mouse.isButtonDown(YakGLUtils.MOUSE_LEFT_BUTTON);
@@ -61,26 +62,28 @@ public class Divider extends BuriedGUIComponent {
             final Vertice ltPos = lastTickMousePos.get();
             if (ltPos.equals(new Vertice(Mouse.getX(), Mouse.getY())) && isMouseOver) onHover.ifPresent(Runnable::run);
 
-            if (!ltPos.equals(new Vertice(Mouse.getX(), Mouse.getY())) && isMouseOver)
-                onMouseMove.ifPresent(Runnable::run);
+            if (!ltPos.equals(new Vertice(Mouse.getX(), Mouse.getY())) && isMouseOver) onMouseMove.ifPresent(Runnable::run);
 
             if (this.rectBounding(ltPos.getX(), ltPos.getY(), y, x, x + width, y + height) && !isMouseOver)
                 onMouseOut.ifPresent(Runnable::run);
 
-            lastKeyDown.set(YakGLUtils.CHAR_NONE);
-            while (Keyboard.next()) if (focused.get()) lastKeyDown.set(Keyboard.getEventKey());
+            while (Keyboard.next()) {
+                final int eventKey = Keyboard.getEventKey();
+                if (focused.get() && eventKey != YakGLUtils.CHAR_NONE)
+                    lastKeyDown.set(eventKey);
+            }
 
-            //TODO the keys dont down and up dont currently work
             final int key = lastKeyDown.get();
-            if (Keyboard.isKeyDown(key))
+            if (Keyboard.isKeyDown(key)) {
                 onKeyDown.ifPresent(consumer -> consumer.accept(key));
-            else {
+                wasLastTickKeyDown.set(true);
+            } else if (wasLastTickKeyDown.get()) {
                 onKeyUp.ifPresent(consumer -> consumer.accept(key));
-                lastKeyDown.set(YakGLUtils.CHAR_NONE);
+                wasLastTickKeyDown.set(false);
             }
 
 
-            wasLastTickMouseDown.set(lmbDown);
+            if (isMouseOver) wasLastTickMouseDown.set(lmbDown);
             while (Mouse.next()) {
                 final int button = Mouse.getEventButton();
                 if (button == YakGLUtils.MOUSE_LEFT_BUTTON && Mouse.getEventButtonState()) {
@@ -96,8 +99,6 @@ public class Divider extends BuriedGUIComponent {
                             onClick.ifPresent(Runnable::run);
                         }
                     }
-
-//                    if (isMouseOver) wasLastTickMouseDown.set(true);
                 }
             }
 
