@@ -19,5 +19,6 @@ public interface Texture {
 
     void release();
 
+    TexAggregation generateTexs(VerticeAggregation vertices);
 
 }

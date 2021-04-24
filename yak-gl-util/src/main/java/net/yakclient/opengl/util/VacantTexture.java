@@ -45,4 +45,10 @@ public class VacantTexture implements Texture {
     public void release() {
         //Nothing to do
     }
+
+    @Override
+    public TexAggregation generateTexs(VerticeAggregation vertices) {
+        return new TexAggregation();
+    }
+
 }

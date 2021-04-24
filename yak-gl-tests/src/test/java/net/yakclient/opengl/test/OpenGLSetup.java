@@ -9,7 +9,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class OpenGLSetup {
     private static final int FPS_GOAL = 60;
-    private static final int LONGEST_RUNTIME = 20; /* seconds */
+    private static final int LONGEST_RUNTIME = 600; /* seconds */
 
     public static void setupAndStart(Runnable gameLoop) {
         setupAndStart(() -> {

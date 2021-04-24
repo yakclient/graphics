@@ -5,6 +5,20 @@ import net.yakclient.opengl.util.*;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 
+/**
+ * GLRendering data is considered actual data that needs to be
+ * passed to opengl. It could for example be anything in a buffer
+ * or a texture bound to opengl. It maintains data like vertice
+ * count.
+ * <p>
+ * {@code GLRenderingContext} however doesnt contain what we consider
+ * data but contains settings for opengl to process this data with.
+ *
+ * @author Durgan McBroom
+ * @see GLRenderingContext
+ * @see Aggregation
+ * @see Texture
+ */
 public class GLRenderingData {
     private final VerticeAggregation vertices;
     private final ColorAggregation colors;
@@ -46,6 +60,22 @@ public class GLRenderingData {
 
     public Texture getTexture() {
         return texture;
+    }
+
+    public boolean hasVertices() {
+        return !this.vertices.isEmpty();
+    }
+
+    public boolean hasColors() {
+        return !this.colors.isEmpty();
+    }
+
+    public boolean hasNormals() {
+        return !this.normals.isEmpty();
+    }
+
+    public boolean hasTexs() {
+        return !this.texs.isEmpty();
     }
 
     public int getVerticeCount() {

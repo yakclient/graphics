@@ -222,6 +222,7 @@ public abstract class BuriedGUIComponent implements GLPropsRenderable {
             this.properties = properties;
         }
 
+        @NotNull
         public <T> T requireProp(String name) {
             final T prop = this.properties.get(name);
             if (prop == null)
@@ -229,6 +230,7 @@ public abstract class BuriedGUIComponent implements GLPropsRenderable {
             return prop;
         }
 
+        @NotNull
         public <T> Optional<T> requestProp(String name) {
             return Optional.ofNullable(this.properties.get(name));
         }

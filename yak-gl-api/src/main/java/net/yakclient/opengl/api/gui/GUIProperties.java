@@ -31,7 +31,7 @@ public class GUIProperties {
     @SuppressWarnings("unchecked")
     @Nullable
     public <T> T get(String value) throws IllegalPropertyException {
-        return (T) this.props.get(value);
+        return (T) this.props.get(value.toLowerCase());
     }
 
     /**
@@ -54,7 +54,7 @@ public class GUIProperties {
      * @return if the property is found.
      */
     public boolean hasProperty(String name) {
-        return this.get(name) != null;
+        return this.get(name.toLowerCase()) != null;
     }
 
 //    static class PropertyNode {

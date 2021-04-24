@@ -11,19 +11,20 @@ public interface ColorFunction {
 
     @NotNull
     static ColorAggregation applyColorEffect(int offset, @NotNull VerticeAggregation vertices, @NotNull RGBColor... colors) {
-        double centerX = 0;
-        double centerY = 0;
-
-        for (int i = 0; i < vertices.size(); i++) {
-            final VerticeAggregation.Vertice vertice = vertices.get(i);
-            if (i == 0) {
-                centerX = vertice.getX();
-                centerY = vertice.getY();
-            } else {
-                centerX = (centerX + vertice.getX()) / 2;
-                centerY = (centerY + vertice.getY()) / 2;
-            }
-        }
+        if (colors.length == 0) return new ColorAggregation();
+        //        double centerX = 0;
+//        double centerY = 0;
+//
+//        for (int i = 0; i < vertices.size(); i++) {
+//            final VerticeAggregation.Vertice vertice = vertices.get(i);
+//            if (i == 0) {
+//                centerX = vertice.getX();
+//                centerY = vertice.getY();
+//            } else {
+//                centerX = (centerX + vertice.getX()) / 2;
+//                centerY = (centerY + vertice.getY()) / 2;
+//            }
+//        }
 
         final var pointMappings = new int[vertices.size()];
         for (int color = 0; color < colors.length; color++) {

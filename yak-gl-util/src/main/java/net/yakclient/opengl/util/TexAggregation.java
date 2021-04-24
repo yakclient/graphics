@@ -8,8 +8,8 @@ import java.nio.FloatBuffer;
 import java.util.Collection;
 
 public class TexAggregation implements Aggregation<TexAggregation.TexNode> {
-    public static final int VERTICE_SIZE = 2;
-    public static final float DEFAULT_R = 1;
+    public static final int VERTICE_SIZE = 3;
+    public static final float DEFAULT_R = 0;
 
     private final Collection<Float> texs;
 
@@ -23,12 +23,12 @@ public class TexAggregation implements Aggregation<TexAggregation.TexNode> {
         int nodesIndex = 0;
         int index = 0;
 
-        final var coords = new float[]{0, 0, DEFAULT_R};
+        final var texs = new float[]{0, 0, DEFAULT_R};
         for (Float normal : this.texs) {
-            coords[index++] = normal;
+            texs[index++] = normal;
             if (index == VERTICE_SIZE) {
                 index = 0;
-                nodes[nodesIndex++] = new TexNode(coords[0], coords[1]);
+                nodes[nodesIndex++] = new TexNode(texs[0], texs[1], texs[2]);
             }
         }
 
@@ -52,12 +52,21 @@ public class TexAggregation implements Aggregation<TexAggregation.TexNode> {
     public boolean add(TexNode node) {
         this.texs.add(node.getS());
         this.texs.add(node.getT());
+        this.texs.add(node.getR());
         return true;
     }
 
     public TexAggregation add(float s, float t) {
         this.texs.add(s);
         this.texs.add(t);
+        this.texs.add(DEFAULT_R);
+        return this;
+    }
+
+    public TexAggregation add(float s, float t, float r) {
+        this.texs.add(s);
+        this.texs.add(t);
+        this.texs.add(r);
         return this;
     }
 
@@ -78,10 +87,12 @@ public class TexAggregation implements Aggregation<TexAggregation.TexNode> {
     public static class TexNode implements AggregateNode {
         private final float s;
         private final float t;
+        private final float r;
 
-        public TexNode(float s, float t) {
+        public TexNode(float s, float t, float r) {
             this.s = s;
             this.t = t;
+            this.r = r;
         }
 
         public float getS() {
@@ -92,5 +103,8 @@ public class TexAggregation implements Aggregation<TexAggregation.TexNode> {
             return t;
         }
 
+        public float getR() {
+            return r;
+        }
     }
 }

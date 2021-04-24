@@ -34,6 +34,10 @@ public interface Aggregation<T extends AggregateNode> extends Iterable<T> {
         return this.iterator().nodes[i];
     }
 
+    default boolean isEmpty() {
+        return this.size() == 0;
+    }
+
     class AggregationIterator<T extends AggregateNode> implements Iterator<T> {
         private final T[] nodes;
         private int current = 0;

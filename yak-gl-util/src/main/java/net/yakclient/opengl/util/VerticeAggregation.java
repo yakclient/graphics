@@ -1,6 +1,5 @@
 package net.yakclient.opengl.util;
 
-import net.yakclient.opengl.util.VerticeAggregation.Vertice;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.Buffer;
@@ -83,29 +82,5 @@ public class VerticeAggregation implements Aggregation<Vertice> {
     @Override
     public int size() {
         return this.vertices.size() / VERTICE_SIZE;
-    }
-
-    public static class Vertice implements AggregateNode {
-        private final double x;
-        private final double y;
-        private final double z;
-
-        private Vertice(double x, double y, double z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        public double getX() {
-            return x;
-        }
-
-        public double getY() {
-            return y;
-        }
-
-        public double getZ() {
-            return z;
-        }
     }
 }

@@ -6,6 +6,8 @@ import net.yakclient.opengl.api.gui.GUIProperties;
 import net.yakclient.opengl.api.gui.state.Stateful;
 import net.yakclient.opengl.components.Divider;
 
+import java.util.function.Consumer;
+
 public class TestComponent extends GUIComponent {
     @Override
     public ComponentRenderingContext<?> render(GUIProperties properties) {
@@ -15,7 +17,17 @@ public class TestComponent extends GUIComponent {
                .addProp("height", 100d)
                .addProp("x", 50d)
                .addProp("y", 50d)
-               .<Runnable>addProp("onHover", ()-> System.out.println(hovered.set(hovered.get() + 1)))
+//               .<Runnable>addProp("onHover", ()-> System.out.println("Hovering"))
+//               .<Runnable>addProp("onclick", ()-> System.out.println("Clicked"))
+//               .<Runnable>addProp("ondbclick", ()-> System.out.println("Double Clicked"))
+//               .<Runnable>addProp("onHover", ()-> System.out.println("Hovering"))
+//               .<Runnable>addProp("onmousedown", ()-> System.out.println("Mouse Down"))
+//               .<Runnable>addProp("onmouseup", ()-> System.out.println("Mouse Up"))
+//               .<Runnable>addProp("onmouseover", ()-> System.out.println("Mouse Over"))
+//               .<Runnable>addProp("onmousemove", ()-> System.out.println("Mouse Move"))
+               .<Consumer<Integer>>addProp("onkeydown", (key)-> System.out.println("Key Down: " + key))
+               .addProp("backgroundimage", getClass().getResourceAsStream("/wood.png"))
+
                .addChild(create(this.useComponent(new OtherTestComponent(), 1))).build();
     }
 }

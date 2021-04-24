@@ -26,10 +26,11 @@ public class PropertyFactory {
     }
 
     public PropertyFactory addProp(String name, Object value) throws IllegalPropertyException {
-        if (name.equalsIgnoreCase(CHILD_NAME))
+        final String key = name.toLowerCase();
+        if (key.equalsIgnoreCase(CHILD_NAME))
             throw new IllegalPropertyException("The name " + CHILD_NAME + " is reserved for children of components!");
 
-        this.props.put(name, value);
+        this.props.put(key, value);
 //        for (String node : props.keySet()) {
 //            if (node.getId() == id)
 //                throw new IllegalPropertyException(name, "You have a duplicate ID of: " + id);
