@@ -6,27 +6,27 @@ public class Vertice implements AggregateNode {
     private final double x;
     private final double y;
     private final double z;
-    private final double a;
+    private final double r;
 
-    public Vertice(double x, double y, double z, double a) {
+    public Vertice(double x, double y, double z, double r) {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.a = a;
+        this.r = r;
     }
 
     public Vertice(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.a = VerticeAggregation.DEFAULT_ALPHA;
+        this.r = VerticeAggregation.DEFAULT_R;
     }
 
     public Vertice(double x, double y) {
         this.x = x;
         this.y = y;
         this.z = VerticeAggregation.Z_INDEX_2D;
-        this.a = VerticeAggregation.DEFAULT_ALPHA;
+        this.r = VerticeAggregation.DEFAULT_R;
     }
 
     public double getX() {
@@ -41,8 +41,8 @@ public class Vertice implements AggregateNode {
         return z;
     }
 
-    public double getA() {
-        return a;
+    public double getR() {
+        return r;
     }
 
     @Override
@@ -50,11 +50,11 @@ public class Vertice implements AggregateNode {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Vertice vertice = (Vertice) o;
-        return Double.compare(vertice.x, x) == 0 && Double.compare(vertice.y, y) == 0 && Double.compare(vertice.z, z) == 0 && Double.compare(vertice.a, a) == 0;
+        return Double.compare(vertice.x, x) == 0 && Double.compare(vertice.y, y) == 0 && Double.compare(vertice.z, z) == 0 && Double.compare(vertice.r, r) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y, z, a);
+        return Objects.hash(x, y, z, r);
     }
 }

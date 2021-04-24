@@ -10,7 +10,7 @@ import java.util.Collection;
 public class VerticeAggregation implements Aggregation<Vertice> {
     public static final int VERTICE_SIZE = 4;
     public static final double Z_INDEX_2D = 0;
-    public static final double DEFAULT_ALPHA = 1;
+    public static final double DEFAULT_R = 1;
 
     protected final Collection<Double> vertices;
 
@@ -22,23 +22,31 @@ public class VerticeAggregation implements Aggregation<Vertice> {
         this.vertices.add(x);
         this.vertices.add(y);
         this.vertices.add(Z_INDEX_2D);
-        this.vertices.add(DEFAULT_ALPHA);
+        this.vertices.add(DEFAULT_R);
         return this;
     }
+    public VerticeAggregation addR(double x, double y, double r) {
+        this.vertices.add(x);
+        this.vertices.add(y);
+        this.vertices.add(r);
+        this.vertices.add(DEFAULT_R);
+        return this;
+    }
+
 
     public VerticeAggregation add(double x, double y, double z) {
         this.vertices.add(x);
         this.vertices.add(y);
         this.vertices.add(z);
-        this.vertices.add(DEFAULT_ALPHA);
+        this.vertices.add(DEFAULT_R);
         return this;
     }
 
-    public VerticeAggregation add(double x, double y, double z, double a) {
+    public VerticeAggregation addR(double x, double y, double z, double r) {
         this.vertices.add(x);
         this.vertices.add(y);
         this.vertices.add(z);
-        this.vertices.add(a);
+        this.vertices.add(r);
         return this;
     }
 
@@ -50,7 +58,7 @@ public class VerticeAggregation implements Aggregation<Vertice> {
         int nodesIndex = 0;
         int index = 0;
 
-        final var coords = new double[]{0, 0, Z_INDEX_2D, DEFAULT_ALPHA};
+        final var coords = new double[]{0, 0, Z_INDEX_2D, DEFAULT_R};
         for (Double normal : this.vertices) {
             coords[index++] = normal;
             if (index == VERTICE_SIZE) {
@@ -80,7 +88,7 @@ public class VerticeAggregation implements Aggregation<Vertice> {
         this.vertices.add(node.getX());
         this.vertices.add(node.getY());
         this.vertices.add(node.getZ());
-        this.vertices.add(node.getA());
+        this.vertices.add(node.getR());
         return true;
     }
 
