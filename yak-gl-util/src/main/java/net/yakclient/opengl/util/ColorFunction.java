@@ -3,14 +3,11 @@ package net.yakclient.opengl.util;
 import org.jetbrains.annotations.NotNull;
 
 public interface ColorFunction {
-    ColorAggregation toAggregation(int offset, VerticeAggregation aggregation);
+    ColorAggregation toAggregation(VerticeAggregation aggregation);
 
-    default ColorAggregation toAggregation(VerticeAggregation aggregation) {
-        return this.toAggregation(0, aggregation);
-    }
 
     @NotNull
-    static ColorAggregation applyColorEffect(int offset, @NotNull VerticeAggregation vertices, @NotNull RGBColor... colors) {
+    static ColorAggregation applyColorEffect(int offset, float alpha, @NotNull VerticeAggregation vertices, @NotNull RGBColor... colors) {
         if (colors.length == 0) return new ColorAggregation();
         //        double centerX = 0;
 //        double centerY = 0;
@@ -39,7 +36,7 @@ public interface ColorFunction {
 
         for (int color = 0; color < pointMappings.length; color++) {
             final RGBColor mapping = colors[pointMappings[(color + offset) % pointMappings.length]];
-            aggregation.add(mapping.toColorNode());
+            aggregation.add(mapping.getRed(), mapping.getBlue(), mapping.getGreen(), alpha);
         }
 
         return aggregation;
