@@ -15,9 +15,9 @@ import java.nio.FloatBuffer;
  * data but contains settings for opengl to process this data with.
  *
  * @author Durgan McBroom
- * @see GLRenderingContext
+ * @see VerticeRenderingContext
  * @see Aggregation
- * @see Texture
+ * @see YakTexture
  */
 public class GLRenderingData {
     private final VerticeAggregation vertices;
@@ -25,11 +25,11 @@ public class GLRenderingData {
     private final NormalAggregation normals;
     private final TexAggregation texs;
 
-    private final Texture texture;
+    private final YakTexture texture;
 
     private final int verticeCount;
 
-    public GLRenderingData(VerticeAggregation vertices, ColorAggregation colors, NormalAggregation normals, TexAggregation texs, Texture texture, int verticeCount) {
+    public GLRenderingData(VerticeAggregation vertices, ColorAggregation colors, NormalAggregation normals, TexAggregation texs, YakTexture texture, int verticeCount) {
         this.vertices = vertices;
         this.colors = colors;
         this.normals = normals;
@@ -58,7 +58,7 @@ public class GLRenderingData {
         return this.texs.asBuf(this.texs.createBuf());
     }
 
-    public Texture getTexture() {
+    public YakTexture getTexture() {
         return texture;
     }
 
@@ -86,7 +86,7 @@ public class GLRenderingData {
         return new RenderingDataBuilder();
     }
 
-    public static RenderingDataBuilder create(Texture texture) {
+    public static RenderingDataBuilder create(YakTexture texture) {
         return new RenderingDataBuilder(texture);
     }
 
@@ -96,7 +96,7 @@ public class GLRenderingData {
         private final NormalAggregation normals;
         private final TexAggregation texs;
 
-        private final Texture texture;
+        private final YakTexture texture;
 
         private int verticeCount = 0;
 
@@ -109,7 +109,7 @@ public class GLRenderingData {
             this.texture = new VacantTexture();
         }
 
-        public RenderingDataBuilder(Texture texture) {
+        public RenderingDataBuilder(YakTexture texture) {
             this.vertices = new VerticeAggregation();
             this.colors = new ColorAggregation();
             this.normals = new NormalAggregation();

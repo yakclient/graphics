@@ -30,13 +30,12 @@ import java.util.function.Consumer;
  * contexts. Direct implementations of GLPropsRenderable can be used however
  * it is recommended to use the utilities provided in this class.
  *
- * @see GLPropsRenderable
- * @see GLRenderingContext
+ * @see ContextPropsRenderable
  * @see GUIProperties
  *
  * @author Durgan McBroom
  */
-public abstract class BuriedGUIComponent implements GLPropsRenderable {
+public abstract class BuriedGUIComponent implements ContextPropsRenderable {
     /**
      * State keeping for this component. Each state is by kept
      * by an integer id. This provides an alternative for using
@@ -58,7 +57,7 @@ public abstract class BuriedGUIComponent implements GLPropsRenderable {
      * @param <T> The component type.
      * @return The factory created.
      */
-    public final <T extends GLPropsRenderable> ComponentFactory<T> create(T component) {
+    public final <T extends ContextPropsRenderable> ComponentFactory<T> create(T component) {
         return ComponentFactory.create(component);
     }
 

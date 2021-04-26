@@ -4,6 +4,10 @@ package net.yakclient.opengl.test;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.TrueTypeFont;
+
+import java.awt.*;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -26,12 +30,14 @@ public class OpenGLSetup {
             System.exit(1);
         }
 
+
+
         configurations.run();
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
 //        GLU.gluPerspective(100, 640f/480f, 0.001f, 100f);
-        glOrtho(0, Display.getWidth(), 0, Display.getHeight(), 1, -1);
+        glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 0, -1);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
@@ -53,12 +59,11 @@ public class OpenGLSetup {
 
             gameLoop.run();
 
-
             Display.update();
             Display.sync(FPS_GOAL);
         }
         System.out.println("Attempting to cleanup resources");
-
+        System.out.println();
         System.out.println("----- RUNTIME STATS -----");
         System.out.println("HIGHEST FPS: " + highestFPS);
         System.out.println("AVERAGE FPS: " + averageFPS);

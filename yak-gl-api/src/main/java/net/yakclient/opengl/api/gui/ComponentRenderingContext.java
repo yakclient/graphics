@@ -2,7 +2,7 @@ package net.yakclient.opengl.api.gui;
 
 import net.yakclient.opengl.api.render.GLRenderingContext;
 
-public class ComponentRenderingContext<T extends GLPropsRenderable> implements GLRenderable {
+public class ComponentRenderingContext<T extends ContextPropsRenderable> implements ContextRenderable {
     private final T component;
     private final GUIProperties properties;
 

@@ -1,6 +1,6 @@
 package net.yakclient.opengl.api.gui;
 
-public class ComponentFactory<T extends GLPropsRenderable> {
+public class ComponentFactory<T extends ContextPropsRenderable> {
     private final T component;
     private final PropertyFactory properties;
 
@@ -9,7 +9,7 @@ public class ComponentFactory<T extends GLPropsRenderable> {
         this.properties = properties;
     }
 
-    public static <T extends GLPropsRenderable> ComponentFactory<T> create(T component) {
+    public static <T extends ContextPropsRenderable> ComponentFactory<T> create(T component) {
         return new ComponentFactory<>(component, PropertyFactory.create());
     }
 

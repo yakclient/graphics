@@ -15,6 +15,5 @@ module yak.gl.tests {
     requires org.junit.platform.commons;
     requires org.apiguardian.api;
 
-    //Kill me now but lwjgl needs it
     requires jdk.unsupported;
 }

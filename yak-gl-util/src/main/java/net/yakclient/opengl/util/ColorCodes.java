@@ -5,8 +5,10 @@ package net.yakclient.opengl.util;
  * https://htmlcolorcodes.com/color-names/
  */
 public interface ColorCodes {
+    float COLOR_MAX = 255f;
+
     static RGBColor rgb(int red, int green, int blue) {
-        return new RGBColor(red, green, blue);
+        return new RGBColor(red / COLOR_MAX, green / COLOR_MAX, blue / COLOR_MAX);
     }
 
     //Red color codes

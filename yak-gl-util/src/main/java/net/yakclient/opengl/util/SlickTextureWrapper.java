@@ -1,6 +1,6 @@
 package net.yakclient.opengl.util;
 
-public class SlickTextureWrapper implements Texture {
+public class SlickTextureWrapper implements YakTexture {
     private final org.newdawn.slick.opengl.Texture tex;
 
     public SlickTextureWrapper(org.newdawn.slick.opengl.Texture tex) {

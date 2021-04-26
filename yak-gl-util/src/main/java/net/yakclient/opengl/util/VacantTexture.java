@@ -1,6 +1,6 @@
 package net.yakclient.opengl.util;
 
-public class VacantTexture implements Texture {
+public class VacantTexture implements YakTexture {
     @Override
     public boolean hasAlpha() {
          return false;

@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 public interface ColorFunction {
     ColorAggregation toAggregation(VerticeAggregation aggregation);
 
-
     @NotNull
     static ColorAggregation applyColorEffect(int offset, float alpha, @NotNull VerticeAggregation vertices, @NotNull RGBColor... colors) {
         if (colors.length == 0) return new ColorAggregation();

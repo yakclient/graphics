@@ -7,4 +7,6 @@ module yak.gl.util {
     requires lwjgl;
     requires lwjgl.util;
     requires slick.util;
+    requires java.desktop;
+//    requires java.awt;
 }

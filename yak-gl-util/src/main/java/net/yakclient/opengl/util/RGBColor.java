@@ -1,22 +1,20 @@
 package net.yakclient.opengl.util;
 
 public class RGBColor {
-    public static final float COLOR_MAX = 255f;
-
     private final float red;
     private final float green;
     private final float blue;
 
     private final float alpha;
 
-    public RGBColor(int red, int green, int blue, float alpha) {
-        this.red = red % COLOR_MAX;
-        this.green = green % COLOR_MAX;
-        this.blue = blue % COLOR_MAX;
+    public RGBColor(float red, float green, float blue, float alpha) {
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
         this.alpha = alpha;
     }
 
-    public RGBColor(int red, int green, int blue) {
+    public RGBColor(float red, float green, float blue) {
         this(red, green, blue, ColorAggregation.DEFAULT_ALPHA);
     }
 
@@ -37,6 +35,6 @@ public class RGBColor {
     }
 
     public ColorAggregation.ColorNode toColorNode() {
-        return new ColorAggregation.ColorNode(this.red / COLOR_MAX, this.green / COLOR_MAX, this.blue / COLOR_MAX, this.alpha);
+        return new ColorAggregation.ColorNode(this.red, this.green, this.blue, this.alpha);
     }
 }
