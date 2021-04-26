@@ -54,7 +54,7 @@ public class GUIProperties {
      * @return if the property is found.
      */
     public boolean hasProperty(String name) {
-        return this.get(name.toLowerCase()) != null;
+        return this.props.containsKey(name.toLowerCase());
     }
 
 //    static class PropertyNode {

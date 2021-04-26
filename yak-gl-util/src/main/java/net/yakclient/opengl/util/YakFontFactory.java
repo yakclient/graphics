@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class YakFontFactory {
+    public static final int DEFAULT_TEXT_SIZE = 24;
+    public static final String FONT_DEFAULT = "Default";
+
     private static final Map<YakFont.FontMetaData, YakFont> fonts;
 
     static {
@@ -33,6 +36,10 @@ public abstract class YakFontFactory {
 
     public static YakFontFactory create(String name, int fontSize) {
         return new YakNamedFontFactory(name, fontSize);
+    }
+
+    public static YakFontFactory create() {
+        return new YakNamedFontFactory(FONT_DEFAULT, DEFAULT_TEXT_SIZE);
     }
 
     public static final class YakCustomFontFactory extends YakFontFactory {

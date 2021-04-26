@@ -9,6 +9,12 @@ public interface YakFont {
 
     FontMetaData getMeta();
 
+    double getWidth(String value);
+
+    double getLineHeight();
+
+    double getHeight(String value);
+
     void drawString(String value, RGBColor color, double x, double y);
 
     void drawString(String value, double x, double y);

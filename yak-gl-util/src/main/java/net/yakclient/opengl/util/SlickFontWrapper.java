@@ -18,6 +18,8 @@ public class SlickFontWrapper implements YakFont {
         return this.type;
     }
 
+
+
     @Override
     public String getName() {
         return this.type.getName();
@@ -26,6 +28,21 @@ public class SlickFontWrapper implements YakFont {
     @Override
     public FontMetaData getMeta() {
         return this.metaData;
+    }
+
+    @Override
+    public double getWidth(String value) {
+        return this.trueType.getWidth(value);
+    }
+
+    @Override
+    public double getLineHeight() {
+        return this.trueType.getLineHeight();
+    }
+
+    @Override
+    public double getHeight(String value) {
+        return this.trueType.getHeight(value);
     }
 
     @Override

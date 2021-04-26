@@ -1,5 +1,10 @@
 package net.yakclient.opengl.api.gui;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
+import java.util.function.Supplier;
+
 public class ComponentFactory<T extends ContextPropsRenderable> {
     private final T component;
     private final PropertyFactory properties;
@@ -14,7 +19,7 @@ public class ComponentFactory<T extends ContextPropsRenderable> {
     }
 
     public <V> ComponentFactory<T> addProp(String name, V value) {
-        return this.addProp(name, value, true);
+        return this.addProp(name, true, value);
     }
 
 //    public ComponentFactory<T> addProp(String name, int id, Object value) {
@@ -22,8 +27,13 @@ public class ComponentFactory<T extends ContextPropsRenderable> {
 //        return this;
 //    }
 
-    public ComponentFactory<T> addProp(String name, Object value, Boolean condition) {
+    public ComponentFactory<T> addProp(String name, Boolean condition, Object value) {
        if (condition != null && condition) this.properties.addProp(name, value);
+        return this;
+    }
+
+    public ComponentFactory<T> addProp(String name, Boolean condition, Supplier<?> value) {
+        if (condition != null && condition) this.properties.addProp(name, value.get());
         return this;
     }
 
