@@ -3,10 +3,7 @@ module yak.opengl.components {
 
     requires yakclient.graphics.util;
     requires yakclient.graphics.api;
-
-    requires org.jetbrains.annotations;
+    requires yakclient.graphics.opengl2;
     requires lwjgl;
-    requires lwjgl.util;
-    requires slick.util;
     requires kotlin.stdlib;
 }

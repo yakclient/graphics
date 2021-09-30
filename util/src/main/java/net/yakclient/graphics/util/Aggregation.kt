@@ -1,59 +1,85 @@
-package net.yakclient.graphics.util;
+package net.yakclient.graphics.util
 
-import org.jetbrains.annotations.NotNull;
+import java.nio.DoubleBuffer
+import java.nio.FloatBuffer
 
-import java.nio.Buffer;
-import java.util.Iterator;
+public abstract class Aggregation<T : AggregateNode>(
+    delegate: List<T> = ArrayList(),
+) : List<T> by delegate {
+    public abstract fun asDoubleBuffer(): DoubleBuffer
 
-/**
- * The Aggregation interface specifies a iterable amount of nodes that are
- * grouped into {@code AggregationNodes}. A Aggregation MUST implement
- * the Iterable interface and provide context by which groups of values
- * can be sorted.
- *
- * @param <T> The node that values will be grouped by.
- *
- * @author Durgan McBroom
- */
-public interface Aggregation<T extends AggregateNode> extends Iterable<T> {
-    @NotNull
-    @Override
-    AggregationIterator<T> iterator();
+    public abstract fun asFloatBuffer(): FloatBuffer
+}
 
-    Buffer createBuf();
+public class VerticeAggregation(
+    delegate: List<Vertice> = ArrayList(),
+) : Aggregation<Vertice>(delegate) {
+    override fun asDoubleBuffer(): DoubleBuffer =
+        DoubleBuffer.allocate(size)
+            .put(YakGraphicsUtils.toPrimitiveArray(this.flatMap { (x, y, z, r) -> listOf(x, y, z, r) }.toTypedArray()))
 
-    <B extends Buffer> B asBuf(B buf);
+    override fun asFloatBuffer(): FloatBuffer =
+        FloatBuffer.allocate(size)
+            .put(YakGraphicsUtils.toPrimitiveArray(this.flatMap { (x, y, z, r) -> listOf(x, y, z, r) }
+                .map { it.toFloat() }.toTypedArray()))
 
-    boolean add(T node);
+    public companion object {
+        public const val VERTICE_SIZE: Int = 4
+        public const val Z_INDEX_2D: Double = 0.0
+        public const val DEFAULT_R: Double = 1.0
+    }
+}
 
-    <A extends Aggregation<T>> A combine(A aggregate);
+public fun verticesOf(vararg vertices: Vertice): VerticeAggregation = VerticeAggregation(ArrayList<Vertice>().apply { addAll(vertices) })
 
-    int size();
-
-    default T get(int i) {
-        return this.iterator().nodes[i];
+public class ColorAggregation(
+    delegate: List<ColorNode> = ArrayList(),
+) : Aggregation<ColorNode>(delegate) {
+    public companion object {
+        public const val DEFAULT_ALPHA: Float = 1.0f
+        public const val COLOR_INDEX_SIZE: Int = 4
     }
 
-    default boolean isEmpty() {
-        return this.size() == 0;
+    override fun asDoubleBuffer(): DoubleBuffer =
+        DoubleBuffer.allocate(size)
+            .put(YakGraphicsUtils.toPrimitiveArray(this.flatMap { (r, g, b, a) -> listOf(r, g, b, a) }
+                .map { it.toDouble() }.toTypedArray()))
+
+    override fun asFloatBuffer(): FloatBuffer =
+        FloatBuffer.allocate(size)
+            .put(YakGraphicsUtils.toPrimitiveArray(this.flatMap { (r, g, b, a) -> listOf(r, g, b, a) }.toTypedArray()))
+}
+
+public class TexAggregation(
+    delegate: List<TexNode> = ArrayList(),
+) : Aggregation<TexNode>(delegate) {
+    public companion object {
+        public const val VERTICE_SIZE: Int = 3
+        public const val DEFAULT_R: Float = 0f
     }
 
-    class AggregationIterator<T extends AggregateNode> implements Iterator<T> {
-        private final T[] nodes;
-        private int current = 0;
+    override fun asDoubleBuffer(): DoubleBuffer = DoubleBuffer.allocate(size)
+        .put(YakGraphicsUtils.toPrimitiveArray(flatMap { (s, t, r) -> listOf(s, t, r) }.map { it.toDouble() }
+            .toTypedArray()))
 
-        public AggregationIterator(T[] nodes) {
-            this.nodes = nodes;
-        }
+    override fun asFloatBuffer(): FloatBuffer = FloatBuffer.allocate(size)
+        .put(YakGraphicsUtils.toPrimitiveArray(flatMap { (s, t, r) -> listOf(s, t, r) }
+            .toTypedArray()))
+}
 
-        @Override
-        public boolean hasNext() {
-            return current < nodes.length;
-        }
-
-        @Override
-        public T next() {
-            return nodes[this.current++];
-        }
+public class NormalAggregation(
+    delegate: List<NormalNode> = ArrayList(),
+) : Aggregation<NormalNode>(delegate) {
+    public companion object {
+        public const val NORMAL_INDEX_SIZE: Int = 3
     }
+
+    override fun asDoubleBuffer(): DoubleBuffer = DoubleBuffer.allocate(size)
+        .put(YakGraphicsUtils.toPrimitiveArray(flatMap { (x, y, z) -> listOf(x, y, z) }
+            .toTypedArray()))
+
+    override fun asFloatBuffer(): FloatBuffer = FloatBuffer.allocate(size)
+        .put(YakGraphicsUtils.toPrimitiveArray(flatMap { (x, y, z) -> listOf(x, y, z) }.map { it.toFloat() }
+            .toTypedArray()))
+
 }

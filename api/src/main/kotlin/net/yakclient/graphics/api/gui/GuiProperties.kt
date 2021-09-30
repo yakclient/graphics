@@ -1,18 +1,23 @@
 package net.yakclient.graphics.api.gui
 
+import net.yakclient.graphics.util.ColorFunction
 import java.util.*
 
 public class GuiProperties(
     delegate: Map<String, Any?>,
 ) : Map<String, Any?> by delegate {
     public fun <T> getAs(key: String): T? = this[key] as T
+
+    public fun <T> optionallyAs(key: String): Optional<T> = Optional.ofNullable(getAs(key))
+
+    public fun <T> requireAs(key: String) : T = if (!containsKey(key)) throw IllegalPropertyException(key) else getAs(key)!!
 }
 
 public const val CHILD_NAME: String = "children"
 
 public class PropertyFactory : MutableMap<String, Any?> by HashMap() {
     init {
-        this[CHILD_NAME] = ArrayList<Any>()
+        this[CHILD_NAME] = ArrayList<ComponentRenderingContext<*>>()
     }
 
     override fun put(key: String, value: Any?): Any? {

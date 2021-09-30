@@ -34,7 +34,7 @@ public class RGBColor {
         return alpha;
     }
 
-    public ColorAggregation.ColorNode toColorNode() {
-        return new ColorAggregation.ColorNode(this.red, this.green, this.blue, this.alpha);
+    public AggregateNode.ColorNode toColorNode() {
+        return new AggregateNode.ColorNode(this.red, this.green, this.blue, this.alpha);
     }
 }

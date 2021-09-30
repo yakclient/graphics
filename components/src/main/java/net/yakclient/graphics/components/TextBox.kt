@@ -1,40 +1,62 @@
-package net.yakclient.graphics.components;
+package net.yakclient.graphics.components
 
-import net.yakclient.graphics.api.gui.ComponentRenderingContext;
-import net.yakclient.graphics.api.gui.GuiComponent;
-import net.yakclient.graphics.api.gui.GuiProperties;
-import net.yakclient.graphics.util.ColorFunction;
-import net.yakclient.graphics.util.PaddingFunc;
+import net.yakclient.graphics.api.gui.Component
+import net.yakclient.graphics.api.gui.GuiComponent
+import net.yakclient.graphics.api.gui.GuiProperties
+import net.yakclient.graphics.api.gui.ComponentRenderingContext
+import net.yakclient.graphics.components.TextSpecProps
+import net.yakclient.graphics.util.PaddingFunc
+import java.util.Optional
+import net.yakclient.graphics.util.ColorFunction
+import net.yakclient.graphics.util.VacantColorFunction
+import java.io.InputStream
 
-import java.io.InputStream;
-import java.util.Optional;
+public fun TextBox(): Component = { props ->
+    val specs = TextSpecProps(props)
+    val padding: PaddingFunc = props.getAs<PaddingFunc>("padding") ?: PaddingFunc(0.0)
+    val backgroundColor: ColorFunction = props.getAs("backgroundcolor") ?: VacantColorFunction()
+    val backgroundImage = props.getAs<InputStream>("backgroundimage")
 
-public class TextBox extends GuiComponent {
-    @Override
-    public ComponentRenderingContext<?> render(GuiProperties properties) {
-        final var specs = new TextSpecProps(properties);
-        final var padding = this.requestProp(properties.<PaddingFunc>get("padding")).or(() -> Optional.of(PaddingFunc.pad(0d))).get();
-        final var backgroundColor = this.requestProp(properties.<ColorFunction>get("backgroundcolor"));
-        final var backgroundImage = this.requestProp(properties.<InputStream>get("backgroundimage"));
+    build(use<Box>(0)) {
+        set("x") to specs.x
+        set("y") to specs.y
+        set("width") to specs.font.getWidth(specs.value) + padding.paddingHorizontal
+        set("height") to specs.font.getWidth(specs.value) + padding.paddingHorizontal
+        set("backgroundcolor") to backgroundColor
+        set("backgroundimage") ifNotNull backgroundImage
 
+        build(use<Text>(1)) {
+            set("x") to specs.x + padding.paddingLeft
+            set("y") to specs.y + padding.paddingTop
 
-        return this.create(this.useComponent(new Box(), 0))
-                .addProp("x", specs.getX())
-                .addProp("y", specs.getY())
-                .addProp("width", specs.getFont().getWidth(specs.getValue()) + padding.getPaddingHorizontal())
-                .addProp("height", specs.getFont().getHeight(specs.getValue()) + padding.getPaddingVertical())
-                .addProp("backgroundcolor", backgroundColor.isPresent(), backgroundColor::get)
-                .addProp("backgroundimage", backgroundImage.isPresent(), backgroundImage::get)
-
-                .addChild(this.create(this.useComponent(new Text(), 1))
-                        .addProp("x", specs.getX() + padding.getPaddingLeft())
-                        //Assuming the origin is the top left
-                        .addProp("y", specs.getY() + padding.getPaddingTop())
-                        .addProp("value", specs.getValue())
-                        .addProp("color", specs.getColor())
-                        .addProp("font", specs.getFont())
-
-                )
-                .build();
+            set("value") to specs.value
+            set("color") to specs.color
+            set("font") to specs.font
+        }
     }
 }
+//
+//class TextBox : GuiComponent() {
+//    override fun render(properties: GuiProperties): ComponentRenderingContext<*> {
+//        val specs = TextSpecProps(properties)
+//        val padding = this.requestProp(properties.get("padding")).or { Optional.of(PaddingFunc(0)) }
+//            .get()
+//        val backgroundColor = this.requestProp(properties.get("backgroundcolor"))
+//        val backgroundImage = this.requestProp(properties.get("backgroundimage"))
+//        return this.create(this.useComponent(Box(), 0))
+//            .addProp("x", specs.x)
+//            .addProp("y", specs.y)
+//            .addProp("width", specs.font.getWidth(specs.value) + padding.getPaddingHorizontal())
+//            .addProp("height", specs.font.getHeight(specs.value) + padding.getPaddingVertical())
+//            .addProp("backgroundcolor", backgroundColor.isPresent(), backgroundColor::get)
+//            .addProp("backgroundimage", backgroundImage.isPresent(), backgroundImage::get)
+//            .addChild(this.create(this.useComponent(Text(), 1))
+//                .addProp("x", specs.x + padding.getPaddingLeft()) //Assuming the origin is the top left
+//                .addProp("y", specs.y + padding.getPaddingTop())
+//                .addProp("value", specs.value)
+//                .addProp("color", specs.color)
+//                .addProp("font", specs.font)
+//            )
+//            .build()
+//    }
+//}

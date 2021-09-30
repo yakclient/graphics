@@ -4,6 +4,7 @@ import net.yakclient.graphics.api.gui.state.GUIState
 import net.yakclient.graphics.api.gui.state.Stateful
 import net.yakclient.graphics.api.render.RenderingContext
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 /**
@@ -44,7 +45,7 @@ public abstract class NativeGuiComponent {
     private val states: MutableMap<Int, Stateful<*>> = HashMap()
 
 
-    public abstract fun renderNatively(props: GuiProperties) : List<RenderingContext>
+    public abstract fun renderNatively(props: GuiProperties): List<RenderingContext>
 //    /**
 //     * Creates a Component factory with the given component.
 //     *
@@ -101,7 +102,10 @@ public abstract class NativeGuiComponent {
 //        return childrenRender.toTypedArray()
 //    }
 
-//    /**
+    public fun applyChildren(properties: GuiProperties): List<RenderingContext> =
+        (properties.getAs<List<ComponentRenderingContext<*>>>(CHILD_NAME) ?: ArrayList()).flatMap { it.applyContext() }
+
+    //    /**
 //     * Combines contexts of a array and a singular to a
 //     * array. This is useful when trying to return rendered
 //     * children and the context created by the
@@ -111,12 +115,9 @@ public abstract class NativeGuiComponent {
 //     * @param all The array of contexts to add to.
 //     * @return The result of the singular and array.
 //     */
-//    public fun combineContexts(context: GLRenderingContext?, all: Array<GLRenderingContext?>): Array<GLRenderingContext?> {
-//        val out = arrayOfNulls<GLRenderingContext>(all.size + 1)
-//        out[0] = context
-//        System.arraycopy(all, 0, out, 1, all.size)
-//        return out
-//    }
+    public fun combine(context: RenderingContext, all: List<RenderingContext>): List<RenderingContext> =
+        ArrayList<RenderingContext>().apply {add(context); addAll(all)}
+
 
     /**
      * Returns and stores a state for the given object, note

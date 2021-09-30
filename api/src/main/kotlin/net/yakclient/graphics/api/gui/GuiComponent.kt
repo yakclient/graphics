@@ -45,6 +45,8 @@ public class ExternalComponentConfigurationScope(
 
     public fun set(name: String, value: Any): Unit = Unit.also { properties.set(name, value) }
 
+    public fun setIfNotNull(name: String, value: Any?) : Unit = if (value != null) set(name, value) else Unit
+
     public fun set(name: String): PropertySetter = PropertySetter(name, this)
 
     public class PropertySetter internal constructor(
@@ -53,6 +55,8 @@ public class ExternalComponentConfigurationScope(
     )
 
     public infix fun PropertySetter.to(value: Any): Unit = scope.set(name, value)
+
+    public infix fun PropertySetter.ifNotNull(value: Any?) : Unit = if (value != null) to(value) else Unit
 
     public fun build(component: NativeGuiComponent, settings: ExternalComponentConfigurationScope.() -> Unit = {}) {
         val scope = ExternalComponentConfigurationScope(component)

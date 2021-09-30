@@ -4,7 +4,7 @@ import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class YakGLUtils {
+public class YakGraphicsUtils {
     public static final int MAX_DOUBLE_CLICK_TIME = 500;
     public static final int MOUSE_LEFT_BUTTON = 0;
     public static final int MOUSE_RIGHT_BUTTON = 1;

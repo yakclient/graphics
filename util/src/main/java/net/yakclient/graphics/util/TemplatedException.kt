@@ -1,29 +1,15 @@
-package net.yakclient.graphics.util;
+package net.yakclient.graphics.util
 
+public abstract class TemplatedException(
+    private val template: String,
+    private val values: List<Any>,
+) : IllegalStateException() {
+    public constructor(template: String, vararg values: Any) : this(template, listOf(values))
 
-import org.jetbrains.annotations.NotNull;
+    override val message: String
+        get() = values.fold(template) { acc, value -> acc.replaceFirst(TEMPLATE_IDENTIFIER, value.toString()) }
 
-public abstract class TemplatedException extends RuntimeException {
-    private static final String TEMPLATE_IDENTIFIER = "%s";
-
-    @Override
-    public final String getMessage() {
-        return this.template();
+    public companion object {
+        private const val TEMPLATE_IDENTIFIER: String = "%s"
     }
-
-    protected final String fillTemplate(String template, String identifier, Object @NotNull ... values) {
-        var last = template;
-        for (var value : values) {
-            last = last.replaceFirst(identifier, value.toString());
-        }
-        return last;
-    }
-
-    public String template() {
-        return this.fillTemplate(this.getTemplate(), TEMPLATE_IDENTIFIER, this.getValues());
-    }
-
-    public abstract String getTemplate();
-
-    public abstract Object[] getValues();
 }

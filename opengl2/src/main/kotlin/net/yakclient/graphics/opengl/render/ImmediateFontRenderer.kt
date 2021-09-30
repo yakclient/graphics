@@ -1,6 +1,5 @@
 package net.yakclient.graphics.opengl.render
 
-import net.yakclient.graphics.api.render.FontRenderingContext
 import net.yakclient.graphics.api.render.Renderer
 import org.lwjgl.opengl.GL11
 
