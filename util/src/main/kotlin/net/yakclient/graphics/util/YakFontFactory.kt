@@ -1,198 +1,116 @@
-package net.yakclient.graphics.util;
+package net.yakclient.graphics.util
 
-import org.newdawn.slick.TrueTypeFont;
+import net.yakclient.graphics.util.YakFont.FontMetaData
+import java.awt.Font
+import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 
-import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+public object YakFontFactory {
+    private val fonts: MutableMap<FontMetaData, YakFont> = ConcurrentHashMap()
 
-public abstract class YakFontFactory {
-    public static final int DEFAULT_TEXT_SIZE = 24;
-    public static final String FONT_DEFAULT = "Default";
-
-    private static final Map<YakFont.FontMetaData, YakFont> fonts;
-
-    static {
-        fonts = new ConcurrentHashMap<>();
-    }
-
-    private YakFontFactory() {
-    }
-
-    public abstract YakFont buildFont(boolean isAliased);
-
-    public abstract YakFontFactory addStyle(int style);
-
-    public YakFont buildFont() {
-        return this.buildFont(true);
-    }
-
-
-    public static YakFontFactory create(InputStream fontIn) {
-        return new YakCustomFontFactory(fontIn);
-    }
-
-    public static YakFontFactory create(String name, int fontSize) {
-        return new YakNamedFontFactory(name, fontSize);
-    }
-
-    public static YakFontFactory create() {
-        return new YakNamedFontFactory(FONT_DEFAULT, DEFAULT_TEXT_SIZE);
-    }
-
-    public static final class YakCustomFontFactory extends YakFontFactory {
-        private final InputStream fontIn;
-
-        private YakCustomFontFactory(InputStream fontIn) {
-            this.fontIn = fontIn;
-        }
-
-        @Override
-        public YakFont buildFont(boolean isAliased) {
-            final Font font = this.createFont();
-            final YakFont.FontMetaData meta = new YakFont.FontMetaData(font.getName(), font.getStyle(), font.getSize(), isAliased);
-            if (fonts.containsKey(meta)) return fonts.get(meta);
-
-            final SlickFontWrapper yakFont = new SlickFontWrapper(font, new TrueTypeFont(font, isAliased), meta);
-            fonts.put(meta, yakFont);
-            return yakFont;
-        }
-
-        private Font createFont() {
-            try {
-                return Font.createFont(Font.TRUETYPE_FONT, this.fontIn);
-            } catch (FontFormatException | IOException e) {
-                return new Font(null, Font.PLAIN, 12);
-            }
-        }
-
-        @Override
-        public YakFontFactory addStyle(int style) {
-            //Nothing to do
-            return this;
+    @JvmOverloads
+    public fun fontOf(
+        name: String = "Default",
+        fontSize: Int = 24,
+        style: Int = Font.PLAIN,
+        aliased: Boolean = false,
+    ) : YakFont {
+        val metaData = FontMetaData(name, style, fontSize, aliased)
+        if (fonts.containsKey(metaData)) return fonts[metaData]!!
+        return fonts[metaData] ?: run {
+            val font = Font(name, style, fontSize)
+            val yakFont = YakGLFont(font, name, metaData)
+            fonts[metaData] = yakFont
+            yakFont
         }
     }
 
-
-    public static final class YakNamedFontFactory extends YakFontFactory {
-        private final String name;
-        private final int size;
-        private int style;
-
-        private YakNamedFontFactory(String name, int size) {
-            this.name = name;
-            this.size = size;
-            this.style = Font.PLAIN;
-        }
-
-        @Override
-        public YakFont buildFont(boolean isAliased) {
-            final YakFont.FontMetaData metaData = new YakFont.FontMetaData(this.name, this.style, this.size, isAliased);
-            if (fonts.containsKey(metaData)) return fonts.get(metaData);
-
-            final Font font = new Font(this.name, this.style, this.size);
-
-            final SlickFontWrapper yakFont = new SlickFontWrapper(font, new TrueTypeFont(font, isAliased), metaData);
-            fonts.put(metaData, yakFont);
-            return yakFont;
-        }
-
-        @Override
-        public YakFontFactory addStyle(int style) {
-            this.style = this.style | style;
-            return this;
+    @JvmOverloads
+    public fun fontOf(
+        fontIn: File,
+        fontSize: Int = 24,
+        style: Int = Font.PLAIN,
+        aliased: Boolean = false,
+    ) : YakFont {
+        val metaData = FontMetaData(fontIn.absolutePath, style, fontSize, aliased)
+        if (fonts.containsKey(metaData)) return fonts[metaData]!!
+        return fonts[metaData] ?: run {
+            val font = Font.createFont(Font.TRUETYPE_FONT, fontIn)
+            val yakFont = YakGLFont(font, font.fontName, metaData)
+            fonts[metaData] = yakFont
+            yakFont
         }
     }
 
-
+//    public companion object {
+//        public const val DEFAULT_TEXT_SIZE : Int = 24
+//        public const val FONT_DEFAULT : String = "Default"
+//        private val fonts: MutableMap<FontMetaData, YakFont> = ConcurrentHashMap()
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//    private final boolean isAliased;
-//    private FontBuilder builder;
-//
-//    private YakFontFactory(boolean isAliased, FontBuilder builder) {
-//        this.isAliased = isAliased;
-//        this.builder = builder;
-//    }
-//
-//    public YakFontFactory addStyle(int style) {
-//        this.builder.addStyle(style);
-//        return this;
-//    }
-//
-//    public Font createFont() {
-//
-//    }
-//
-//    public static YakFontFactory create(InputStream fontIn) {
-//        return new YakFontFactory(true, new CustomFontBuilder(fontIn));
-//    }
-//
-//
-//    public static YakFontFactory create(String name, int fontSize) {
-//        return new YakFontFactory(true, new NamedFontBuilder(name, fontSize));
-//    }
-//
-//    private interface FontBuilder {
-//        void addStyle(int style);
-//
-//        Font createFont();
-//    }
-//
-//    private static class CustomFontBuilder implements FontBuilder {
-//        private final InputStream fontIn;
-//
-//        private CustomFontBuilder(InputStream fontIn) {
-//            this.fontIn = fontIn;
+//        public fun create(fontIn: InputStream): YakFontFactory {
+//            return YakCustomFontFactory(fontIn)
 //        }
 //
-//        @Override
-//        public void addStyle(int style) { /*  Nothing to do */ }
+//        public fun create(name: String, fontSize: Int): YakFontFactory {
+//            return YakNamedFontFactory(name, fontSize)
+//        }
 //
-//        @Override
-//        public Font createFont() {
-//            try {
-//                return Font.createFont(Font.TRUETYPE_FONT, this.fontIn);
-//            } catch (FontFormatException | IOException e) {
-//                return new NamedFontBuilder(null, YakFontFactory.DEFAULT_FONT_SIZE).createFont();
+////        @JvmStatic
+//        public fun create(): YakFontFactory {
+//            return YakNamedFontFactory(FONT_DEFAULT, DEFAULT_TEXT_SIZE)
+//        }
+//    }
+//
+//    abstract fun buildFont(isAliased: Boolean): YakFont?
+//    abstract fun addStyle(style: Int): YakFontFactory
+//    fun buildFont(): YakFont? {
+//        return this.buildFont(true)
+//    }
+//
+//    private class YakCustomFontFactory (private val fontIn: InputStream) : YakFontFactory() {
+//        override fun buildFont(isAliased: Boolean): YakFont {
+//            val font = createFont()
+//            val meta = FontMetaData(font.name, font.style, font.size, isAliased)
+//            if (fonts.containsKey(meta)) return fonts[meta]!!
+//            val yakFont = SlickFontWrapper(font, TrueTypeFont(font, isAliased), meta)
+//            fonts[meta] = yakFont
+//            return yakFont
+//        }
+//
+//        private fun createFont(): Font {
+//            return try {
+//                Font.createFont(Font.TRUETYPE_FONT, fontIn)
+//            } catch (e: FontFormatException) {
+//                Font(null, Font.PLAIN, 12)
+//            } catch (e: IOException) {
+//                Font(null, Font.PLAIN, 12)
 //            }
 //        }
+//
+//        override fun addStyle(style: Int): YakFontFactory {
+//            //Nothing to do
+//            return this
+//        }
 //    }
 //
-//    private static class NamedFontBuilder implements FontBuilder {
-//        private final String name;
-//        private final int size;
-//        private int style;
-//
-//        private NamedFontBuilder(String name, int size) {
-//            this.size = size;
-//            this.name = name;
+//    private class YakNamedFontFactory constructor(private val name: String, private val size: Int) : YakFontFactory() {
+//        private var style: Int
+//        override fun buildFont(isAliased: Boolean): YakFont? {
+//            val metaData = FontMetaData(name, style, size, isAliased)
+//            if (fonts!!.containsKey(metaData)) return fonts[metaData]
+//            val font = Font(name, style, size)
+//            val yakFont = SlickFontWrapper(font, TrueTypeFont(font, isAliased), metaData)
+//            fonts[metaData] = yakFont
+//            return yakFont
 //        }
 //
-//        public void addStyle(int style) {
-//            this.style = this.style | style;
+//        override fun addStyle(style: Int): YakFontFactory {
+//            this.style = this.style or style
+//            return this
 //        }
 //
-//        @Override
-//        public Font createFont() {
-//            return new Font(name, style, size);
+//        init {
+//            style = Font.PLAIN
 //        }
 //    }
 }

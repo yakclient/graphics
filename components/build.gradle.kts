@@ -6,7 +6,7 @@ dependencies {
     implementation( project(":api"))
     implementation(project(":opengl2"))
 
-    implementation("org.lwjgl.lwjgl:lwjgl:2.9.2")
+    implementation("org.lwjgl.lwjgl:lwjgl:2.9.3")
 
 }
 

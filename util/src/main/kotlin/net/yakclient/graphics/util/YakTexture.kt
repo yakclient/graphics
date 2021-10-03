@@ -1,24 +1,17 @@
-package net.yakclient.graphics.util;
+package net.yakclient.graphics.util
 
 public interface YakTexture {
-    boolean hasAlpha();
+//    fun hasAlpha(): Boolean
 
-    void bind();
+//    public val imageHeight: Int
+//    public val imageWidth: Int
+    public val height: Int
+    public val width: Int
+//    public val textureHeight: Int
+//    public val textureWidth: Int
 
-    int getImageHeight();
+    public fun bind()
+    public fun release()
 
-    int getImageWidth();
-
-    float getHeight();
-
-    float getWidth();
-
-    int getTextureHeight();
-
-    int getTextureWidth();
-
-    void release();
-
-    TexAggregation generateTexs(VerticeAggregation vertices);
-
+//    public fun generateTexs(vertices: VerticeAggregation): TexAggregation
 }

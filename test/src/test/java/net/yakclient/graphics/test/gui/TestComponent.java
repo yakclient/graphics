@@ -9,7 +9,7 @@ import net.yakclient.graphics.components.Text;
 import net.yakclient.graphics.components.TextBox;
 import net.yakclient.graphics.util.ColorCodes;
 import net.yakclient.graphics.util.PaddingFunc;
-import net.yakclient.graphics.util.SolidRGBColor;
+import net.yakclient.graphics.util.SolidColor;
 
 import java.util.function.Consumer;
 
@@ -36,7 +36,7 @@ public class TestComponent extends GuiComponent {
 //               .<Runnable>addProp("onmousemove", ()-> System.out.println("Mouse Move"))
                 .<Consumer<Integer>>addProp("onkeydown", (key) -> System.out.println("Key Down: " + key))
                 .<Consumer<Integer>>addProp("onkeyup", (key) -> System.out.println("Key Up: " + key))
-                .addProp("backgroundcolor", new SolidRGBColor(ColorCodes.WHITE, 1f))
+                .addProp("backgroundcolor", new SolidColor(ColorCodes.WHITE, 1f))
                .addProp("backgroundimage", getClass().getResourceAsStream("/wood.png"))
 
                 .addChild(create(this.useComponent(new OtherTestComponent(), 1)))
@@ -49,7 +49,7 @@ public class TestComponent extends GuiComponent {
                         .addProp("value", "Im gonna type a really long sentence and see how this wraps!")
                         .addProp("x", 200d)
                         .addProp("y", 200d)
-                        .addProp("backgroundcolor", new SolidRGBColor(ColorCodes.TOMATO))
+                        .addProp("backgroundcolor", new SolidColor(ColorCodes.TOMATO))
                         .addProp("backgroundimage", getClass().getResourceAsStream("/wood.png"))
                         .addProp("padding", PaddingFunc.pad(20))
                 )

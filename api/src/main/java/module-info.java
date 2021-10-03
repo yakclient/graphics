@@ -5,8 +5,8 @@ module yakclient.graphics.api {
 
     requires yakclient.graphics.util;
 
-    requires lwjgl;
-    requires lwjgl.util;
-    requires slick.util;
+//    requires lwjgl;
+//    requires lwjgl.util;
+//    requires slick.util;
     requires kotlin.stdlib;
 }

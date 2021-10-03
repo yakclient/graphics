@@ -1,8 +1,5 @@
-package net.yakclient.graphics.util;
+@file:JvmName("VacantColorFunction")
 
-public class VacantColorFunction implements ColorFunction {
-    @Override
-    public ColorAggregation toAggregation(VerticeAggregation aggregation) {
-        return new ColorAggregation();
-    }
-}
+package net.yakclient.graphics.util
+
+public class VacantColorFunction : ColorFunction by functionalColorFunc({ ColorAggregation() })

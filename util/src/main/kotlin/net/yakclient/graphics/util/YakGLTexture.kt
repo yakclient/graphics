@@ -1,24 +1,25 @@
 package net.yakclient.graphics.util
 
-//public class SlickTextureWrapper(private val tex: Texture) : YakTexture {
-////    override val imageHeight: Int
-////        get() = tex.imageHeight
-////    override val imageWidth: Int
-////        get() = tex.imageWidth
-//    override val height: Int
-//        get() = tex.textureHeight
-//    override val width: Int
-//        get() = tex.textureWidth
-////    override val textureHeight: Int
-////        get() = tex.textureHeight
-////    override val textureWidth: Int
-////        get() = tex.textureWidth
-//
-//    override fun bind() { tex.bind() }
-//
-//    override fun release() { tex.release() }
-//
-//    //Currently all generated textures will be a stretch fit however this most likely will be refactored to en-compass more stretching types.
+import org.lwjgl.opengl.GL11
+
+public class YakGLTexture(
+    private val texId: Int,
+    private val target: Int,
+//    override val imageHeight: Int,
+//    override val imageWidth: Int,
+    override val height: Int,
+    override val width: Int,
+
+) : YakTexture {
+    override fun bind() {
+        GL11.glEnable(GL11.GL_TEXTURE_2D)
+        GL11.glBindTexture(target, texId)
+    }
+
+    override fun release() {
+        GL11.glDeleteTextures(texId)
+    }
+
 //    override fun generateTexs(vertices: VerticeAggregation): TexAggregation {
 //        if (vertices.isEmpty()) return TexAggregation()
 //        var maxX = vertices[0].x
@@ -35,6 +36,7 @@ package net.yakclient.graphics.util
 //            if (minY > y) minY = y
 //            if (minZ > z) minZ = z
 //        }
+//
 //        val aggregation = ArrayList<TexNode>()
 //        for ((x, y, z) in vertices) {
 //            val xDif = maxX - minX
@@ -47,4 +49,4 @@ package net.yakclient.graphics.util
 //        }
 //        return TexAggregation(aggregation)
 //    }
-//}
+}

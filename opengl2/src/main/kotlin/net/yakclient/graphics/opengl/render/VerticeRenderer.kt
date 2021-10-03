@@ -13,7 +13,6 @@ public abstract class VerticeRenderer(override val context: VerticeRenderingCont
         get() = context.data
 
     override fun render() {
-        val data = data
         bindPointers()
         if (data.hasVertices()) GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY)
         if (data.hasColors()) GL11.glEnableClientState(GL11.GL_COLOR_ARRAY)
@@ -25,7 +24,7 @@ public abstract class VerticeRenderer(override val context: VerticeRenderingCont
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
         }
         data.texture.bind()
-        GL11.glTexCoordPointer(TexAggregation.VERTICE_SIZE, 0, YakGraphicsUtils.flipBuf(data.texs.asFloatBuffer()))
+        GL11.glTexCoordPointer(TexAggregation.VERTICE_SIZE, 0, YakGraphicsUtils.flipBuf(data.texBuf))
         GL11.glDrawArrays(context.drawType, 0, data.verticeCount)
         data.texture.release()
         if (data.hasTexs()) {

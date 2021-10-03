@@ -5,7 +5,7 @@ package net.yakclient.graphics.api.render
  *
  * @author Durgan McBroom
  */
-enum class RenderingType {
+public enum class RenderingType {
     /**
      * This will be the default rendering type and should
      * be used by most applications. However in some cases it

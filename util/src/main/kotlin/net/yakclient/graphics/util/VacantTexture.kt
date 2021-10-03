@@ -1,54 +1,24 @@
-package net.yakclient.graphics.util;
+package net.yakclient.graphics.util
 
-public class VacantTexture implements YakTexture {
-    @Override
-    public boolean hasAlpha() {
-         return false;
-    }
+import net.yakclient.graphics.util.YakTexture
+import net.yakclient.graphics.util.VerticeAggregation
+import net.yakclient.graphics.util.TexAggregation
 
-    @Override
-    public void bind() {
-        //Nothing to do
-    }
+public class VacantTexture : YakTexture {
 
-    @Override
-    public int getImageHeight() {
-        return 0;
-    }
+//    override val imageHeight: Int
+//        get() = 0
+//    override val imageWidth: Int
+//        get() = 0
+    override val height: Int
+        get() = 0
+    override val width: Int
+        get() = 0
 
-    @Override
-    public int getImageWidth() {
-        return 0;
-    }
 
-    @Override
-    public float getHeight() {
-        return 0;
-    }
+    override fun bind() {}
 
-    @Override
-    public float getWidth() {
-        return 0;
-    }
+    override fun release() {}
 
-    @Override
-    public int getTextureHeight() {
-        return 0;
-    }
-
-    @Override
-    public int getTextureWidth() {
-        return 0;
-    }
-
-    @Override
-    public void release() {
-        //Nothing to do
-    }
-
-    @Override
-    public TexAggregation generateTexs(VerticeAggregation vertices) {
-        return new TexAggregation();
-    }
-
+//    override fun generateTexs(vertices: VerticeAggregation): TexAggregation = TexAggregation()
 }

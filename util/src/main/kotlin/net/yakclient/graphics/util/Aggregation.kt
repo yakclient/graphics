@@ -33,8 +33,8 @@ public class VerticeAggregation(
 public fun verticesOf(vararg vertices: Vertice): VerticeAggregation = VerticeAggregation(ArrayList<Vertice>().apply { addAll(vertices) })
 
 public class ColorAggregation(
-    delegate: List<ColorNode> = ArrayList(),
-) : Aggregation<ColorNode>(delegate) {
+    delegate: List<Color> = ArrayList(),
+) : Aggregation<Color>(delegate) {
     public companion object {
         public const val DEFAULT_ALPHA: Float = 1.0f
         public const val COLOR_INDEX_SIZE: Int = 4
@@ -67,9 +67,11 @@ public class TexAggregation(
             .toTypedArray()))
 }
 
+public fun texsOf(vararg texs: TexNode) : TexAggregation = TexAggregation(listOf(*texs))
+
 public class NormalAggregation(
-    delegate: List<NormalNode> = ArrayList(),
-) : Aggregation<NormalNode>(delegate) {
+    delegate: List<Normal> = ArrayList(),
+) : Aggregation<Normal>(delegate) {
     public companion object {
         public const val NORMAL_INDEX_SIZE: Int = 3
     }

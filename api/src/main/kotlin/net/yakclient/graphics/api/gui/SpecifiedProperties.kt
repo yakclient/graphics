@@ -8,8 +8,8 @@ import java.util.Optional
  *
  * @author Durgan McBroom
  */
-abstract class SpecifiedProperties(private val properties: GuiProperties) {
+public abstract class SpecifiedProperties(private val properties: GuiProperties) {
     protected operator fun <T> get(name: String): Optional<T> {
-        return Optional.ofNullable(properties.get(name))
+        return Optional.ofNullable<T>(properties.getAs(name))
     }
 }

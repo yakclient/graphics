@@ -28,8 +28,4 @@ public class VerticeRenderingContext(
             else -> throw UnsupportedRenderingTypeException(type, this.javaClass.name)
         }
     }
-
-    override fun useRenderer(): Renderer<VerticeRenderingContext> {
-        return this.useRenderer(RenderingType.VBO)
-    }
 }

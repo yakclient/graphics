@@ -12,6 +12,4 @@ public class ComponentRenderingContext<in T : NativeGuiComponent>(
     internal fun applyContext() : List<RenderingContext> = component.renderNatively(properties)
 
     override fun useRenderer(type: RenderingType): Renderer<ComponentRenderingContext<*>> = ComponentRenderer(this, type)
-
-    override fun useRenderer(): Renderer<ComponentRenderingContext<*>> = ComponentRenderer(this, null)
 }

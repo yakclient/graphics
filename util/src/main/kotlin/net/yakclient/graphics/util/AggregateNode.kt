@@ -17,16 +17,16 @@ public data class Vertice @JvmOverloads constructor(
     ) : this(x.toDouble(), y.toDouble(), z.toDouble(), r.toDouble())
 }
 
-public data class NormalNode constructor(
+public data class Normal constructor(
     val x: Double,
     val y: Double,
     val z: Double,
 ) : AggregateNode
 
-public data class ColorNode @JvmOverloads constructor(
-    val r: Float,
-    val g: Float,
-    val b: Float,
+public data class Color @JvmOverloads constructor(
+    val red: Float,
+    val green: Float,
+    val blue: Float,
     val alpha: Float = ColorAggregation.DEFAULT_ALPHA,
 ) : AggregateNode
 

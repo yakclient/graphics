@@ -9,8 +9,6 @@ import net.yakclient.graphics.util.*
 import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
-import java.io.IOException
-import java.io.InputStream
 import java.util.function.Consumer
 
 /**
@@ -42,7 +40,7 @@ public class Box : NativeGuiComponent() {
         val y: Double = props.requireAs("y")
         //  Transparency is defined in the background color.
         val backgroundColor = props.getAs<ColorFunction>("backgroundcolor")
-        val backgroundImage = props.getAs<InputStream>("backgroundimage")
+        val backgroundImage = props.getAs<YakTexture>("backgroundimage")
 
         //  Events
         val onClick = props.getAs<Runnable>("onclick") ?: Runnable {}
@@ -124,9 +122,9 @@ public class Box : NativeGuiComponent() {
             Vertice(x, y + height)
         )
 
-        val colors: ColorFunction = backgroundColor ?: VacantColorFunction()// ?:  backgroundColor.or(Supplier<Optional<out ColorFunction>> {
+        val colors: ColorFunction = backgroundColor ?: VacantColorFunction// ?:  backgroundColor.or(Supplier<Optional<out ColorFunction>> {
 
-        val texture: YakTexture = backgroundImage?.createTex() ?: VacantTexture() // createTex(backgroundImage)
+        val texture: YakTexture = backgroundImage ?: VacantTexture() // createTex(backgroundImage)
 
         val data = GLRenderingData(vertices, colors.toAggregation(vertices),texs= texture.generateTexs(vertices), texture = texture)
 
@@ -136,13 +134,5 @@ public class Box : NativeGuiComponent() {
 
     private fun rectBounding(x: Double, y: Double, top: Double, left: Double, bottom: Double, right: Double): Boolean {
         return top < y && bottom > y && left < x && right > x
-    }
-
-    private fun InputStream. createTex(): YakTexture {
-        return try {
-            YakTextureFactory.createTex(this)
-        } catch (e: IOException) {
-            VacantTexture()
-        }
     }
 }
