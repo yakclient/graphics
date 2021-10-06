@@ -21,7 +21,7 @@ public class VerticeRenderingContext(
     public val textureType: Int = GL11.GL_TEXTURE_2D,
     public val data: GLRenderingData,
 ) : RenderingContext {
-    override fun useRenderer(type: RenderingType): Renderer<VerticeRenderingContext> {
+    public override fun useRenderer(type: RenderingType): Renderer<VerticeRenderingContext> {
         return when (type) {
             RenderingType.VBO -> VerticeVBORenderer(this)
             RenderingType.VAO -> VerticeVAORenderer(this)

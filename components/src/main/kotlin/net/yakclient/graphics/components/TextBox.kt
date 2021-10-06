@@ -9,7 +9,7 @@ import java.io.InputStream
 public fun TextBox(): Component = { props ->
     val specs = TextSpecProps(props)
     val padding: PaddingFunc = props.getAs<PaddingFunc>("padding") ?: PaddingFunc(0.0)
-    val backgroundColor: ColorFunction = props.getAs("backgroundcolor") ?: VacantColorFunction
+    val backgroundColor: ColorFunction = props.getAs("backgroundcolor") ?: VacantColorFunction()
     val backgroundImage = props.getAs<InputStream>("backgroundimage")
 
     build(use<Box>(0)) {

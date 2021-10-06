@@ -3,11 +3,11 @@ open module yak.opengl.test {
     requires yak.opengl.components;
     requires yakclient.graphics.api;
 
-    requires org.jetbrains.annotations;
+//    requires org.jetbrains.annotations;
 
-    requires lwjgl;
-    requires lwjgl.util;
-    requires slick.util;
+//    requires lwjgl;
+//    requires lwjgl.util;
+//    requires slick.util;
     requires java.desktop;
     requires org.junit.jupiter.api;
 
@@ -17,4 +17,6 @@ open module yak.opengl.test {
 
     requires jdk.unsupported;
     requires kotlin.stdlib;
+//     requires lwjgl;
+//    requires lwjgl.util;
 }

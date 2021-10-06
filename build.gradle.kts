@@ -1,5 +1,7 @@
 plugins {
     kotlin("jvm") version "1.5.30"
+    id("org.javamodularity.moduleplugin") version "1.8.10"
+
 }
 
 group = "net.yakclient"
@@ -14,6 +16,7 @@ tasks.wrapper {
 
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin="org.javamodularity.moduleplugin")
 
     repositories {
         mavenCentral()
@@ -24,9 +27,9 @@ subprojects {
     }
 
     dependencies {
-
         implementation(kotlin("stdlib"))
     }
+
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
         destinationDirectory.set(tasks.compileJava.get().destinationDirectory.asFile.get())
         kotlinOptions.jvmTarget = "11"

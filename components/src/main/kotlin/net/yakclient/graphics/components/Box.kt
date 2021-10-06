@@ -122,11 +122,16 @@ public class Box : NativeGuiComponent() {
             Vertice(x, y + height)
         )
 
-        val colors: ColorFunction = backgroundColor ?: VacantColorFunction// ?:  backgroundColor.or(Supplier<Optional<out ColorFunction>> {
+        val colors: ColorFunction = backgroundColor ?: VacantColorFunction()// ?:  backgroundColor.or(Supplier<Optional<out ColorFunction>> {
 
         val texture: YakTexture = backgroundImage ?: VacantTexture() // createTex(backgroundImage)
 
-        val data = GLRenderingData(vertices, colors.toAggregation(vertices),texs= texture.generateTexs(vertices), texture = texture)
+        val data = GLRenderingData(vertices, colors.toAggregation(vertices),texs= texsOf(
+            TexNode(0f,0f),
+            TexNode(1f,0f),
+            TexNode(0f,1f),
+            TexNode(1f,1f),
+        ), texture = texture)
 
 
         return this.combine(VerticeRenderingContext(GL11.GL_QUADS, GL11.GL_TEXTURE_2D, data), this.applyChildren(props))

@@ -7,7 +7,7 @@ public abstract class GuiComponent : NativeGuiComponent() {
     private val maintainedChildren: MutableList<NativeGuiComponent> = ArrayList()
     private val childSettings: MutableList<ComponentRenderingContext<*>> = ArrayList()
 
-    public abstract fun render(properties: GuiProperties)
+    protected abstract fun render(properties: GuiProperties)
 
     override fun renderNatively(props: GuiProperties): List<RenderingContext> {
         childSettings.clear()
@@ -32,7 +32,7 @@ public abstract class GuiComponent : NativeGuiComponent() {
 
 public typealias Component = GuiComponent.(props: GuiProperties) -> Unit
 
-public class FunctionalComponent internal constructor(
+public class FunctionalComponent constructor(
     private val component: Component
 ) : GuiComponent() {
     override fun render(properties: GuiProperties): Unit = component(this, properties)

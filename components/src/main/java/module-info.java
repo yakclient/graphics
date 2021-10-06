@@ -1,9 +1,10 @@
-module yak.opengl.components {
+module yakclient.graphics.components {
     exports net.yakclient.graphics.components;
 
     requires yakclient.graphics.util;
     requires yakclient.graphics.api;
-    requires yakclient.graphics.opengl2;
+
+//    requires yakclient.graphics.open2gl;
     requires lwjgl;
     requires kotlin.stdlib;
 }

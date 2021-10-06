@@ -139,9 +139,11 @@ public class YakGraphicsUtils {
     public static final int KEY_CLEAR = 218;
     public static final int KEY_LMETA = 219;
     /** @deprecated */
+    @Deprecated
     public static final int KEY_LWIN = 219;
     public static final int KEY_RMETA = 220;
     /** @deprecated */
+    @Deprecated
     public static final int KEY_RWIN = 220;
     public static final int KEY_APPS = 221;
     public static final int KEY_POWER = 222;

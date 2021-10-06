@@ -4,9 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.*;
-import org.lwjgl.util.glu.GLU;
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -16,6 +13,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
+import org.lwjgl.util.glu.GLU;
 
 public class BasicTextureTests {
     @Test
