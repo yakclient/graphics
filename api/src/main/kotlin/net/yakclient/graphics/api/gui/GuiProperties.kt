@@ -1,6 +1,5 @@
 package net.yakclient.graphics.api.gui
 
-import net.yakclient.graphics.util.ColorFunction
 import java.util.*
 
 public class GuiProperties(

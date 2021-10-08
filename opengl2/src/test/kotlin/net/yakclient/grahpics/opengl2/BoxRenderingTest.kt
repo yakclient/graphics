@@ -31,26 +31,26 @@ fun main() {
             GL15.GL_STATIC_DRAW
         )
         GL11.glVertexPointer(4, GL11.GL_DOUBLE, 0, 0);
-        val colorHandle: Int = GL15.glGenBuffers()
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, colorHandle)
-        GL15.glBufferData(
-            GL15.GL_ARRAY_BUFFER, YakGraphicsUtils.flipBuf(
-                colorsOf(
-                    1f, 0f, 0f,
-                    0f, 1f, 0f,
-                    0f, 0f, 1f,
-                    1f, 1f, 1f
-                ).asBuffer()
-            ), GL15.GL_STATIC_DRAW
-        )
-        GL11.glColorPointer(3, GL11.GL_FLOAT, 0, 0)
+//        val colorHandle: Int = GL15.glGenBuffers()
+//        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, colorHandle)
+//        GL15.glBufferData(
+//            GL15.GL_ARRAY_BUFFER, YakGraphicsUtils.flipBuf(
+//                colorsOf(
+//                    1f, 0f, 0f,
+//                    0f, 1f, 0f,
+//                    0f, 0f, 1f,
+//                    1f, 1f, 1f
+//                ).asBuffer()
+//            ), GL15.GL_STATIC_DRAW
+//        )
+//        GL11.glColorPointer(3, GL11.GL_FLOAT, 0, 0)
 
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY)
-        GL11.glEnableClientState(GL11.GL_COLOR_ARRAY)
+//        GL11.glEnableClientState(GL11.GL_COLOR_ARRAY)
 
         GL11.glDrawArrays(GL11.GL_QUADS, 0, 4)
 
-        GL11.glDisableClientState(GL11.GL_COLOR_ARRAY)
+//        GL11.glDisableClientState(GL11.GL_COLOR_ARRAY)
         GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY)
 
         Display.update()

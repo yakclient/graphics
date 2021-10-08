@@ -28,7 +28,9 @@ public data class Color @JvmOverloads constructor(
     val green: Float,
     val blue: Float,
     val alpha: Float = ColorAggregation.DEFAULT_ALPHA,
-) : AggregateNode
+) : AggregateNode {
+    public fun setAlpha(alpha: Float) : Color = Color(red, green, blue, alpha)
+}
 
 public data class TexNode @JvmOverloads constructor(
     val s: Float,

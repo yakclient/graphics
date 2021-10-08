@@ -7,6 +7,7 @@ import net.yakclient.graphics.api.gui.PropertyFactory
 import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.util.ColorCodes
 import net.yakclient.graphics.util.SolidColor
+import net.yakclient.graphics.util.YakTextureFactory
 import org.lwjgl.opengl.GL11
 
 fun main() {
@@ -32,11 +33,12 @@ fun main() {
 
 fun BasicTestComponent(): Component = { props ->
     build(use<Box>(0)) {
-        set("width") to 100
-        set("height") to 200
+        set("width") to 256
+        set("height") to 256
         set("x") to 100
         set("y") to 100
+        set("backgroundimage") ifNotNull javaClass.getResource("/wood.png")?.let { YakTextureFactory.loadTexture(it) }
 
-        set("backgroundcolor") to SolidColor(ColorCodes.RED)
+//        set("backgroundcolor") to  SolidColor(ColorCodes.RED)
     }
 }
