@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11
 import kotlin.system.exitProcess
 
 object OpenGLSetup {
-    private const val FPS_GOAL = 60
+    private const val FPS_GOAL = 600
     private const val LONGEST_RUNTIME = 600 /* seconds */
 
     fun setupAndStart(gameLoop: () -> Unit) {

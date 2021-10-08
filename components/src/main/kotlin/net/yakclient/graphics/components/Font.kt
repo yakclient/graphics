@@ -3,8 +3,8 @@ package net.yakclient.graphics.components
 import net.yakclient.graphics.api.gui.GuiProperties
 import net.yakclient.graphics.api.gui.NativeGuiComponent
 import net.yakclient.graphics.api.render.RenderingContext
-import net.yakclient.graphics.opengl.render.GLRenderingData
-import net.yakclient.graphics.opengl.render.VerticeRenderingContext
+import net.yakclient.graphics.opengl2.render.GLRenderingData
+import net.yakclient.graphics.opengl2.render.VerticeRenderingContext
 import net.yakclient.graphics.util.*
 import org.lwjgl.opengl.GL11
 

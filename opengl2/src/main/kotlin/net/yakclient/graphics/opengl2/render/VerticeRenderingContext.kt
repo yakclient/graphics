@@ -1,4 +1,4 @@
-package net.yakclient.graphics.opengl.render
+package net.yakclient.graphics.opengl2.render
 
 import net.yakclient.graphics.api.render.*
 import org.lwjgl.opengl.GL11

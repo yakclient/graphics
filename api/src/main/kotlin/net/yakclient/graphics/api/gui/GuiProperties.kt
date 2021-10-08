@@ -28,7 +28,7 @@ public class PropertyFactory(
             key.equals(CHILD_NAME, ignoreCase = true)
         ) throw IllegalPropertyException(key, "The name $CHILD_NAME is reserved for children of components")
 
-        this[key.lowercase()] = value
+        _delegate[key.lowercase()] = value
 
         return value
     }

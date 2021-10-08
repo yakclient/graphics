@@ -10,16 +10,15 @@ dependencies {
 //    implementation(kotlin("stdlib"))
     implementation(project(":api"))
     implementation(project(":util"))
-    testImplementation(project(":components"))
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+//    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
+//    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.compileTestKotlin {
-    destinationDirectory.set(tasks.compileTestJava.get().destinationDirectory.get().asFile)
-}
+//tasks.test {
+//    useJUnitPlatform()
+//}
+//
+//tasks.compileTestKotlin {
+//    destinationDirectory.set(tasks.compileTestJava.get().destinationDirectory.get().asFile)
+//}

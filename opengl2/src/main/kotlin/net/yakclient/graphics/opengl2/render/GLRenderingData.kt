@@ -1,4 +1,4 @@
-package net.yakclient.graphics.opengl.render
+package net.yakclient.graphics.opengl2.render
 
 import net.yakclient.graphics.util.*
 import java.nio.DoubleBuffer
@@ -29,10 +29,10 @@ public class GLRenderingData @JvmOverloads constructor(
     public val texture: YakTexture = VacantTexture(),
     public val verticeCount: Int = vertices.size,
 ) {
-    public val verticeBuf: DoubleBuffer by lazy { vertices.asDoubleBuffer() }
-    public val colorBuf: FloatBuffer by lazy { colors.asFloatBuffer() }
-    public val normalBuf: DoubleBuffer by lazy { normals.asDoubleBuffer() }
-    public val texBuf: FloatBuffer by lazy { texs.asFloatBuffer() }
+    public val verticeBuf: DoubleBuffer by lazy { vertices.asBuffer()}
+    public val colorBuf: FloatBuffer by lazy { colors.asBuffer() }
+    public val normalBuf: DoubleBuffer by lazy { normals.asBuffer() }
+    public val texBuf: FloatBuffer by lazy { texs.asBuffer() }
 
 //    public constructor(builder: RenderingDataBuilder) : this(builder.vertices,
 //        builder.colors,
