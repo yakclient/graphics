@@ -45,7 +45,7 @@ object OpenGLSetup {
             } else fps++
             gameLoop()
             Display.update()
-            Display.sync(FPS_GOAL)
+//            Display.sync(FPS_GOAL)
         }
         println("Attempting to cleanup resources")
         println()

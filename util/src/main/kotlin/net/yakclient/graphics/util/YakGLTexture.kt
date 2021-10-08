@@ -2,7 +2,7 @@ package net.yakclient.graphics.util
 
 import org.lwjgl.opengl.GL11
 
-public class YakGLTexture(
+public data class YakGLTexture(
     private val texId: Int,
     private val target: Int,
 //    override val imageHeight: Int,
@@ -17,6 +17,7 @@ public class YakGLTexture(
     }
 
     override fun release() {
+        YakTextureFactory.removeTexture(this)
         GL11.glDeleteTextures(texId)
     }
 
