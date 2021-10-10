@@ -16,7 +16,7 @@ object OpenGLSetup {
 
     fun setupAndStart(configurations: () -> Unit, gameLoop: () -> Unit) {
         try {
-            Display.setDisplayMode(DisplayMode(500, 500))
+            Display.setDisplayMode(DisplayMode(1000, 1000))
             Display.setResizable(true)
             Display.create()
         } catch (e: LWJGLException) {

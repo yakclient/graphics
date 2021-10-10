@@ -7,4 +7,6 @@ module yakclient.graphics.components {
     requires yakclient.graphics.open2gl;
     requires lwjgl;
     requires kotlin.stdlib;
+
+    uses net.yakclient.graphics.components.Box;
 }

@@ -20,7 +20,7 @@ public fun TextBox(): Component = { props ->
         set("backgroundcolor") to backgroundColor
         set("backgroundimage") ifNotNull backgroundImage
 
-        build(use<Font>(1)) {
+        build(use<Text>(1)) {
             set("x") to specs.x + padding.paddingLeft
             set("y") to specs.y + padding.paddingTop
 

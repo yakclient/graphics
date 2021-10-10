@@ -1,17 +1,17 @@
-package net.yakclient.graphics.components
+package net.yakclient.graphics.opengl2.components
 
 import net.yakclient.graphics.api.gui.GuiProperties
-import net.yakclient.graphics.api.gui.NativeGuiComponent
 import net.yakclient.graphics.api.render.RenderingContext
+import net.yakclient.graphics.components.Text
 import net.yakclient.graphics.opengl2.render.GLRenderingData
 import net.yakclient.graphics.opengl2.render.VerticeRenderingContext
 import net.yakclient.graphics.util.*
 import org.lwjgl.opengl.GL11
 
-public class Font : NativeGuiComponent() {
+public class OpenGL2Text : Text() {
     override fun renderNatively(props: GuiProperties): List<RenderingContext> {
         val value = props.requireAs<String>("value")
-        val font = props.requireAs<YakFont>("font")
+        val font = props.getAs<YakFont>("font") ?: YakFontFactory.fontOf()
 
         var x = props.requireAs<Int>("x")
         val y = props.requireAs<Int>("y")
@@ -51,41 +51,5 @@ public class Font : NativeGuiComponent() {
                 x += data.width
             }
         }
-//        return value.map {
-//            object : RenderingContext {
-//                override fun useRenderer(type: RenderingType): Renderer<RenderingContext> {
-//                    return object : Renderer<VerticeRenderingContext> {
-//                        override val context: VerticeRenderingContext
-//                            get() = Verti
-//
-//                        override fun render() {
-//
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        for (c in value) {
-//
-//        }
     }
 }
-
-//public fun Font(): Component = { props ->
-//    val value = props.requireAs<String>("value")
-//    val font = props.requireAs<YakGLFont>("font")
-//
-//    font.fontTex.bind()
-//
-////        value.for
-//    for (c in value) {
-//        build(use<Box>(0)) {
-//            val char = checkNotNull(font.characters[c.code]) { "Failed to find character: $c" }
-//            set("x") to char.storedX
-//            set("y") to char.storedY
-//            set("width") to char.width
-//            set("height") to char.height
-//            set("backgroundimage") to font.fontTex
-//        }
-//    }
-//}

@@ -5,13 +5,15 @@ import net.yakclient.graphics.api.gui.FunctionalComponent
 import net.yakclient.graphics.api.gui.GuiComponent
 import net.yakclient.graphics.api.gui.PropertyFactory
 import net.yakclient.graphics.components.Box
+import net.yakclient.graphics.components.Text
 import net.yakclient.graphics.util.ColorCodes
 import net.yakclient.graphics.util.SolidColor
 import net.yakclient.graphics.util.YakTextureFactory
 import org.lwjgl.opengl.GL11
+import java.lang.RuntimeException
 
 fun main() {
-    val component: GuiComponent = FunctionalComponent(BasicUserComponent())
+    val component: GuiComponent = FunctionalComponent(BasicTestComponent())
     OpenGLSetup.setupAndStart {
 //        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT)
 
@@ -31,25 +33,22 @@ fun main() {
     }
 }
 
-fun BasicUserComponent() : Component = { props ->
-    for (y in 0..10)
-        for (x in 0..10) {
-            build(use(::BasicTestComponent, x*(y+1))) {
-                set("x") to x * 70
-                set("y") to y * 70
-            }
-        }
-}
-
-
+// build(use<Text>(0)) {
+//        set("x") to 100
+//        set("y") to 100
+//        set("value") to "Why is this text rendering weirdly?"
+//    }
 fun BasicTestComponent(): Component = { props ->
-    build(use<Box>(0)) {
-        set("width") to 64
-        set("height") to 64
-        set("x") to props.requireAs<Int>("x")
-        set("y") to props.requireAs<Int>("y")
-        set("backgroundimage") ifNotNull javaClass.getResource("/wood.png")?.let { YakTextureFactory.loadTexture(it) }
-
-//        set("backgroundcolor") to  SolidColor(ColorCodes.RED)
-    }
+    var id = 1
+    for (x in 0 until 1000 step 100)
+        for (y in 0 until 1000 step 100)
+            build(use<Box>(id++)) {
+                set("x") to x
+                set("y") to y
+                set("width") to 64
+                set("height") to 64
+                set("backgroundimage") to YakTextureFactory.loadTexture(
+                    javaClass.getResource("/wood.png") ?: throw RuntimeException("Resource not found!")
+                )
+            }
 }

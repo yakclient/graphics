@@ -2,12 +2,12 @@ package net.yakclient.graphics.util
 
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL12
 import java.awt.image.BufferedImage
 import java.net.URL
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import javax.imageio.ImageIO
-
 
 
 public object YakTextureFactory {
@@ -49,11 +49,11 @@ public object YakTextureFactory {
         val textureID = glGenTextures()
         glBindTexture(GL_TEXTURE_2D, textureID)
 
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE)
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE)
 
-        glTexParameteri(GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST)
-        glTexParameteri(GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
         glTexImage2D(
             GL_TEXTURE_2D,
@@ -69,6 +69,8 @@ public object YakTextureFactory {
 
         return YakGLTexture(textureID, GL_TEXTURE_2D, image.height, image.width)
     }
+
+
 
     public fun loadTexture(loc: URL): YakTexture = urlToTex[loc] ?: loadTexture(ImageIO.read(loc)).also { urlToTex[loc] = it; texToUrl[it] = loc }
 }

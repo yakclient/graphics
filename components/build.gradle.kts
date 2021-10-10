@@ -33,15 +33,3 @@ tasks.compileTestKotlin {
 
  }
 
-tasks.compileTestJava {
-//    options.compilerArgs.addAll(
-//        listOf(
-//            "--patch-module",
-//            "yakclient.graphics.components=${sourceSets.main.get().java.destinationDirectory.get().asFile.absolutePath}"
-//        )
-//    )
-//    println(options.compilerArgs)
-    doLast {
-        println(options.compilerArgs)
-    }
-}
