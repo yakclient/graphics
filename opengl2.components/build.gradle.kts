@@ -12,3 +12,10 @@ dependencies {
 
 //    implementation(kotlin("stdlib"))
 }
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.compileTestKotlin {
+    destinationDirectory.set(tasks.compileTestJava.get().destinationDirectory.get().asFile)
+}

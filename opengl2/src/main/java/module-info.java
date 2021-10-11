@@ -4,7 +4,6 @@ module yakclient.graphics.open2gl {
     requires yakclient.graphics.util;
     requires lwjgl;
     requires java.base;
-//    requires lwjgl.platform;
 
     exports net.yakclient.graphics.opengl2.render;
 }

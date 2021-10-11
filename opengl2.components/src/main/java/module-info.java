@@ -8,7 +8,10 @@ module yakclient.graphics.open2gl.components {
     requires yakclient.graphics.api;
     requires yakclient.graphics.util;
     requires yakclient.graphics.open2gl;
+    requires yakclient.graphics.components;
 
+    uses Box;
+    uses Text;
     provides Box with OpenGL2Box;
     provides Text with OpenGL2Text;
 }

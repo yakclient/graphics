@@ -5,11 +5,8 @@ import net.yakclient.graphics.api.gui.FunctionalComponent
 import net.yakclient.graphics.api.gui.GuiComponent
 import net.yakclient.graphics.api.gui.PropertyFactory
 import net.yakclient.graphics.components.Box
-import net.yakclient.graphics.components.Text
-import net.yakclient.graphics.util.ColorCodes
-import net.yakclient.graphics.util.SolidColor
+import net.yakclient.graphics.opengl2.components.test.OpenGLSetup
 import net.yakclient.graphics.util.YakTextureFactory
-import org.lwjgl.opengl.GL11
 import java.lang.RuntimeException
 
 fun main() {

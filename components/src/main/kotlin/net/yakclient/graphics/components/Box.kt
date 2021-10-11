@@ -3,14 +3,7 @@ package net.yakclient.graphics.components
 import net.yakclient.graphics.api.gui.GuiProperties
 import net.yakclient.graphics.api.gui.NativeGuiComponent
 import net.yakclient.graphics.api.render.RenderingContext
-import net.yakclient.graphics.opengl2.render.GLRenderingData
-import net.yakclient.graphics.opengl2.render.VerticeRenderingContext
-import net.yakclient.graphics.util.*
-import org.lwjgl.input.Keyboard
-import org.lwjgl.input.Mouse
-import org.lwjgl.opengl.GL11
 import java.util.*
-import java.util.function.Consumer
 
 /**
  * A `Box` represents the closest thing that yak-opengl-api

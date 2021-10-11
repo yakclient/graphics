@@ -71,7 +71,7 @@ public open class Text : NativeGuiComponent() {
 //        for (c in value) {
 //
 //        }
-    }
+//    }
 }
 
 //public fun Font(): Component = { props ->
