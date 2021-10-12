@@ -11,6 +11,10 @@ import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
 import java.util.function.Consumer
 
+public fun main() {
+    println(OpenGL2Box::class.java.module.name)
+}
+
 public class OpenGL2Box : Box() {
     override fun renderNatively(props: GuiProperties): List<RenderingContext> {
         val width: Double = props.requireAs("width")

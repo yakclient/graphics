@@ -5,11 +5,12 @@ import net.yakclient.graphics.api.gui.FunctionalComponent
 import net.yakclient.graphics.api.gui.GuiComponent
 import net.yakclient.graphics.api.gui.PropertyFactory
 import net.yakclient.graphics.components.Box
-import net.yakclient.graphics.opengl2.components.test.OpenGLSetup
+import net.yakclient.graphics.opengl2.components.OpenGL2Box
 import net.yakclient.graphics.util.YakTextureFactory
-import java.lang.RuntimeException
 
 fun main() {
+//    println(OpenGL2Box::class.java.module.name)
+
     val component: GuiComponent = FunctionalComponent(BasicTestComponent())
     OpenGLSetup.setupAndStart {
 //        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT)
