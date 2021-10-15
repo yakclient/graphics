@@ -19,16 +19,6 @@ public class OpenGL2Text : Text() {
         return value.map {
             val data = checkNotNull(font[it]) { "Failed to find character: $it" }
 
-//            val width = data.width
-//            val height = data.height
-//
-////            val cx = data.storedX
-////            val cy = data.storedY
-////            val rx = 1f / (width / cx)
-////            val ry = 1f / (height / cy)
-////            val rw = 1f / (width / data.width)
-////            val rh = 1f / (height / data.height)
-
             VerticeRenderingContext(
                 GL11.GL_QUADS,
                 GL11.GL_TEXTURE_2D,

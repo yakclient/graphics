@@ -1,9 +1,6 @@
 package net.yakclient.graphics.components
 
-import net.yakclient.graphics.api.gui.GuiProperties
-import net.yakclient.graphics.api.gui.NativeGuiComponent
-import net.yakclient.graphics.api.render.RenderingContext
-import java.util.*
+import net.yakclient.graphics.api.gui.DeferredComponent
 
 /**
  * A `Box` represents the closest thing that yak-opengl-api
@@ -18,19 +15,21 @@ import java.util.*
  * @author Durgan McBroom
  * @since 1.0
  */
-public open class Box : NativeGuiComponent() {
-    /**
-     * Renders given the passed properties.
-     *
-     * @param props Properties to render from
-     * @return Context of itself and its children
-     */
-    override fun renderNatively(props: GuiProperties): List<RenderingContext> {
-        val loader = ServiceLoader.load(Box::class.java)
-        val box = loader.firstOrNull() ?: throw IllegalStateException("No Box component implementations on the classpath!")
+public open class Box : DeferredComponent() {
 
-        return box.renderNatively(props)
-
+//    /**
+//     * Renders given the passed properties.
+//     *
+//     * @param props Properties to render from
+//     * @return Context of itself and its children
+//     */
+//    override fun renderNatively(props: GuiProperties): List<RenderingContext> {
+//        val loader = ServiceLoader.load(Box::class.java)
+//        val box =
+//            loader.firstOrNull() ?: throw IllegalStateException("No Box component implementations on the classpath!")
+//
+//        return box.renderNatively(props)
+//    }
 
 //        val width: Double = props.requireAs("width")
 //        val height: Double = props.requireAs("height")
@@ -145,7 +144,6 @@ public open class Box : NativeGuiComponent() {
 //                )
 //            ), this.applyChildren(props)
 //        )
-    }
 
 //    private fun rectBounding(x: Double, y: Double, top: Double, left: Double, bottom: Double, right: Double): Boolean {
 //        return top < y && bottom > y && left < x && right > x

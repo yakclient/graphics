@@ -5,7 +5,7 @@ import net.yakclient.graphics.api.gui.FunctionalComponent
 import net.yakclient.graphics.api.gui.GuiComponent
 import net.yakclient.graphics.api.gui.PropertyFactory
 import net.yakclient.graphics.components.Box
-import net.yakclient.graphics.opengl2.components.OpenGL2Box
+import net.yakclient.graphics.components.Text
 import net.yakclient.graphics.util.YakTextureFactory
 
 fun main() {
@@ -37,6 +37,12 @@ fun main() {
 //        set("value") to "Why is this text rendering weirdly?"
 //    }
 fun BasicTestComponent(): Component = { props ->
+    build(use<Text>(0)) {
+        set("x") to 10
+        set("y") to 10
+        set("value") to "AYYY"
+    }
+
     var id = 1
     for (x in 0 until 1000 step 100)
         for (y in 0 until 1000 step 100)

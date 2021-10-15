@@ -2,8 +2,9 @@ package net.yakclient.graphics.api.gui
 
 import java.util.*
 
-public class GuiProperties(
-    delegate: Map<String, Any?>,
+//make this a data class so that properties can be compared.
+public data class GuiProperties(
+    private val delegate: Map<String, Any?>,
 ) : Map<String, Any?> by delegate {
     public fun <T> getAs(key: String): T? = this[key] as T
 
@@ -11,6 +12,21 @@ public class GuiProperties(
 
     public fun <T> requireAs(key: String): T =
         if (!containsKey(key)) throw IllegalPropertyException(key) else getAs(key)!!
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as GuiProperties
+
+        if (delegate != other.delegate) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return delegate.hashCode()
+    }
 }
 
 public const val CHILD_NAME: String = "children"

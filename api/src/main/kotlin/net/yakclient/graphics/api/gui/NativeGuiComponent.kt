@@ -1,11 +1,10 @@
 package net.yakclient.graphics.api.gui
 
-import net.yakclient.graphics.api.gui.state.GUIState
+import net.yakclient.graphics.api.gui.state.ObservableState
 import net.yakclient.graphics.api.gui.state.Stateful
 import net.yakclient.graphics.api.render.RenderingContext
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 /**
  * The base component for doing any rendering to openGL. This class
@@ -37,13 +36,8 @@ import kotlin.collections.HashMap
  * @author Durgan McBroom
  */
 public abstract class NativeGuiComponent {
-    /**
-     * State keeping for this component. Each state is by kept
-     * by an integer id. This provides an alternative for using
-     * state and keeping it as a member variable.
-     */
     private val states: MutableMap<Int, Stateful<*>> = HashMap()
-
+    internal var needsReRender: Boolean = true
 
     public abstract fun renderNatively(props: GuiProperties): List<RenderingContext>
 //    /**
@@ -103,7 +97,7 @@ public abstract class NativeGuiComponent {
 //    }
 
     public fun applyChildren(properties: GuiProperties): List<RenderingContext> =
-        (properties.getAs<List<ComponentRenderingContext<*>>>(CHILD_NAME) ?: ArrayList()).flatMap { it.applyContext() }
+        properties.getAs<List<ComponentRenderingContext<*>>>(CHILD_NAME) ?: ArrayList()
 
     //    /**
 //     * Combines contexts of a array and a singular to a
@@ -115,40 +109,17 @@ public abstract class NativeGuiComponent {
 //     * @param all The array of contexts to add to.
 //     * @return The result of the singular and array.
 //     */
-    public fun combine(context: RenderingContext, all: List<RenderingContext>): List<RenderingContext> =
-        ArrayList<RenderingContext>().apply {add(context); addAll(all)}
+//    public fun combine(context: RenderingContext, all: List<RenderingContext>): List<RenderingContext> =
+//        RenderingNode(ArrayList<RenderingContext>().apply { add(context); addAll(all) }, listOf())
+
+    public fun ofAll(initial: RenderingContext, all: List<RenderingContext>): List<RenderingContext> =
+        ArrayList<RenderingContext>().apply { add(initial);addAll(all) }
 
 
-    /**
-     * Returns and stores a state for the given object, note
-     * this is not necessary and you can instead just use member
-     * variables. However state provides the best possible way
-     * to update values from passed lambdas(either in props or
-     * just in general)
-     *
-     * Example:
-     *
-     *
-     * `final Stateful<String> name = this.useState("My name is Bob!", 0);
-     * final Stateful<Boolean> nameSet = this.useState(false, 1);
-     *
-     * //... component rendering
-     * .addProp("onHover", ()->name.set("No my name is actually Jerry"));
-     * .addProp("onFocus", ()-> name.setIf(nameSet.get(), "Since we've hovered my name is Bob again"));
-    ` *
-     *
-     *
-     * The one draw back of this method is that state has to be stored
-     * by ID due to speed and the fact that it would be extremely hard
-     * to try to figure out which state is which on re-renders.
-     *
-     * @param initial The initial value of the state.
-     * @param key The key to identify the given state by.
-     * @param <T> The state type.
-     * @return the computed and stored state.
-    </T> */
     public fun <T> useState(key: Int, provider: () -> T): Stateful<T> =
-        (states[key] ?: GUIState(provider()).also { states[key] = it }) as Stateful<T>
+        (states[key] ?: ObservableState(provider()) { _, _ ->
+            needsReRender = true
+        }.also { states[key] = it }) as Stateful<T>
 
     public fun <T> useState(key: Int): Stateful<T?> {
         return this.useState(key) { null }

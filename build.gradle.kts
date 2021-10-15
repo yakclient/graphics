@@ -1,5 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.5.30"
+    kotlin("jvm") version "1.5.31"
+    kotlin("kapt") version "1.5.31"
     id("org.javamodularity.moduleplugin") version "1.8.10"
 
 }

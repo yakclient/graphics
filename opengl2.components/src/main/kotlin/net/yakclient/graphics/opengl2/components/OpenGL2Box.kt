@@ -11,10 +11,6 @@ import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
 import java.util.function.Consumer
 
-public fun main() {
-    println(OpenGL2Box::class.java.module.name)
-}
-
 public class OpenGL2Box : Box() {
     override fun renderNatively(props: GuiProperties): List<RenderingContext> {
         val width: Double = props.requireAs("width")
@@ -114,9 +110,7 @@ public class OpenGL2Box : Box() {
         val colors: ColorFunction =
             backgroundColor ?: VacantColorFunction()// ?:  backgroundColor.or(Supplier<Optional<out ColorFunction>> {
 
-
-
-        return this.combine(
+        return ofAll(
             VerticeRenderingContext(
                 GL11.GL_QUADS,
                 GL11.GL_TEXTURE_2D,
@@ -130,6 +124,7 @@ public class OpenGL2Box : Box() {
                 )
             ), this.applyChildren(props)
         )
+
     }
 
     private fun rectBounding(x: Double, y: Double, top: Double, left: Double, bottom: Double, right: Double): Boolean {

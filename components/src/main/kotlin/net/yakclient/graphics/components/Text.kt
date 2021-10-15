@@ -1,18 +1,19 @@
 package net.yakclient.graphics.components
 
+import net.yakclient.graphics.api.gui.DeferredComponent
 import net.yakclient.graphics.api.gui.GuiProperties
 import net.yakclient.graphics.api.gui.NativeGuiComponent
 import net.yakclient.graphics.api.render.RenderingContext
 import java.util.*
 
-public open class Text : NativeGuiComponent() {
+public open class Text : DeferredComponent() {
 //    private val charAddition = 10
 
-    override fun renderNatively(props: GuiProperties): List<RenderingContext> {
-        val loader = ServiceLoader.load(Text::class.java)
-        val text = loader.firstOrNull() ?: throw IllegalStateException("No Text component implementations on the classpath!")
-
-        return text.renderNatively(props)
+//    override fun renderNatively(props: GuiProperties): List<RenderingContext> {
+//        val loader = ServiceLoader.load(Text::class.java)
+//        val text = loader.firstOrNull() ?: throw IllegalStateException("No Text component implementations on the classpath!")
+//
+//        return text.renderNatively(props)
 //        val value = props.requireAs<String>("value")
 //        val font = props.getAs<YakFont>("font") ?: YakFontFactory.fontOf()
 //
@@ -72,7 +73,7 @@ public open class Text : NativeGuiComponent() {
 //
 //        }
 //    }
-}
+//}
 
 //public fun Font(): Component = { props ->
 //    val value = props.requireAs<String>("value")
