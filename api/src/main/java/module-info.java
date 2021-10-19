@@ -1,7 +1,11 @@
+import net.yakclient.graphics.api.DeferredComponentProvider;
+import net.yakclient.graphics.api.hook.*;
+
 module yakclient.graphics.api {
-    exports net.yakclient.graphics.api.gui;
-    exports net.yakclient.graphics.api.gui.state;
+    exports net.yakclient.graphics.api;
+    exports net.yakclient.graphics.api.state;
     exports net.yakclient.graphics.api.render;
+    exports net.yakclient.graphics.api.hook;
 
     requires yakclient.graphics.util;
 
@@ -9,4 +13,9 @@ module yakclient.graphics.api {
 //    requires lwjgl.util;
 //    requires slick.util;
     requires kotlin.stdlib;
+
+    uses DeferredComponentProvider;
+    uses MouseMoveSubscriber;
+    uses MouseButtonEventSubscriber;
+    uses KeyboardActionSubscriber;
 }

@@ -1,6 +1,6 @@
 package net.yakclient.graphics.api.render
 
-import net.yakclient.graphics.api.gui.ComponentRenderingContext
+import net.yakclient.graphics.api.ComponentRenderingContext
 
 public class ComponentRenderer(
     override val context: ComponentRenderingContext<*>,

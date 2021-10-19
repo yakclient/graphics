@@ -1,4 +1,4 @@
-package net.yakclient.graphics.api.gui
+package net.yakclient.graphics.api
 
 import net.yakclient.graphics.util.TemplatedException
 

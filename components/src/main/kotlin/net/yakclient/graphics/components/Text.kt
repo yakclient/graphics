@@ -1,10 +1,6 @@
 package net.yakclient.graphics.components
 
-import net.yakclient.graphics.api.gui.DeferredComponent
-import net.yakclient.graphics.api.gui.GuiProperties
-import net.yakclient.graphics.api.gui.NativeGuiComponent
-import net.yakclient.graphics.api.render.RenderingContext
-import java.util.*
+import net.yakclient.graphics.api.DeferredComponent
 
 public open class Text : DeferredComponent() {
 //    private val charAddition = 10

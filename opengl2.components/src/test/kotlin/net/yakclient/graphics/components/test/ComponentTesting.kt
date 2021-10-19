@@ -1,9 +1,12 @@
 package net.yakclient.graphics.components.test
 
-import net.yakclient.graphics.api.gui.Component
-import net.yakclient.graphics.api.gui.FunctionalComponent
-import net.yakclient.graphics.api.gui.GuiComponent
-import net.yakclient.graphics.api.gui.PropertyFactory
+import net.yakclient.graphics.api.Component
+import net.yakclient.graphics.api.FunctionalComponent
+import net.yakclient.graphics.api.GuiComponent
+import net.yakclient.graphics.api.PropertyFactory
+import net.yakclient.graphics.api.hook.HookManager
+import net.yakclient.graphics.api.hook.MouseMoveData
+import net.yakclient.graphics.api.hook.MouseMoveSubscriber
 import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.components.Text
 import net.yakclient.graphics.util.YakTextureFactory
@@ -37,10 +40,20 @@ fun main() {
 //        set("value") to "Why is this text rendering weirdly?"
 //    }
 fun BasicTestComponent(): Component = { props ->
+    val state = useState(0) { 0 }
+    println("RENDERING")
+
+
+
     build(use<Text>(0)) {
         set("x") to 10
         set("y") to 10
         set("value") to "AYYY"
+    }
+
+    HookManager.subscribe<MouseMoveSubscriber, MouseMoveData> {
+        state.value = it.x
+//        println("x: ${it.x} y: ${it.y}")
     }
 
     var id = 1
@@ -54,5 +67,6 @@ fun BasicTestComponent(): Component = { props ->
                 set("backgroundimage") to YakTextureFactory.loadTexture(
                     javaClass.getResource("/wood.png") ?: throw RuntimeException("Resource not found!")
                 )
+                set("")
             }
 }

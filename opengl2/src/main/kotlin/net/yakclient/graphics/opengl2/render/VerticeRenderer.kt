@@ -14,13 +14,14 @@ public abstract class VerticeRenderer(override val context: VerticeRenderingCont
         get() = context.data
 
     override fun render() {
+        //TODO batch rendering, seems like textures arent the issue but instead lots of draw calls...
         bindPointers()
         if (data.hasVertices()) glEnableClientState(GL_VERTEX_ARRAY)
         if (data.hasColors()) glEnableClientState(GL_COLOR_ARRAY)
         if (data.hasNormals()) glEnableClientState(GL_NORMAL_ARRAY)
         if (data.hasTexs()) {
             glEnableClientState(GL_TEXTURE_COORD_ARRAY)
-            GL11.glEnable(context.textureType)
+            glEnable(context.textureType)
 //            GL11.glEnable(GL11.GL_BLEND)
             glDisable(GL_BLEND)
 //            glEnable(GLCULL)
@@ -40,5 +41,6 @@ public abstract class VerticeRenderer(override val context: VerticeRenderingCont
         if (data.hasNormals()) glDisableClientState(GL_NORMAL_ARRAY)
         if (data.hasColors()) glDisableClientState(GL_COLOR_ARRAY)
         if (data.hasVertices()) glDisableClientState(GL_VERTEX_ARRAY)
+
     }
 }

@@ -1,6 +1,6 @@
 package net.yakclient.graphics.components
 
-import net.yakclient.graphics.api.gui.DeferredComponent
+import net.yakclient.graphics.api.DeferredComponent
 
 /**
  * A `Box` represents the closest thing that yak-opengl-api

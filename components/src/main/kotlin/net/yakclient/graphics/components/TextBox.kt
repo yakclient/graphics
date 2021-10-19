@@ -1,6 +1,6 @@
 package net.yakclient.graphics.components
 
-import net.yakclient.graphics.api.gui.Component
+import net.yakclient.graphics.api.Component
 import net.yakclient.graphics.util.PaddingFunc
 import net.yakclient.graphics.util.ColorFunction
 import net.yakclient.graphics.util.VacantColorFunction

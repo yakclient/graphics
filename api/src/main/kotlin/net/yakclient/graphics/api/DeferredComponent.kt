@@ -1,4 +1,4 @@
-package net.yakclient.graphics.api.gui
+package net.yakclient.graphics.api
 
 import net.yakclient.graphics.api.render.RenderingContext
 import java.util.*
@@ -34,6 +34,10 @@ public fun <T : DeferredComponent> provideWith(
     assert(type.superclass == DeferredComponent::class.java).let { inputs.firstOrNull { type.isAssignableFrom(it.java) }?.java as? Class<out T> }
 
 public abstract class DeferredComponent : NativeGuiComponent() {
+    private val backingComponent : DeferredComponent by lazy {
+        DeferredComponentLoader.create(this::class.java)
+    }
+
     override fun renderNatively(props: GuiProperties): List<RenderingContext> =
-        DeferredComponentLoader.create(this::class.java).renderNatively(props)
+        backingComponent.renderNatively(props)
 }

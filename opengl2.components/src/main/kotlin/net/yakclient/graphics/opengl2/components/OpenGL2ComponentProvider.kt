@@ -1,9 +1,9 @@
 package net.yakclient.graphics.opengl2.components
 
 import io.github.emilyydev.asp.Provides
-import net.yakclient.graphics.api.gui.DeferredComponent
-import net.yakclient.graphics.api.gui.DeferredComponentProvider
-import net.yakclient.graphics.api.gui.provideWith
+import net.yakclient.graphics.api.DeferredComponent
+import net.yakclient.graphics.api.DeferredComponentProvider
+import net.yakclient.graphics.api.provideWith
 
 @Provides(DeferredComponentProvider::class)
 public class OpenGL2ComponentProvider : DeferredComponentProvider {

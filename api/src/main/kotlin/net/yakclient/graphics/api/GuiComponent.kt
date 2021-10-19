@@ -1,9 +1,11 @@
-package net.yakclient.graphics.api.gui
+package net.yakclient.graphics.api
 
 import net.yakclient.graphics.api.render.RenderingContext
 import kotlin.reflect.KFunction
 
-public abstract class GuiComponent : NativeGuiComponent() {
+public abstract class GuiComponent: NativeGuiComponent(
+
+) {
     private val maintainedChildren: MutableList<NativeGuiComponent> = ArrayList()
     private val childSettings: MutableList<ComponentRenderingContext<*>> = ArrayList()
 
@@ -18,24 +20,24 @@ public abstract class GuiComponent : NativeGuiComponent() {
         lastPropertyHash = props.hashCode()
 
         if (shouldReRender) {
+            super.needsReRender = false
+
             childSettings.clear()
             render(props)
-            super.needsReRender = false
         }
         return childSettings
     }
 
     public fun <T : NativeGuiComponent> use(clazz: Class<out T>, id: Int): T =
-        (maintainedChildren.getOrNull(id) ?: clazz.getConstructor().newInstance()) as T
+        (maintainedChildren.getOrNull(id) ?: clazz.getConstructor().newInstance().also {
+            maintainedChildren.add(id, it)
+        }) as T
 
     public inline fun <reified T : NativeGuiComponent> use(id: Int): T = use(T::class.java, id)
 
     public fun <T : NativeGuiComponent> use(func: KFunction<Component>, id: Int): T =
         (maintainedChildren.getOrNull(id) ?: FunctionalComponent(func.call()).also {
-            maintainedChildren.add(
-                id,
-                it
-            )
+            maintainedChildren.add(id, it)
         }) as T
 
     public fun <T : NativeGuiComponent> build(
@@ -50,6 +52,8 @@ public abstract class GuiComponent : NativeGuiComponent() {
         ComponentBuilder(component).also(settings)
             .let { ComponentRenderingContext(it.component, it.properties.build()) }).let { }
 }
+
+//public fun interface Component<T: Properties> : GuiProperties.(T) -> Unit;
 
 public typealias Component = GuiComponent.(props: GuiProperties) -> Unit
 
@@ -71,7 +75,7 @@ public class ComponentBuilder(
 
     public fun set(name: String): PropertySetter = PropertySetter(name, this)
 
-    public class PropertySetter internal constructor(
+    public inner class PropertySetter internal constructor(
         internal val name: String,
         internal val scope: ComponentBuilder
     )

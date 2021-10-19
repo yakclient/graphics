@@ -1,4 +1,4 @@
-package net.yakclient.graphics.api.gui.state
+package net.yakclient.graphics.api.state
 
 import kotlin.properties.Delegates
 

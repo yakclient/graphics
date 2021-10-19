@@ -1,6 +1,6 @@
 package net.yakclient.graphics.opengl2.components
 
-import net.yakclient.graphics.api.gui.GuiProperties
+import net.yakclient.graphics.api.GuiProperties
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.components.Text
 import net.yakclient.graphics.opengl2.render.GLRenderingData
@@ -41,5 +41,7 @@ public class OpenGL2Text : Text() {
                 x += data.width
             }
         }
+//        return ArrayList()
+
     }
 }

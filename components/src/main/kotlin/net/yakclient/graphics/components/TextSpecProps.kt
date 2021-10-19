@@ -1,8 +1,8 @@
 package net.yakclient.graphics.components
 
-import net.yakclient.graphics.api.gui.GuiProperties
-import net.yakclient.graphics.api.gui.IllegalPropertyException
-import net.yakclient.graphics.api.gui.SpecifiedProperties
+import net.yakclient.graphics.api.GuiProperties
+import net.yakclient.graphics.api.IllegalPropertyException
+import net.yakclient.graphics.api.SpecifiedProperties
 import net.yakclient.graphics.util.Color
 import net.yakclient.graphics.util.ColorCodes
 import net.yakclient.graphics.util.YakFont
