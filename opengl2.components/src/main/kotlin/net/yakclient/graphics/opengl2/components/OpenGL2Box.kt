@@ -45,8 +45,6 @@ public class OpenGL2Box: Box() {
         val lastKeyDown = this.useState(4, false) { YakGraphicsUtils.CHAR_NONE }
         val wasLastTickKeyDown = this.useState(5, false) { false }
 
-        // TODO figure out something better for this
-
 //        val isMouseOver =
 
         //  Event implementation
