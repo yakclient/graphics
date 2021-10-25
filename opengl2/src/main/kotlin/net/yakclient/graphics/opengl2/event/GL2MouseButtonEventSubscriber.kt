@@ -1,11 +1,10 @@
-package net.yakclient.graphics.opengl2.hook
+package net.yakclient.graphics.opengl2.event
 
 import io.github.emilyydev.asp.Provides
 import net.yakclient.graphics.api.hook.HookTickManager
 import net.yakclient.graphics.api.hook.MouseButtonEventSubscriber
 import net.yakclient.graphics.api.hook.KeyActionData
 import net.yakclient.graphics.api.hook.Ticking
-import net.yakclient.graphics.util.YakGraphicsUtils
 import org.lwjgl.input.Mouse
 
 @Provides(MouseButtonEventSubscriber::class)

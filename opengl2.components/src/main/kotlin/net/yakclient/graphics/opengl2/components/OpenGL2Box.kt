@@ -17,7 +17,6 @@ import java.util.function.Consumer
 public class OpenGL2Box: Box() {
 
     override fun renderNatively(props: GuiProperties): List<RenderingContext> {
-//        println("something")
         val width: Double = props.requireAs("width")
         val height: Double = props.requireAs("height")
         val x: Double = props.requireAs("x")
@@ -55,7 +54,6 @@ public class OpenGL2Box: Box() {
         val isMouseOver = useState(6, false) {false}
 
         useEvent(0, onMouseMove) {
-            println("mouse moving")
             isMouseOver.value = rectBounding(it.absoluteX, it.absoluteY, y, x, x + width, y + height)
 
             if (isMouseOver.value) mouseMove()
@@ -75,7 +73,6 @@ public class OpenGL2Box: Box() {
         }
 
         useEvent(1, onMouseClick) { (key, state) ->
-            println("mouse clicked with key: $key")
             if (isMouseOver.value && (state && (key == YakGraphicsUtils.MOUSE_LEFT_BUTTON))) mouseDown()// onMouseDown.ifPresent { obj: Runnable -> obj.run() }
             if (key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && state) {
                 if (System.currentTimeMillis() - lastClick.value <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME && isMouseOver.value) {
@@ -93,7 +90,6 @@ public class OpenGL2Box: Box() {
         }
 
         useEvent(2, onKeyboardAction) { (key) ->
-            println("key pressed $key")
             if (focused.value && key != YakGraphicsUtils.CHAR_NONE) {
                 lastKeyDown.value = key
                 keyDown(key)

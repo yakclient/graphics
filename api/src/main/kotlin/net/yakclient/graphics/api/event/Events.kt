@@ -1,6 +1,6 @@
-@file:JvmName("Hooks")
+@file:JvmName("Events")
 
-package net.yakclient.graphics.api.hook
+package net.yakclient.graphics.api.event
 
 public val onMouseMove: Class<MouseMoveSubscriber> = MouseMoveSubscriber::class.java
 
@@ -13,7 +13,7 @@ public data class MouseMoveData(
     public val y: Int,
     public val absoluteX: Int,
     public val absoluteY: Int,
-) : HookData
+) : EventData
 
 public abstract class MouseMoveSubscriber : EventSubscriber<MouseMoveData>()
 
@@ -21,7 +21,7 @@ public data class KeyActionData(
     public val key: Int,
     //True up, False down
     public val state: Boolean
-) : HookData
+) : EventData
 
 public abstract class MouseButtonEventSubscriber : EventSubscriber<KeyActionData>()
 

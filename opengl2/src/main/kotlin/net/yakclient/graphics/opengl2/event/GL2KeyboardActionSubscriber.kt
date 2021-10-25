@@ -1,15 +1,12 @@
-package net.yakclient.graphics.opengl2.hook
+package net.yakclient.graphics.opengl2.event
 
 import io.github.emilyydev.asp.Provides
-import net.yakclient.graphics.api.hook.HookTickManager
-import net.yakclient.graphics.api.hook.KeyActionData
-import net.yakclient.graphics.api.hook.KeyboardActionSubscriber
-import net.yakclient.graphics.api.hook.Ticking
+import net.yakclient.graphics.api.event.*
 import org.lwjgl.input.Keyboard
 
 @Provides(KeyboardActionSubscriber::class)
 public class GL2KeyboardActionSubscriber : KeyboardActionSubscriber(), Ticking {
-    override fun hook(): Unit = HookTickManager.register(this)
+    override fun hook(): Unit = TickManager.register(this)
 
     override fun tick() {
         while (Keyboard.next()) {

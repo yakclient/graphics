@@ -1,11 +1,13 @@
 package net.yakclient.graphics.api
 
-import net.yakclient.graphics.api.hook.*
+import net.yakclient.graphics.api.event.EventData
+import net.yakclient.graphics.api.event.EventHook
+import net.yakclient.graphics.api.event.EventManager
+import net.yakclient.graphics.api.event.EventSubscriber
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.api.state.GuiState
 import net.yakclient.graphics.api.state.ObservableState
 import net.yakclient.graphics.api.state.Stateful
-import java.util.*
 
 public abstract class NativeGuiComponent{
     private val events: MutableSet<Int> = HashSet()
@@ -31,7 +33,7 @@ public abstract class NativeGuiComponent{
 //        return this.useState(key, triggersReRender) { null }
 //    }
 
-    public fun <T: HookData> useEvent(id: Int, event: Class<out EventSubscriber<T>>, callback: Hook<T>) : Unit = if (events.add(id)) { HookManager.subscribe(event, callback); } else Unit
+    public fun <T: EventData> useEvent(id: Int, event: Class<out EventSubscriber<T>>, callback: EventHook<T>) : Unit = if (events.add(id)) { EventManager.subscribe(event, callback); } else Unit
 
 //    public fun onMouseMove(callback: Hook<MouseMoveData>): Unit = HookManager.subscribe<MouseMoveSubscriber, MouseMoveData>(callback)
 //

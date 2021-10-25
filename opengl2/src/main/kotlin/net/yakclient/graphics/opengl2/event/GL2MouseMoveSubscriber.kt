@@ -1,4 +1,4 @@
-package net.yakclient.graphics.opengl2.hook
+package net.yakclient.graphics.opengl2.event
 
 import io.github.emilyydev.asp.Provides
 import net.yakclient.graphics.api.hook.HookTickManager
