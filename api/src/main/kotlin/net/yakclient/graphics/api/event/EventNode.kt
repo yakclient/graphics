@@ -71,7 +71,8 @@ public class BinaryEventNode<E : EventData, F : FilterData>(
     previous: FilteredEventNode<*, F>,
     private val predicate: BiPredicate<E, F> = java.util.function.BiPredicate { _, _ -> true },
 ) : EventNode<E>(subscriber, dispatcher, previous) {
-    override fun satisfies(initial: E): Boolean = predicate.test(initial, (previous as FilteredEventNode<*, F>).datum)
+    override fun satisfies(initial: E): Boolean =
+        (previous?.isSatisfied ?: true) && predicate.test(initial, (previous as FilteredEventNode<*, F>).datum)
 
     public fun <T : EventData> next(
         subscriber: Class<out EventSubscriber<T>>,

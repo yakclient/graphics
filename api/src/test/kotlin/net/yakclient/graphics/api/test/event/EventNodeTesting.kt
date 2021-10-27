@@ -39,9 +39,11 @@ class EventNodeTesting {
     fun `Test with multiple predicates and filtering`() {
         EventManager.forceLoad(TestEventOneSubscriber())
         val subscriber = TestEventOneSubscriber::class.java
-        UnaryEventNode(EventNodeDispatcher(), subscriber, null) {
+        val node = UnaryEventNode(EventNodeDispatcher(), subscriber, null) {
             true
-        }.next(subscriber).filter {
+        }
+
+        node.next(subscriber).filter {
             object : FilterData {}
         }.next(subscriber) { event, filter ->
             println("FILTERED $filter")
@@ -53,6 +55,8 @@ class EventNodeTesting {
         TickManager.tickThem()
         TickManager.tickThem()
         TickManager.tickThem()
+        
+        println(node.isSatisfied)
     }
 }
 

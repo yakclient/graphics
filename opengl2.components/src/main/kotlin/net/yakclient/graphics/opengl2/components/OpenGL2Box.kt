@@ -1,15 +1,16 @@
 package net.yakclient.graphics.opengl2.components
 
 import net.yakclient.graphics.api.GuiProperties
+import net.yakclient.graphics.api.event.onKeyboardAction
+import net.yakclient.graphics.api.event.onMouseClick
+import net.yakclient.graphics.api.event.onMouseMove
 import net.yakclient.graphics.api.hook.onKeyboardAction
 import net.yakclient.graphics.api.hook.onMouseClick
-import net.yakclient.graphics.api.hook.onMouseMove
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.opengl2.render.GLRenderingData
 import net.yakclient.graphics.opengl2.render.VerticeRenderingContext
 import net.yakclient.graphics.util.*
-import org.lwjgl.Sys
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
 import java.util.function.Consumer
@@ -52,6 +53,8 @@ public class OpenGL2Box: Box() {
         val lastTickMousePos = this.useState(2, false) { Vertice(Mouse.getX(), Mouse.getY()) }
 
         val isMouseOver = useState(6, false) {false}
+
+
 
         useEvent(0, onMouseMove) {
             isMouseOver.value = rectBounding(it.absoluteX, it.absoluteY, y, x, x + width, y + height)
