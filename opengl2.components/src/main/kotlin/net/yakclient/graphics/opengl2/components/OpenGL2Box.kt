@@ -4,8 +4,6 @@ import net.yakclient.graphics.api.GuiProperties
 import net.yakclient.graphics.api.event.onKeyboardAction
 import net.yakclient.graphics.api.event.onMouseClick
 import net.yakclient.graphics.api.event.onMouseMove
-import net.yakclient.graphics.api.hook.onKeyboardAction
-import net.yakclient.graphics.api.hook.onMouseClick
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.opengl2.render.GLRenderingData
@@ -54,7 +52,17 @@ public class OpenGL2Box: Box() {
 
         val isMouseOver = useState(6, false) {false}
 
-
+        useEvent(10) {
+            chain(onMouseClick) {
+                it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state
+            }.filter {
+                System.currentTimeMillis()
+            }.next(onMouseClick) { event, data ->
+                event.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && event.state && System.currentTimeMillis()-data <= 10000
+            }.event {
+                println("double click!1?")
+            }
+        }
 
         useEvent(0, onMouseMove) {
             isMouseOver.value = rectBounding(it.absoluteX, it.absoluteY, y, x, x + width, y + height)

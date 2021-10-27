@@ -1,13 +1,11 @@
 package net.yakclient.graphics.api
 
-import net.yakclient.graphics.api.event.EventData
-import net.yakclient.graphics.api.event.EventHook
-import net.yakclient.graphics.api.event.EventManager
-import net.yakclient.graphics.api.event.EventSubscriber
+import net.yakclient.graphics.api.event.*
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.api.state.GuiState
 import net.yakclient.graphics.api.state.ObservableState
 import net.yakclient.graphics.api.state.Stateful
+import java.util.function.Predicate
 
 public abstract class NativeGuiComponent{
     private val events: MutableSet<Int> = HashSet()
@@ -34,6 +32,16 @@ public abstract class NativeGuiComponent{
 //    }
 
     public fun <T: EventData> useEvent(id: Int, event: Class<out EventSubscriber<T>>, callback: EventHook<T>) : Unit = if (events.add(id)) { EventManager.subscribe(event, callback); } else Unit
+
+    public fun useEvent(id: Int, callback: ChainedEventReceiver.() -> Unit) : Unit = if (events.add(id)) callback(ChainedEventReceiver()) else Unit
+
+//    public fun <T : EventData> useChainedEvent(id: Int, first: Class<out EventSubscriber<T>>, firstPredicate: Predicate<T>) : UnaryEventNode<T> = UnaryEventNode(
+//        EventNodeDispatcher(), first, null, firstPredicate)
+
+    public inner class ChainedEventReceiver internal constructor() {
+        public fun <T : EventData> chain(first: Class<out EventSubscriber<T>>, firstPredicate: Predicate<T>) : UnaryEventNode<T> = UnaryEventNode(
+            EventNodeDispatcher(), first, null, firstPredicate)
+    }
 
 //    public fun onMouseMove(callback: Hook<MouseMoveData>): Unit = HookManager.subscribe<MouseMoveSubscriber, MouseMoveData>(callback)
 //

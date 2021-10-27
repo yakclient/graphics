@@ -4,9 +4,7 @@ import java.util.function.BiPredicate
 import java.util.function.Consumer
 import java.util.function.Predicate
 
-public fun interface EventFilter<in E : EventData, out F : FilterData> : (E) -> F
-
-public interface FilterData
+public fun interface EventFilter<in E : EventData, out F : Any> : (E) -> F
 
 public abstract class EventNode<E : EventData>(
     internal val subscriber: Class<out EventSubscriber<E>>,
@@ -27,15 +25,15 @@ public abstract class EventNode<E : EventData>(
         dispatcher.register(this)
     }
 
-    public fun <F : FilterData> filter(filter: EventFilter<E, F>): FilteredEventNode<E, F> =
+    public fun <F : Any> filter(filter: EventFilter<E, F>): FilteredEventNode<E, F> =
         FilteredEventNode(dispatcher, filter, this)
 
     protected fun register(): Unit = dispatcher.register(this)
 
-    public abstract fun satisfies(initial: E): Boolean
+    internal abstract fun satisfies(initial: E): Boolean
 }
 
-public class FilteredEventNode<E : EventData, F : FilterData>(
+public class FilteredEventNode<E : EventData, F : Any>(
     dispatcher: EventNodeDispatcher,
     private val filter: EventFilter<E, F>,
     private val node: EventNode<E>
@@ -47,7 +45,8 @@ public class FilteredEventNode<E : EventData, F : FilterData>(
         predicate: BiPredicate<T, F> = java.util.function.BiPredicate { _: T, _: F -> true }
     ): BinaryEventNode<T, F> = BinaryEventNode(dispatcher, subscriber, this, predicate).also { register() }
 
-    override fun satisfies(initial: E): Boolean = node.satisfies(initial).also { this.datum = this.filter(initial) }
+    override fun satisfies(initial: E): Boolean =
+        node.satisfies(initial).also { if (it) this.datum = this.filter(initial) }
 }
 
 public class UnaryEventNode<E : EventData>(
@@ -65,7 +64,7 @@ public class UnaryEventNode<E : EventData>(
 }
 
 //Don't mistake this for a puny exception. It'll crash your app.
-public class BinaryEventNode<E : EventData, F : FilterData>(
+public class BinaryEventNode<E : EventData, F : Any>(
     dispatcher: EventNodeDispatcher,
     subscriber: Class<out EventSubscriber<E>>,
     previous: FilteredEventNode<*, F>,

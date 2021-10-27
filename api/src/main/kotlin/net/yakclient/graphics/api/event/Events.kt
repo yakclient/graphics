@@ -2,6 +2,9 @@
 
 package net.yakclient.graphics.api.event
 
+import java.util.function.Predicate
+
+
 public val onMouseMove: Class<MouseMoveSubscriber> = MouseMoveSubscriber::class.java
 
 public val onMouseClick: Class<MouseButtonEventSubscriber> = MouseButtonEventSubscriber::class.java

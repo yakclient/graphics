@@ -60,28 +60,28 @@ fun BasicTestComponent(): Component = { props ->
                 set("backgroundimage") to YakTextureFactory.loadTexture(
                     javaClass.getResource("/wood.png") ?: throw RuntimeException("Resource not found!")
                 )
-                set("onclick") to Runnable {
-                    println("CLICKED!")
-                }
-
-                set("ondbclick") to Runnable {
-                    println("double cooked")
-                }
-
-                set("onmousedown") to Runnable {
-                    println("mouse down")
-                }
-
-                set("onmousemove") to Runnable {
-                    println("mouse up")
-                }
-
-                set("onmouseout") to Runnable {
-                    println("mouse out")
-                }
-
-                set("onkeydown") to Consumer<Int> {
-                    println("key down: $it")
-                }
+//                set("onclick") to Runnable {
+//                    println("CLICKED!")
+//                }
+//
+//                set("ondbclick") to Runnable {
+//                    println("double cooked")
+//                }
+//
+//                set("onmousedown") to Runnable {
+//                    println("mouse down")
+//                }
+//
+//                set("onmousemove") to Runnable {
+//                    println("mouse up")
+//                }
+//
+//                set("onmouseout") to Runnable {
+//                    println("mouse out")
+//                }
+//
+//                set("onkeydown") to Consumer<Int> {
+//                    println("key down: $it")
+//                }
             }
 }
