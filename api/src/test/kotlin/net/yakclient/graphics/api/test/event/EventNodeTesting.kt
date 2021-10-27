@@ -9,7 +9,7 @@ class EventNodeTesting {
     fun `Test the Unary event node with a single predicate`() {
         EventManager.forceLoad(TestEventOneSubscriber())
         val subscriber = TestEventOneSubscriber::class.java
-        UnaryEventNode(subscriber) {
+        UnaryEventNode(EventNodeDispatcher(), subscriber, null) {
             true
         }.event {
             println("Event got through")
@@ -22,20 +22,24 @@ class EventNodeTesting {
     fun `Test with multiple predicates`() {
         EventManager.forceLoad(TestEventOneSubscriber())
         val subscriber = TestEventOneSubscriber::class.java
-        UnaryEventNode(subscriber) {
+        UnaryEventNode(EventNodeDispatcher(), subscriber, null) {
             true
         }.next(subscriber) {
             true
         }.event {
             println("Did this get through????")
         }
+
+        TickManager.tickThem()
+        TickManager.tickThem()
+
     }
 
     @Test
     fun `Test with multiple predicates and filtering`() {
         EventManager.forceLoad(TestEventOneSubscriber())
         val subscriber = TestEventOneSubscriber::class.java
-        UnaryEventNode(subscriber) {
+        UnaryEventNode(EventNodeDispatcher(), subscriber, null) {
             true
         }.next(subscriber).filter {
             object : FilterData {}
@@ -46,6 +50,8 @@ class EventNodeTesting {
             println("Yay!")
         }
 
+        TickManager.tickThem()
+        TickManager.tickThem()
         TickManager.tickThem()
     }
 }
