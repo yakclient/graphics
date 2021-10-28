@@ -51,7 +51,7 @@ public class OpenGL2Box: Box() {
         val lastTickMousePos = this.useState(2, false) { Vertice(Mouse.getX(), Mouse.getY()) }
 
         val isMouseOver = useState(6, false) {false}
-
+        //TODO the reason this doesnt work is because the key press has an up AND down event, so the first one is getting called with down then the second one is getting called with up, fails and then returns to the beginning.... it sucks... ya
         useEvent(10) {
             chain(onMouseClick) {
                 it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state

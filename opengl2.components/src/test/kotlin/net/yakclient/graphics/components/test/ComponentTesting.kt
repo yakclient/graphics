@@ -49,17 +49,14 @@ fun BasicTestComponent(): Component = { props ->
         set("value") to "AYYY"
     }
 
-    var id = 1
-    for (x in 0 until 1000 step 100)
-        for (y in 0 until 1000 step 100)
-            build(use<Box>(id++)) {
-                set("x") to x
-                set("y") to y
-                set("width") to 64
-                set("height") to 64
-                set("backgroundimage") to YakTextureFactory.loadTexture(
-                    javaClass.getResource("/wood.png") ?: throw RuntimeException("Resource not found!")
-                )
+    build(use<Box>(1)) {
+        set("x") to 100
+        set("y") to 100
+        set("width") to 64
+        set("height") to 64
+        set("backgroundimage") to YakTextureFactory.loadTexture(
+            javaClass.getResource("/wood.png") ?: throw RuntimeException("Resource not found!")
+        )
 //                set("onclick") to Runnable {
 //                    println("CLICKED!")
 //                }
@@ -83,5 +80,5 @@ fun BasicTestComponent(): Component = { props ->
 //                set("onkeydown") to Consumer<Int> {
 //                    println("key down: $it")
 //                }
-            }
+    }
 }
