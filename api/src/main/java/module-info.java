@@ -14,6 +14,7 @@ module yakclient.graphics.api {
 //    requires lwjgl.util;
 //    requires slick.util;
     requires kotlin.stdlib;
+    requires kotlin.reflect;
 
     uses EventSubscriber;
 

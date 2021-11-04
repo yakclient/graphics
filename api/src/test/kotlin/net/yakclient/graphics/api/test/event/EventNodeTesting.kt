@@ -6,55 +6,54 @@ import org.junit.jupiter.api.Test
 
 class EventNodeTesting {
     @Test
-    fun `Test the Unary event node with a single predicate`() {
-        EventManager.forceLoad(TestEventOneSubscriber())
-        val subscriber = TestEventOneSubscriber::class.java
-        UnaryEventNode(EventNodeDispatcher(), subscriber, null) {
+    fun `Test passing Unary event Stage`() {
+        val stage = UnaryPredicateStage(TestEventOne::class.java) {
             true
-        }.event {
-            println("Event got through")
         }
+        val apply = stage.apply(TestEventOne())
 
-        TickManager.tickThem()
+        println(stage.isSatisfied)
+        (apply as SatisfiableEventStage.EventStageReference).fail()
+        println(stage.isSatisfied)
     }
 
     @Test
-    fun `Test with multiple predicates`() {
-        EventManager.forceLoad(TestEventOneSubscriber())
-        val subscriber = TestEventOneSubscriber::class.java
-        UnaryEventNode(EventNodeDispatcher(), subscriber, null) {
-            true
-        }.next(subscriber) {
-            true
-        }.event {
-            println("Did this get through????")
+    fun `Test failing Unary event Stage`() {
+        val stage = UnaryPredicateStage(TestEventOne::class.java) {
+            false
         }
 
-        TickManager.tickThem()
-        TickManager.tickThem()
+        assert(stage.apply(TestEventOne()) is FailedEventData)
+    }
 
+    fun testStageSatisfaction(stage: List<SatisfiableEventStage<*>>) : List<Boolean> = stage.map { it.isSatisfied }
+
+    @Test
+    fun `Test event stage pipeline`() {
+        val stages = listOf(
+            UnaryPredicateStage(TestEventOne::class.java) {
+                true
+            },
+            UnaryPredicateStage(TestEventOne::class.java) {
+                true
+            }
+        )
+
+        println(testStageSatisfaction(stages))
+
+        println(EventPipeline(stages).dispatch(TestEventOne()))
     }
 
     @Test
-    fun `Test with multiple predicates and filtering`() {
-        EventManager.forceLoad(TestEventOneSubscriber())
-        val subscriber = TestEventOneSubscriber::class.java
-        UnaryEventNode(EventNodeDispatcher(), subscriber, null) {
-            true
-        }.filter {
-            System.currentTimeMillis()
-        }.next(subscriber) { event, filter ->
-            println(System.currentTimeMillis() - filter)
-            System.currentTimeMillis() - filter < 1000
-        }.event {
-            println("Yay!")
+    fun `Test event providing`() {
+        val stage = EventProviderStage<TestEventOne, String> {
+            "yay"
         }
 
-        TickManager.tickThem()
-        TickManager.tickThem()
-//        TickManager.tickThem()
-
+        println(stage.apply(TestEventOne()))
     }
+
+
 }
 
 class TestEventOne : EventData

@@ -22,7 +22,7 @@ public abstract class MouseMoveSubscriber : EventSubscriber<MouseMoveData>()
 
 public data class KeyActionData(
     public val key: Int,
-    //True up, False down
+    //false up, true down
     public val state: Boolean
 ) : EventData
 
