@@ -4,8 +4,9 @@ public fun interface EventHook<E : EventData> : (E) -> Unit
 
 public interface EventData
 
-public abstract class HierarchicalEventData<T: EventData>(
-    public val event: T
+public abstract class HierarchicalEventData<T : EventData>(
+    public val event: T,
+    public val type: Class<out EventData>,
 ) : EventData
 
 public abstract class EventSubscriber<E : EventData> {

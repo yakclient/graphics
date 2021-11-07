@@ -13,7 +13,7 @@ class EventNodeTesting {
         val apply = stage.apply(TestEventOne())
 
         println(stage.isSatisfied)
-        (apply as SatisfiableEventStage.EventStageReference).fail()
+        ((apply as EventMetaData).ref as SatisfiableEventStage<*>).isSatisfied = false
         println(stage.isSatisfied)
     }
 
@@ -26,7 +26,8 @@ class EventNodeTesting {
         assert(stage.apply(TestEventOne()) is FailedEventData)
     }
 
-    fun testStageSatisfaction(stage: List<SatisfiableEventStage<*>>) : List<Boolean> = stage.map { it.isSatisfied }
+    fun testStageSatisfaction(stage: List<EventStage>): List<Boolean> =
+        stage.filterIsInstance<SatisfiableEventStage<*>>().map { it.isSatisfied }
 
     @Test
     fun `Test event stage pipeline`() {
@@ -44,16 +45,28 @@ class EventNodeTesting {
         println(EventPipeline(stages).dispatch(TestEventOne()))
     }
 
+
+
     @Test
-    fun `Test event providing`() {
-        val stage = EventProviderStage<TestEventOne, String> {
-            "yay"
-        }
+    fun `Test event providing and binary consuming`() {
+        val first = UnaryPredicateStage(TestEventOne::class.java) { true }
+        val stages = listOf(
+            first,
+            EventProviderStage(first, TestEventOne::class.java) {
+                "yay"
+            },
+            BinaryPredicateStage<TestEventOne, String> { _, data ->
+                println(data)
+                data == "yay"
+            }
+        )
 
-        println(stage.apply(TestEventOne()))
+
+        println(EventPipeline(stages).dispatch(TestEventOne()))
+
+        println(testStageSatisfaction(stages))
+
     }
-
-
 }
 
 class TestEventOne : EventData
