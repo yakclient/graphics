@@ -3,58 +3,78 @@ package net.yakclient.graphics.api.event
 import java.util.function.BiPredicate
 import java.util.function.Predicate
 
-public class FailedEventData internal constructor() : EventData
+public open class IgnoredEventData internal constructor() : EventData
+
+public data class SuccessfulEventData internal constructor(
+    override val event: EventData
+) : HierarchicalEventData
 
 public data class BinaryEventData<out T : EventData, out P : Any> internal constructor(
-    public val event: T,
+    public override val event: T,
     public val other: P
-) : EventData
+) : HierarchicalEventData
 
-public abstract class SatisfiableEventStage<T : EventData>(
+
+public data class EventMetaData(
+    public val ref: EventStage,
+    public val neededEval: Boolean,
+    public override val event: EventData,
+    public val previous: EventMetaData?
+) : HierarchicalEventData
+
+public abstract class SatisfiableEventStage<in T : EventData>(
     private val type: Class<T>,
 ) : EventStage {
     public var isSatisfied: Boolean = false
 
+    public var `re-eval`: Boolean = false
+
     override fun apply(t: EventData): EventData =
         // TODO redo logic about re-evaluation and stuff
-        if (isSatisfied) EventMetaData(
+        if (t is SuccessfulEventData) IgnoredEventData()
+        else if (t is IgnoredEventData) t
+        else if (isSatisfied && !`re-eval`) EventMetaData(
             this,
             false,
             if (t is EventMetaData) t.event else t,
-            if (t is EventMetaData) t else null,
-            t::class.java
+            if (t is EventMetaData) t else null
         )
         else {
-            // TODO redo, will break if is not satisifed and type is not of expected data type
-            if (type.isAssignableFrom(t::class.java)) isSatisfied = satisfies(t as T)
-            else if (EventMetaData::class.java.isAssignableFrom(t::class.java) && type.isAssignableFrom((t as EventMetaData).type)) isSatisfied =
-                satisfies(t.event as T)
-            if (isSatisfied) EventMetaData(
-                this,
-                true,
-                if (t is EventMetaData) t.event else t,
-                if (t is EventMetaData) t else null,
-                t::class.java
-            ) else FailedEventData().apply {
-                tailrec fun recursivelyFail(ref: EventMetaData) {
-                   if( ref.ref is SatisfiableEventStage<*>) ref.ref.isSatisfied = false
-                    if (ref.next != null) recursivelyFail(ref.next)
+            (if (type.isAssignableFrom(t::class.java)) t as T
+            else if (t is HierarchicalEventData && type.isAssignableFrom(t.event::class.java)) t.event as T
+            else null)?.let { actual ->
+                isSatisfied = satisfies(actual)
+
+                if (isSatisfied) SuccessfulEventData(actual)
+                else {
+                    IgnoredEventData().apply {
+                        tailrec fun recursivelyFail(meta: EventMetaData) {
+                            if (meta.ref is SatisfiableEventStage<*>) meta.ref.isSatisfied = false
+                            if (meta.previous != null) recursivelyFail(meta.previous)
+                        }
+                        if (t is EventMetaData) recursivelyFail(t)
+                    }
                 }
-                if (t is EventMetaData) recursivelyFail(t)
-            }
+            } ?: IgnoredEventData()
+
+
+//            if (type.isAssignableFrom(t::class.java)) isSatisfied = satisfies(t as T)
+//            else if (EventMetaData::class.java.isAssignableFrom(t::class.java) && type.isAssignableFrom((t as EventMetaData).event::class.java)) isSatisfied =
+//                satisfies(t.event as T)
+
         }
 
     public abstract fun satisfies(data: T): Boolean
-
 }
 
+public fun eventOf(it: EventData): EventData = if (it is HierarchicalEventData) it.event else it
 
-public fun <T : EventData> eventOf(event: EventData, expected: Class<T>): T? =
-    if (event is EventMetaData && expected.isAssignableFrom(event.type)) event.event as T
-    else if (expected.isAssignableFrom(event::class.java)) event as T
-    else null
+public fun <T : EventData> eventOf(it: EventData, expected: Class<T>): T? {
+    val eventOf = eventOf(it)
+    return if (expected.isAssignableFrom(eventOf::class.java)) eventOf as T else null
+}
 
-public inline fun <reified T : EventData> eventOf(event: EventData): T? = eventOf(event, T::class.java)
+//public inline fun <reified T : EventData> eventOf(event: EventData): T? = eventOf(event, T::class.java)
 
 public abstract class PredicateEventStage<T : EventData>(type: Class<T>) : SatisfiableEventStage<T>(type)
 
@@ -81,15 +101,6 @@ public class BinaryPredicateStage<T : EventData, P : Any>(
     override fun satisfies(data: BinaryEventData<T, P>): Boolean = predicate.test(data.event, data.other)
 }
 
-public data class EventMetaData(
-    public val ref: EventStage,
-    public val neededEval: Boolean,
-    public val event: EventData,
-    public val next: EventMetaData?,
-    public val type: Class<out EventData>
-) : EventData {
-//    public fun fail() =
-}
 
 //public class EventStageReference(
 //    public val stage: SatisfiableEventStage<*>,

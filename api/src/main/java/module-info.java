@@ -17,7 +17,6 @@ module yakclient.graphics.api {
     requires kotlin.reflect;
 
     uses EventSubscriber;
-
     uses DeferredComponentProvider;
 //    uses MouseMoveSubscriber;
 //    uses MouseButtonEventSubscriber;
