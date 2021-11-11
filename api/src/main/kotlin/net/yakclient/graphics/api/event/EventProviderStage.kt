@@ -10,7 +10,12 @@ public class EventProviderStage<T : EventData, P : Any>(
 
     override fun apply(t: EventData): EventData {
         if (t is SuccessfulEventData && type.isAssignableFrom(t.event::class.java)) last = provider.apply(t.event as T)
-        return EventMetaData(this, false, BinaryEventData(eventOf(t), last), if (t is EventMetaData) t else null)
+        return if (this::last.isInitialized) if (t is SuccessfulEventData) IgnoredEventData() else EventMetaData(
+            this,
+            false,
+            BinaryEventData(eventOf(t), last),
+            if (t is EventMetaData) t else null
+        ) else t
     }
 //        (t.takeIf { t is HierarchicalEventData && type.isAssignableFrom(t.event::class.java) }
 //            ?.let { it as HierarchicalEventData }

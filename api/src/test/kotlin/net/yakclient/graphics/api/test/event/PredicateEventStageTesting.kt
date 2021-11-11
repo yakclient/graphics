@@ -2,8 +2,6 @@ package net.yakclient.graphics.api.test.event
 
 import net.yakclient.graphics.api.event.*
 import org.junit.jupiter.api.Test
-import java.lang.invoke.MethodHandles
-import java.lang.reflect.Field
 
 
 class PredicateEventStageTesting {
@@ -14,8 +12,6 @@ class PredicateEventStageTesting {
         }
         val apply = stage.apply(TestEventOne())
 
-        println(stage.isSatisfied)
-        ((apply as EventMetaData).ref as SatisfiableEventStage<*>).isSatisfied = false
         println(stage.isSatisfied)
     }
 
@@ -126,7 +122,7 @@ class PredicateEventStageTesting {
         val stages = listOf(
             UnaryPredicateStage(TestEventTwo::class.java) {
                 it.int == 2
-            }.apply { `re-eval` = true }
+            }.apply { reEval = true }
         )
 
         val pipeline = EventPipeline(stages)
@@ -156,12 +152,12 @@ class PredicateEventStageTesting {
         val stages = listOf(
             UnaryPredicateStage(TestEventOne::class.java) {
                 true
-            }.apply { `re-eval` = true },
+            }.apply { reEval = true },
             UnaryPredicateStage(TestEventTwo::class.java) {
                 true
             },
             CheckPointStage(),
-            UnaryPredicateStage(TestEventOne::class.java) {
+            UnaryPredicateStage(TestEventTwo::class.java) {
                 true
             },
             EventProviderStage(TestEventTwo::class.java) {
@@ -174,23 +170,40 @@ class PredicateEventStageTesting {
                 true
             }
         )
-
         val pipeline = EventPipeline(stages)
 
         pipeline.dispatch(TestEventOne())
         pipeline.dispatch(TestEventTwo(1))
-        pipeline.dispatch(TestEventOne())
         pipeline.dispatch(TestEventTwo(3))
         pipeline.dispatch(TestEventOne())
         pipeline.dispatch(TestEventOne())
 
-        testStageSatisfaction(stages)
+        println(testStageSatisfaction(stages))
+    }
+
+    @Test
+    fun `Test mis-configured Example`() {
+        val stages = listOf(
+            CheckPointStage(),
+            EventProviderStage(TestEventTwo::class.java) { },
+            UnaryPredicateStage(TestEventTwo::class.java) { true }.apply { reEval = true },
+            BinaryPredicateStage<TestEventOne, Any> { first, second ->
+                assert(second is Unit)
+                true
+            }.apply { reEval = true },
+            CheckPointStage(),
+            CheckPointStage(),
+            UnaryPredicateStage(TestEventOne::class.java) { true }.apply { reEval = true }
+
+        )
+        val pipeline = EventPipeline(stages)
+
+        pipeline.dispatch(TestEventTwo(1))
+        pipeline.dispatch(TestEventTwo(1))
+        pipeline.dispatch(TestEventOne())
+        //Reasonably sure this works as expected, output should be [true, false, true] as everything is evaluable and there are basically no dependencies.
+        println(testStageSatisfaction(stages))
     }
 }
 
 
-class TestEventOne : EventData
-
-class TestEventTwo(
-    val int: Int
-) : EventData
