@@ -52,52 +52,54 @@ public class OpenGL2Box : Box() {
         val isMouseOver = useState(6, false) { false }
         //TODO the reason this doesnt work is because the key press has an up AND down event, so the first one is getting called with down then the second one is getting called with up, fails and then returns to the beginning.... it sucks... ya
         eventScope {
-            chain(onMouseClick) {
-                it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state
-            }.provide {
-                System.currentTimeMillis()
-            }.next(onMouseClick) { event, data ->
-                event.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && event.state && System.currentTimeMillis() - data <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME
-            }.ignore {
-                it.state
-            }.event { doubleClick() }
 
-            chain(onMouseClick) {
-                it.state
-            }.next(onMouseClick) {
-                !it.state
-            }.event { mouseClick() }
-
-            chain(onMouseMove) {
-                rectBounding(it.x, it.y, x, y, x + width, y + height)
-            }.next(onMouseClick).event {
-                if (it.state) mouseDown()
-                else mouseUp()
-            }
-
-            subscribe(onMouseClick) {
-                if (it.state) mouseDown
-                else mou
-            }
-//            subscribe(onMouseMove) {
-//                isMouseOver.value = rectBounding(it.absoluteX, it.absoluteY, y, x, x + width, y + height)
-//
-//                if (isMouseOver.value) mouseMove()
-//                else mouseOut()
-//
-////            val lastMousePosition: Vertice = lastTickMousePos.value
-////            if (lastMousePosition == Vertice(
-////                    Mouse.getX(),
-////                    Mouse.getY()
-////                ) && isMouseOver.value!!
-////            ) onHover()
-////            if (lastMousePosition != Vertice(
-////                    Mouse.getX(),
-////                    Mouse.getY()
-////                ) && isMouseOver.value!!
-////            ) onMouseMove()
-//            }
         }
+//            chain(onMouseClick) {
+//                it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state
+//            }.provide {
+//                System.currentTimeMillis()
+//            }.next(onMouseClick) { event, data ->
+//                event.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && event.state && System.currentTimeMillis() - data <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME
+//            }.ignore {
+//                it.state
+//            }.event { doubleClick() }
+//
+//            chain(onMouseClick) {
+//                it.state
+//            }.next(onMouseClick) {
+//                !it.state
+//            }.event { mouseClick() }
+//
+//            chain(onMouseMove) {
+//                rectBounding(it.x, it.y, x, y, x + width, y + height)
+//            }.next(onMouseClick).event {
+//                if (it.state) mouseDown()
+//                else mouseUp()
+//            }
+//
+//            subscribe(onMouseClick) {
+//                if (it.state) mouseDown
+//                else mou
+//            }
+////            subscribe(onMouseMove) {
+////                isMouseOver.value = rectBounding(it.absoluteX, it.absoluteY, y, x, x + width, y + height)
+////
+////                if (isMouseOver.value) mouseMove()
+////                else mouseOut()
+////
+//////            val lastMousePosition: Vertice = lastTickMousePos.value
+//////            if (lastMousePosition == Vertice(
+//////                    Mouse.getX(),
+//////                    Mouse.getY()
+//////                ) && isMouseOver.value!!
+//////            ) onHover()
+//////            if (lastMousePosition != Vertice(
+//////                    Mouse.getX(),
+//////                    Mouse.getY()
+//////                ) && isMouseOver.value!!
+//////            ) onMouseMove()
+////            }
+//        }
 
 
 //        eventScope(1, onMouseClick) { (key, state) ->

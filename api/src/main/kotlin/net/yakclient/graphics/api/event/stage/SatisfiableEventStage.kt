@@ -4,18 +4,17 @@ import net.yakclient.graphics.api.event.*
 import java.util.function.BiPredicate
 import java.util.function.Predicate
 
-public data class BinaryEventData<out T : EventData, out P : Any> internal constructor(
-    public override val event: T,
-    public val other: P
-) : HierarchicalEventData
+public data class BinaryEventData internal constructor(
+    public override var wrapped: EventData,
+    public val other: Any
+) : WrappedEventData
 
 
 public data class EventMetaData(
     public val ref: EventStage,
-    public val neededEval: Boolean,
-    public override val event: EventData,
+    public override var wrapped: EventData,
     public val previous: EventMetaData?
-) : HierarchicalEventData
+) : WrappedEventData
 
 public abstract class SatisfiableEventStage<T : EventData>(
     public val type: Class<T>,
@@ -25,25 +24,23 @@ public abstract class SatisfiableEventStage<T : EventData>(
     public var reEval: Boolean = false
 
     override fun apply(t: EventData): EventData {
-        return if (t is SuccessfulEventData) return IgnoredEventData()
+        if (t is SuccessfulEventData) return IgnoredEventData()
         else if (t is IgnoredEventData) return t
         else if (isSatisfied && !reEval) return EventMetaData(
-            this, false,
-            if (t is EventMetaData) t.event else t,
+            this, if (t is EventMetaData) t.wrapped else t,
             if (t is EventMetaData) t else null
         ) else {
             val event = eventOf(t, type) ?: return if (isSatisfied || reEval)
                 EventMetaData(
-                    this, false,
-                    if (t is EventMetaData) t.event else t,
+                    this, if (t is EventMetaData) t.wrapped else t,
                     if (t is EventMetaData) t else null
                 )
             else IgnoredEventData()
 
             isSatisfied = satisfies(event)
 
-            if (isSatisfied && !reEval) SuccessfulEventData(t)
-            else if (isSatisfied && reEval) EventMetaData(this, true, event, if (t is EventMetaData) t else null)
+            return if (isSatisfied && !reEval) SuccessfulEventData(event)
+            else if (isSatisfied && reEval) EventMetaData(this, event, if (t is EventMetaData) t else null)
             else IgnoredEventData().apply {
                 tailrec fun recursivelyFail(meta: EventMetaData) {
                     if (meta.ref is SatisfiableEventStage<*>) meta.ref.isSatisfied = false
@@ -53,45 +50,6 @@ public abstract class SatisfiableEventStage<T : EventData>(
             }
 
         }
-
-
-//        return if (t is SuccessfulEventData) IgnoredEventData()
-//        else if (t is IgnoredEventData) t
-//        else if (isSatisfied && !reEval) EventMetaData(
-//            this,
-//            false,
-//            if (t is EventMetaData) t.event else t,
-//            if (t is EventMetaData) t else null
-//        )
-//        else {
-//            (if (type.isAssignableFrom(t::class.java)) t as T
-//            else if (t is HierarchicalEventData && type.isAssignableFrom(t.event::class.java)) t.event as T
-//            else null)?.let { actual ->
-//                isSatisfied = satisfies(actual)
-//
-//                if (isSatisfied) if (reEval) EventMetaData(
-//                    this,
-//                    false,
-//                    if (t is EventMetaData) t.event else t,
-//                    if (t is EventMetaData) t else null
-//                ) else SuccessfulEventData(actual)
-//                else {
-//                    IgnoredEventData().apply {
-//                        tailrec fun recursivelyFail(meta: EventMetaData) {
-//                            if (meta.ref is SatisfiableEventStage<*>) meta.ref.isSatisfied = false
-//                            if (meta.previous != null) recursivelyFail(meta.previous)
-//                        }
-//                        if (t is EventMetaData) recursivelyFail(t)
-//                    }
-//                }
-//            } ?: t
-
-
-//            if (type.isAssignableFrom(t::class.java)) isSatisfied = satisfies(t as T)
-//            else if (EventMetaData::class.java.isAssignableFrom(t::class.java) && type.isAssignableFrom((t as EventMetaData).event::class.java)) isSatisfied =
-//                satisfies(t.event as T)
-
-//    }
     }
 
     public abstract fun satisfies(data: T): Boolean
@@ -109,26 +67,30 @@ public class UnaryPredicateStage<T : EventData>(
     override fun satisfies(data: T): Boolean = predicate.test(data)
 }
 
-private inline fun <reified T> classOf(): Class<T> = T::class.java
+//private inline fun <reified T> classOf(): Class<T> = T::class.java
+
+//IDEAS FOR THE EVENT STUFF
+// LINKED LIST:
+//  There is almost a linked list of nodes(LinkedNodeDat?, it would be an actual list) that you can then search for types etc.
+// Better UTILS:
+//  there would be a WrappedEventData which is effectively my current hierarchical event data and utils like unwrapUntil, unwrapAll, unwrap, etc.
+// Keep thinking, i gotta go to bed now....
 
 public class BinaryPredicateStage<T : EventData, P : Any>(
     private val backingType: Class<T>,
+    private val backingSuppliedType: Class<P>,
     private val predicate: BiPredicate<T, P>
-) : PredicateEventStage<BinaryEventData<T, P>>(classOf()) {
+) : PredicateEventStage<BinaryEventData>(BinaryEventData::class.java) {
+    // TODO Probably going to have to make hierarchical event data mutable... sadly
     override fun apply(t: EventData): EventData {
         val eventOfT = eventOf(t)
-        if (eventOfT is BinaryEventData<*, *> && !backingType.isAssignableFrom(eventOfT.event::class.java)) return IgnoredEventData()
-        return super.apply(t).let {
-            if (it is EventMetaData && it.event is BinaryEventData<*, *>) EventMetaData(
-                this,
-                it.neededEval,
-                it.event.event,
-                it.previous
-            ) else it
+        if (eventOfT is BinaryEventData && !backingType.isAssignableFrom(eventOfT.wrapped::class.java) && !backingSuppliedType.isAssignableFrom(eventOfT.other::class.java)) return IgnoredEventData()
+        return super.apply(t).also {
+            if (it is WrappedEventData && it.wrapped is BinaryEventData) it.wrapped = (it.wrapped as? BinaryEventData)?.wrapped ?: it.wrapped
         }
     }
 
-    override fun satisfies(data: BinaryEventData<T, P>): Boolean = predicate.test(data.event, data.other)
+    override fun satisfies(data: BinaryEventData): Boolean = predicate.test(data.wrapped as T, data.other as P)
 }
 
 

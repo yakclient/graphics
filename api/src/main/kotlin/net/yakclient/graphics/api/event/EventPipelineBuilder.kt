@@ -34,8 +34,8 @@ public sealed class PredicateStageBuilder<T : EventData>(
 
     public fun checkPoint(): CheckpointStageBuilder = CheckpointStageBuilder(pipelineBuilder)
 
-    public fun <P : Any> supply(supplier: Function<T, P>): EventSupplierStageBuilder<T, P> =
-        EventSupplierStageBuilder(pipelineBuilder, EventSupplierStage(stage.type, supplier))
+    public fun <P : Any> supply(suppliedType: Class<P>, supplier: Function<T, P>): EventSupplierStageBuilder<T, P> =
+        EventSupplierStageBuilder(pipelineBuilder, suppliedType, EventSupplierStage(stage.type, supplier))
 }
 
 public class UnaryPredicateStageBuilder<T : EventData>(
@@ -46,14 +46,15 @@ public class UnaryPredicateStageBuilder<T : EventData>(
 public class BinaryPredicateStageBuilder<T : EventData, P : Any>(
     pipeline: EventPipelineBuilder,
     stage: BinaryPredicateStage<T, P>
-) : PredicateStageBuilder<BinaryEventData<T, P>>(pipeline, stage)
+) : PredicateStageBuilder<BinaryEventData>(pipeline, stage)
 
 public class EventSupplierStageBuilder<T : EventData, P : Any>(
     pipeline: EventPipelineBuilder,
+    private val suppliedType: Class<P>,
     override val stage: EventSupplierStage<T, P>
 ) : EventStageBuilder(pipeline) {
     public fun <N : EventData> next(type: Class<N>, predicate: BiPredicate<N, P>): BinaryPredicateStageBuilder<N, P> =
-        BinaryPredicateStageBuilder(pipelineBuilder, BinaryPredicateStage(type, predicate))
+        BinaryPredicateStageBuilder(pipelineBuilder, BinaryPredicateStage(type, this.suppliedType, predicate))
 }
 
 public class CheckpointStageBuilder(
@@ -64,3 +65,18 @@ public class CheckpointStageBuilder(
     public fun <N : EventData> next(type: Class<N>, predicate: Predicate<N>): PredicateStageBuilder<N> =
         UnaryPredicateStageBuilder(pipelineBuilder, UnaryPredicateStage(type, predicate))
 }
+
+public inline fun <T : EventData, reified P : Any> PredicateStageBuilder<T>.supply(supplier: Function<T, P>): EventSupplierStageBuilder<T, P> =
+    supply(P::class.java, supplier)
+
+public inline fun <reified N : EventData> PredicateStageBuilder<*>.next(predicate: Predicate<N>): PredicateStageBuilder<N> =
+    next(N::class.java, predicate)
+
+public inline fun <reified N : EventData> CheckpointStageBuilder.next(predicate: Predicate<N>): PredicateStageBuilder<N> =
+    next(N::class.java, predicate)
+
+public inline fun <reified N : EventData> EventPipelineBuilder.start(predicate: Predicate<N>): PredicateStageBuilder<N> =
+    start(N::class.java, predicate)
+
+public inline fun <reified N : EventData, P : Any> EventSupplierStageBuilder<*, P>.next(predicate: BiPredicate<N, P>): BinaryPredicateStageBuilder<N, P> =
+    next(N::class.java, predicate)

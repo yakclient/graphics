@@ -1,6 +1,7 @@
 package net.yakclient.graphics.api.test.event
 
-import net.yakclient.graphics.api.event.*
+import net.yakclient.graphics.api.event.EventPipeline
+import net.yakclient.graphics.api.event.IgnoredEventData
 import net.yakclient.graphics.api.event.stage.*
 import org.junit.jupiter.api.Test
 
@@ -69,7 +70,7 @@ class PredicateEventStageTesting {
             EventSupplierStage(TestEventOne::class.java) {
                 "yay"
             },
-            BinaryPredicateStage<TestEventOne, String>(TestEventOne::class.java) { _, data ->
+            BinaryPredicateStage(TestEventOne::class.java, String::class.java) { _, data ->
                 println(data)
                 data == "yay"
             }
@@ -164,7 +165,7 @@ class PredicateEventStageTesting {
             EventSupplierStage(TestEventTwo::class.java) {
                 "fine...${it.int}"
             },
-            BinaryPredicateStage<TestEventOne, String>(TestEventOne::class.java) { _, data ->
+            BinaryPredicateStage<TestEventOne, String>(TestEventOne::class.java, String::class.java) { _, data ->
                 data == "fine...3"
             },
             UnaryPredicateStage(TestEventOne::class.java) {
@@ -188,7 +189,7 @@ class PredicateEventStageTesting {
             CheckPointStage(),
             EventSupplierStage(TestEventTwo::class.java) { },
             UnaryPredicateStage(TestEventTwo::class.java) { true }.apply { reEval = true },
-            BinaryPredicateStage<TestEventOne, Any>(TestEventOne::class.java) { first, second ->
+            BinaryPredicateStage(TestEventOne::class.java, Any::class.java) { first, second ->
                 assert(second is Unit)
                 true
             }.apply { reEval = true },
@@ -204,6 +205,29 @@ class PredicateEventStageTesting {
         pipeline.dispatch(TestEventOne())
         //Reasonably sure this works as expected, output should be [true, false, true] as everything is evaluable and there are basically no dependencies.
         println(testStageSatisfaction(stages))
+    }
+
+    @Test
+    fun `Test Supplying timing`() {
+        val stages = listOf(
+            UnaryPredicateStage(TestEventOne::class.java) {
+                true
+            },
+            EventSupplierStage(TestEventOne::class.java) {
+                System.currentTimeMillis()
+            },
+            BinaryPredicateStage(TestEventOne::class.java, Long::class.java) { event, data ->
+                (System.currentTimeMillis() - data) >= 1000L
+            },
+            EventConsumingStage(TestEventOne::class.java) {
+                println("yay")
+            }
+        )
+        val pipeline = EventPipeline(stages)
+
+        pipeline.dispatch(TestEventOne())
+        Thread.sleep(1000)
+        pipeline.dispatch(TestEventOne())
     }
 }
 

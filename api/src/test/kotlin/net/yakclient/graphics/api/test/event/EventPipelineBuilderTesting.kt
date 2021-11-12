@@ -1,6 +1,6 @@
 package net.yakclient.graphics.api.test.event
 
-import net.yakclient.graphics.api.event.EventPipelineBuilder
+import net.yakclient.graphics.api.event.*
 import org.junit.jupiter.api.Test
 
 class EventPipelineBuilderTesting {
@@ -8,15 +8,15 @@ class EventPipelineBuilderTesting {
     fun `Test Construction`() {
         val builder = EventPipelineBuilder()
 
-        builder.start(TestEventOne::class.java) {
+        builder.start<TestEventOne> {
             true
-        }.next(TestEventOne::class.java) {
+        }.next<TestEventOne> {
             true
-        }.checkPoint().next(TestEventTwo::class.java) {
+        }.checkPoint().next<TestEventTwo> {
             true
         }.supply {
             "yay!"
-        }.next(TestEventTwo::class.java) { event, data ->
+        }.next<TestEventTwo, String> { _, data ->
             "yay!" == data
         }.reEval().reEval().reEval().checkPoint().next(TestEventTwo::class.java) {
             true

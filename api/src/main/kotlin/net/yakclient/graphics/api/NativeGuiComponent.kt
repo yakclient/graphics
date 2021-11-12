@@ -42,17 +42,17 @@ public abstract class NativeGuiComponent {
 //    public fun <T : EventData> useChainedEvent(id: Int, first: Class<out EventSubscriber<T>>, firstPredicate: Predicate<T>) : UnaryEventNode<T> = UnaryEventNode(
 //        EventNodeDispatcher(), first, null, firstPredicate)
 
-    public inner class ChainedEventReceiver internal constructor()
+    public inner class ChainedEventReceiver internal constructor() {
+        public fun <T : EventData> chain(
+            first: Class<T>,
+            firstPredicate: Predicate<T>
+        ): PredicateStageBuilder<T> = EventPipelineBuilder().start(first, firstPredicate)
 
-//    public fun <T : EventData> ChainedEventReceiver.chain(
-//        first: Class<out EventSubscriber<T>>,
-//        firstPredicate: Predicate<T>
-//    ): UnaryEventNode<T> = UnaryEventNode(
-//        EventNodeDispatcher(), first, null, firstPredicate
-//    )
+        public fun <T : EventData> subscribe(event: Class<out EventSubscriber<T>>, callback: EventHook<T>): Unit =
+            EventManager.subscribe(event, callback)
+    }
 
-    public fun <T : EventData> ChainedEventReceiver.subscribe(event: Class<out EventSubscriber<T>>, callback: EventHook<T>): Unit =
-        EventManager.subscribe(event, callback)
+
 
 //    public fun onMouseMove(callback: Hook<MouseMoveData>): Unit = HookManager.subscribe<MouseMoveSubscriber, MouseMoveData>(callback)
 //

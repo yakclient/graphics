@@ -10,10 +10,9 @@ public class EventSupplierStage<T : EventData, P : Any>(
     private lateinit var last: P
 
     override fun apply(t: EventData): EventData {
-        if (t is SuccessfulEventData && type.isAssignableFrom(t.event::class.java)) last = supplier.apply(t.event as T)
+        if (t is SuccessfulEventData && type.isAssignableFrom(t.wrapped::class.java)) last = supplier.apply(t.wrapped as T)
         return if (this::last.isInitialized) if (t is SuccessfulEventData) IgnoredEventData() else EventMetaData(
             this,
-            false,
             BinaryEventData(eventOf(t), last),
             if (t is EventMetaData) t else null
         ) else t
