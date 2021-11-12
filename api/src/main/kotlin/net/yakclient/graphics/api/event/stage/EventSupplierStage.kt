@@ -1,15 +1,16 @@
-package net.yakclient.graphics.api.event
+package net.yakclient.graphics.api.event.stage
 
+import net.yakclient.graphics.api.event.*
 import java.util.function.Function
 
-public class EventProviderStage<T : EventData, P : Any>(
+public class EventSupplierStage<T : EventData, P : Any>(
     private val type: Class<T>,
-    private val provider: Function<T, P>
+    private val supplier: Function<T, P>
 ) : EventStage {
     private lateinit var last: P
 
     override fun apply(t: EventData): EventData {
-        if (t is SuccessfulEventData && type.isAssignableFrom(t.event::class.java)) last = provider.apply(t.event as T)
+        if (t is SuccessfulEventData && type.isAssignableFrom(t.event::class.java)) last = supplier.apply(t.event as T)
         return if (this::last.isInitialized) if (t is SuccessfulEventData) IgnoredEventData() else EventMetaData(
             this,
             false,

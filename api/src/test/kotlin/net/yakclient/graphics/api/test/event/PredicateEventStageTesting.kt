@@ -1,8 +1,11 @@
 package net.yakclient.graphics.api.test.event
 
 import net.yakclient.graphics.api.event.*
+import net.yakclient.graphics.api.event.stage.*
 import org.junit.jupiter.api.Test
 
+fun testStageSatisfaction(stage: List<EventStage>): List<Boolean> =
+    stage.filterIsInstance<SatisfiableEventStage<*>>().map { it.isSatisfied }
 
 class PredicateEventStageTesting {
     @Test
@@ -24,8 +27,6 @@ class PredicateEventStageTesting {
         assert(stage.apply(TestEventOne()) is IgnoredEventData)
     }
 
-    fun testStageSatisfaction(stage: List<EventStage>): List<Boolean> =
-        stage.filterIsInstance<SatisfiableEventStage<*>>().map { it.isSatisfied }
 
     @Test
     fun `Test event stage pipeline`() {
@@ -65,10 +66,10 @@ class PredicateEventStageTesting {
     fun `Test event providing and binary consuming`() {
         val stages = listOf(
             UnaryPredicateStage(TestEventOne::class.java) { true },
-            EventProviderStage(TestEventOne::class.java) {
+            EventSupplierStage(TestEventOne::class.java) {
                 "yay"
             },
-            BinaryPredicateStage<TestEventOne, String> { _, data ->
+            BinaryPredicateStage<TestEventOne, String>(TestEventOne::class.java) { _, data ->
                 println(data)
                 data == "yay"
             }
@@ -160,10 +161,10 @@ class PredicateEventStageTesting {
             UnaryPredicateStage(TestEventTwo::class.java) {
                 true
             },
-            EventProviderStage(TestEventTwo::class.java) {
+            EventSupplierStage(TestEventTwo::class.java) {
                 "fine...${it.int}"
             },
-            BinaryPredicateStage<TestEventOne, String> { _, data ->
+            BinaryPredicateStage<TestEventOne, String>(TestEventOne::class.java) { _, data ->
                 data == "fine...3"
             },
             UnaryPredicateStage(TestEventOne::class.java) {
@@ -185,9 +186,9 @@ class PredicateEventStageTesting {
     fun `Test mis-configured Example`() {
         val stages = listOf(
             CheckPointStage(),
-            EventProviderStage(TestEventTwo::class.java) { },
+            EventSupplierStage(TestEventTwo::class.java) { },
             UnaryPredicateStage(TestEventTwo::class.java) { true }.apply { reEval = true },
-            BinaryPredicateStage<TestEventOne, Any> { first, second ->
+            BinaryPredicateStage<TestEventOne, Any>(TestEventOne::class.java) { first, second ->
                 assert(second is Unit)
                 true
             }.apply { reEval = true },

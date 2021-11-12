@@ -1,5 +1,6 @@
-package net.yakclient.graphics.api.event
+package net.yakclient.graphics.api.event.stage
 
+import net.yakclient.graphics.api.event.*
 import java.util.function.BiPredicate
 import java.util.function.Predicate
 
@@ -16,8 +17,8 @@ public data class EventMetaData(
     public val previous: EventMetaData?
 ) : HierarchicalEventData
 
-public abstract class SatisfiableEventStage<in T : EventData>(
-    private val type: Class<T>,
+public abstract class SatisfiableEventStage<T : EventData>(
+    public val type: Class<T>,
 ) : EventStage {
     public var isSatisfied: Boolean = false
 
@@ -111,10 +112,13 @@ public class UnaryPredicateStage<T : EventData>(
 private inline fun <reified T> classOf(): Class<T> = T::class.java
 
 public class BinaryPredicateStage<T : EventData, P : Any>(
+    private val backingType: Class<T>,
     private val predicate: BiPredicate<T, P>
 ) : PredicateEventStage<BinaryEventData<T, P>>(classOf()) {
-    override fun apply(t: EventData): EventData =
-        super.apply(t).let {
+    override fun apply(t: EventData): EventData {
+        val eventOfT = eventOf(t)
+        if (eventOfT is BinaryEventData<*, *> && !backingType.isAssignableFrom(eventOfT.event::class.java)) return IgnoredEventData()
+        return super.apply(t).let {
             if (it is EventMetaData && it.event is BinaryEventData<*, *>) EventMetaData(
                 this,
                 it.neededEval,
@@ -122,6 +126,7 @@ public class BinaryPredicateStage<T : EventData, P : Any>(
                 it.previous
             ) else it
         }
+    }
 
     override fun satisfies(data: BinaryEventData<T, P>): Boolean = predicate.test(data.event, data.other)
 }
