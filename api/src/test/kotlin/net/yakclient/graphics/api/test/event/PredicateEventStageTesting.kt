@@ -3,6 +3,7 @@ package net.yakclient.graphics.api.test.event
 import net.yakclient.graphics.api.event.EventPipeline
 import net.yakclient.graphics.api.event.IgnoredEventData
 import net.yakclient.graphics.api.event.stage.*
+import net.yakclient.graphics.api.event.stage.predicate.*
 import org.junit.jupiter.api.Test
 
 fun testStageSatisfaction(stage: List<EventStage>): List<Boolean> =
@@ -228,6 +229,17 @@ class PredicateEventStageTesting {
         pipeline.dispatch(TestEventOne())
         Thread.sleep(1000)
         pipeline.dispatch(TestEventOne())
+    }
+
+    @Test
+    fun `Test ignored events`() {
+        val stage = IgnoringEventStage(TestEventTwo::class.java) {
+            it.int == 2
+        }
+
+        assert(stage.apply(TestEventOne()) !is IgnoredEventData)
+        assert(stage.apply(TestEventTwo(1)) !is IgnoredEventData)
+        assert(stage.apply(TestEventTwo(2)) is IgnoredEventData)
     }
 }
 

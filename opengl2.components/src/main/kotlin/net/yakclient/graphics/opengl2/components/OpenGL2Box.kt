@@ -1,8 +1,8 @@
 package net.yakclient.graphics.opengl2.components
 
 import net.yakclient.graphics.api.GuiProperties
-import net.yakclient.graphics.api.event.onMouseClick
-import net.yakclient.graphics.api.event.onMouseMove
+import net.yakclient.graphics.api.event.*
+import net.yakclient.graphics.api.event.supply
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.opengl2.render.GLRenderingData
@@ -52,6 +52,16 @@ public class OpenGL2Box : Box() {
         val isMouseOver = useState(6, false) { false }
         //TODO the reason this doesnt work is because the key press has an up AND down event, so the first one is getting called with down then the second one is getting called with up, fails and then returns to the beginning.... it sucks... ya
         eventScope {
+            chain().ignore<KeyActionData> {
+                !it.state
+            }.next(onMouseClick) {
+                it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state
+            }.supply {
+                System.currentTimeMillis()
+            }.next(onMouseClick) { event, data ->
+                event.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && event.state && System.currentTimeMillis() - data <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME
+            }.event(onMouseClick, doubleClick)
+
 
         }
 //            chain(onMouseClick) {

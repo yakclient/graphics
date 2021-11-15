@@ -9,6 +9,7 @@ module yakclient.graphics.api {
     exports net.yakclient.graphics.api.event;
 
     requires yakclient.graphics.util;
+    requires kotlinx.coroutines.core.jvm;
 
 //    requires lwjgl;
 //    requires lwjgl.util;
@@ -16,7 +17,7 @@ module yakclient.graphics.api {
     requires kotlin.stdlib;
     requires kotlin.reflect;
 
-    uses EventSubscriber;
+    uses EventDispatcher;
     uses DeferredComponentProvider;
 //    uses MouseMoveSubscriber;
 //    uses MouseButtonEventSubscriber;

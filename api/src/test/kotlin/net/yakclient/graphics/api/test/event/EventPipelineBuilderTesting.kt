@@ -6,23 +6,23 @@ import org.junit.jupiter.api.Test
 class EventPipelineBuilderTesting {
     @Test
     fun `Test Construction`() {
-        val builder = EventPipelineBuilder()
+        val builder = EventPipelineChainer()
 
-        builder.start<TestEventOne> {
+        builder.next(testEventOne) {
             true
-        }.next<TestEventOne> {
+        }.next(testEventOne) {
             true
-        }.checkPoint().next<TestEventTwo> {
+        }.checkPoint().next(testEventTwo) {
             true
         }.supply {
             "yay!"
-        }.next<TestEventTwo, String> { _, data ->
+        }.next(testEventTwo) { _, data ->
             "yay!" == data
-        }.reEval().reEval().reEval().checkPoint().next(TestEventTwo::class.java) {
+        }.reEval().reEval().reEval().checkPoint().next(testEventTwo) {
             true
         }
+        val pipeline = builder.toPipe()
 
-        val pipeline = builder.build()
         pipeline.dispatch(TestEventOne())
         pipeline.dispatch(TestEventOne())
         pipeline.dispatch(TestEventTwo(1))
@@ -31,4 +31,6 @@ class EventPipelineBuilderTesting {
 
         println(testStageSatisfaction(pipeline))
     }
+
+
 }

@@ -2,14 +2,11 @@
 
 package net.yakclient.graphics.api.event
 
-import java.util.function.Predicate
+public val onMouseMove: Class<MouseMoveDispatcher> = MouseMoveDispatcher::class.java
 
+public val onMouseClick: Class<MouseButtonEventDispatcher> = MouseButtonEventDispatcher::class.java
 
-public val onMouseMove: Class<MouseMoveSubscriber> = MouseMoveSubscriber::class.java
-
-public val onMouseClick: Class<MouseButtonEventSubscriber> = MouseButtonEventSubscriber::class.java
-
-public val onKeyboardAction: Class<KeyboardActionSubscriber> = KeyboardActionSubscriber::class.java
+public val onKeyboardAction: Class<KeyboardActionDispatcher> = KeyboardActionDispatcher::class.java
 
 public data class MouseMoveData(
     public val x: Int,
@@ -18,7 +15,9 @@ public data class MouseMoveData(
     public val absoluteY: Int,
 ) : EventData
 
-public abstract class MouseMoveSubscriber : EventSubscriber<MouseMoveData>()
+public abstract class MouseMoveDispatcher : EventDispatcher<MouseMoveData>() {
+    override val eventType: Class<MouseMoveData> = MouseMoveData::class.java
+}
 
 public data class KeyActionData(
     public val key: Int,
@@ -26,6 +25,10 @@ public data class KeyActionData(
     public val state: Boolean
 ) : EventData
 
-public abstract class MouseButtonEventSubscriber : EventSubscriber<KeyActionData>()
+public abstract class MouseButtonEventDispatcher : EventDispatcher<KeyActionData>() {
+    override val eventType: Class<KeyActionData> = KeyActionData::class.java
+}
 
-public abstract class KeyboardActionSubscriber : EventSubscriber<KeyActionData>()
+public abstract class KeyboardActionDispatcher : EventDispatcher<KeyActionData>() {
+    override val eventType: Class<KeyActionData> = KeyActionData::class.java
+}

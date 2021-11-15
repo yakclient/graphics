@@ -1,7 +1,8 @@
-package net.yakclient.graphics.api.event.stage
+package net.yakclient.graphics.api.event.stage.predicate
 
 import net.yakclient.graphics.api.event.EventData
 import net.yakclient.graphics.api.event.eventOf
+import net.yakclient.graphics.api.event.stage.EventStage
 import java.util.function.Consumer
 
 public class EventConsumingStage<T : EventData>(

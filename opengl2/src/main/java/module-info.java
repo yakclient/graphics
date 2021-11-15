@@ -9,9 +9,9 @@ module yakclient.graphics.open2gl {
     requires java.base;
     requires io.github.emilyydev.asp;
 
-    provides MouseMoveSubscriber with GL2MouseMoveSubscriber;
-    provides MouseButtonEventSubscriber with GL2MouseButtonEventSubscriber;
-    provides KeyboardActionSubscriber with GL2KeyboardActionSubscriber;
+    provides MouseMoveDispatcher with GL2MouseMoveDispatcher;
+    provides MouseButtonEventDispatcher with GL2MouseButtonEventDispatcher;
+    provides KeyboardActionDispatcher with GL2KeyboardActionDispatcher;
 
     exports net.yakclient.graphics.opengl2.render;
 }

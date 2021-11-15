@@ -61,9 +61,9 @@ fun BasicTestComponent(): Component = { props ->
 //                    println("CLICKED!")
 //                }
 //
-//                set("ondbclick") to Runnable {
-//                    println("double cooked")
-//                }
+                set("ondbclick") to Runnable {
+                    println("double cooked")
+                }
 //
 //                set("onmousedown") to Runnable {
 //                    println("mouse down")
