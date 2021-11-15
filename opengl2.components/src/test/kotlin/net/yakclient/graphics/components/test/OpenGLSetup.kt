@@ -1,6 +1,6 @@
 package net.yakclient.graphics.components.test
 
-import net.yakclient.graphics.api.hook.HookTickManager
+import net.yakclient.graphics.api.event.TickManager
 import org.lwjgl.LWJGLException
 import org.lwjgl.opengl.Display
 import org.lwjgl.opengl.DisplayMode
@@ -47,7 +47,7 @@ object OpenGLSetup {
             } else fps++
 
             gameLoop()
-            HookTickManager.tickThem()
+            TickManager.tickThem()
             Display.update()
             Display.sync(FPS_GOAL)
         }

@@ -1,23 +1,20 @@
 package net.yakclient.graphics.opengl2.components
 
 import net.yakclient.graphics.api.GuiProperties
-import net.yakclient.graphics.api.hook.onKeyboardAction
-import net.yakclient.graphics.api.hook.onMouseClick
-import net.yakclient.graphics.api.hook.onMouseMove
+import net.yakclient.graphics.api.event.*
+import net.yakclient.graphics.api.event.supply
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.opengl2.render.GLRenderingData
 import net.yakclient.graphics.opengl2.render.VerticeRenderingContext
 import net.yakclient.graphics.util.*
-import org.lwjgl.Sys
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
 import java.util.function.Consumer
 
-public class OpenGL2Box: Box() {
+public class OpenGL2Box : Box() {
 
     override fun renderNatively(props: GuiProperties): List<RenderingContext> {
-//        println("something")
         val width: Double = props.requireAs("width")
         val height: Double = props.requireAs("height")
         val x: Double = props.requireAs("x")
@@ -30,7 +27,7 @@ public class OpenGL2Box: Box() {
         val mouseClick = props.getAs<Runnable>("onclick") ?: Runnable {}
         val doubleClick = props.getAs<Runnable>("ondbclick") ?: Runnable {}
         val mouseDown = props.getAs<Runnable>("onmousedown") ?: Runnable {}
-//        val mouseUp = props.getAs<Runnable>("onmouseup") ?: Runnable {}
+        val mouseUp = props.getAs<Runnable>("onmouseup") ?: Runnable {}
 //        val mouseOver = props.getAs<Runnable>("onmouseover") ?: Runnable {}
         val mouseMove = props.getAs<Runnable>("onmousemove") ?: Runnable {}
         val mouseOut = props.getAs<Runnable>("onmouseout") ?: Runnable {}
@@ -52,53 +49,92 @@ public class OpenGL2Box: Box() {
 //        if (wasLastTickMouseDown.value && !lmbDown) onMouseUp()// .ifPresent { obj: Runnable -> obj.run() }
         val lastTickMousePos = this.useState(2, false) { Vertice(Mouse.getX(), Mouse.getY()) }
 
-        val isMouseOver = useState(6, false) {false}
+        val isMouseOver = useState(6, false) { false }
+        //TODO the reason this doesnt work is because the key press has an up AND down event, so the first one is getting called with down then the second one is getting called with up, fails and then returns to the beginning.... it sucks... ya
+        eventScope {
+            chain().ignore<KeyActionData> {
+                !it.state
+            }.next(onMouseClick) {
+                it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state
+            }.supply {
+                System.currentTimeMillis()
+            }.next(onMouseClick) { event, data ->
+                event.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && event.state && System.currentTimeMillis() - data <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME
+            }.event(onMouseClick, doubleClick)
 
-        useEvent(0, onMouseMove) {
-            println("mouse moving")
-            isMouseOver.value = rectBounding(it.absoluteX, it.absoluteY, y, x, x + width, y + height)
 
-            if (isMouseOver.value) mouseMove()
-            else mouseOut()
-
-//            val lastMousePosition: Vertice = lastTickMousePos.value
-//            if (lastMousePosition == Vertice(
-//                    Mouse.getX(),
-//                    Mouse.getY()
-//                ) && isMouseOver.value!!
-//            ) onHover()
-//            if (lastMousePosition != Vertice(
-//                    Mouse.getX(),
-//                    Mouse.getY()
-//                ) && isMouseOver.value!!
-//            ) onMouseMove()
         }
+//            chain(onMouseClick) {
+//                it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state
+//            }.provide {
+//                System.currentTimeMillis()
+//            }.next(onMouseClick) { event, data ->
+//                event.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && event.state && System.currentTimeMillis() - data <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME
+//            }.ignore {
+//                it.state
+//            }.event { doubleClick() }
+//
+//            chain(onMouseClick) {
+//                it.state
+//            }.next(onMouseClick) {
+//                !it.state
+//            }.event { mouseClick() }
+//
+//            chain(onMouseMove) {
+//                rectBounding(it.x, it.y, x, y, x + width, y + height)
+//            }.next(onMouseClick).event {
+//                if (it.state) mouseDown()
+//                else mouseUp()
+//            }
+//
+//            subscribe(onMouseClick) {
+//                if (it.state) mouseDown
+//                else mou
+//            }
+////            subscribe(onMouseMove) {
+////                isMouseOver.value = rectBounding(it.absoluteX, it.absoluteY, y, x, x + width, y + height)
+////
+////                if (isMouseOver.value) mouseMove()
+////                else mouseOut()
+////
+//////            val lastMousePosition: Vertice = lastTickMousePos.value
+//////            if (lastMousePosition == Vertice(
+//////                    Mouse.getX(),
+//////                    Mouse.getY()
+//////                ) && isMouseOver.value!!
+//////            ) onHover()
+//////            if (lastMousePosition != Vertice(
+//////                    Mouse.getX(),
+//////                    Mouse.getY()
+//////                ) && isMouseOver.value!!
+//////            ) onMouseMove()
+////            }
+//        }
 
-        useEvent(1, onMouseClick) { (key, state) ->
-            println("mouse clicked with key: $key")
-            if (isMouseOver.value && (state && (key == YakGraphicsUtils.MOUSE_LEFT_BUTTON))) mouseDown()// onMouseDown.ifPresent { obj: Runnable -> obj.run() }
-            if (key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && state) {
-                if (System.currentTimeMillis() - lastClick.value <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME && isMouseOver.value) {
-                    focused.value = true
-                    doubleClick()// { obj: Runnable -> obj.run() }
-                    lastClick.value = 0L
-                } else {
-                    if (!isMouseOver.value) focused.value = false else {
-                        lastClick.value = System.currentTimeMillis()
-                        focused.value = true
-                        mouseClick()// { obj: Runnable -> obj.run() }
-                    }
-                }
-            }
-        }
 
-        useEvent(2, onKeyboardAction) { (key) ->
-            println("key pressed $key")
-            if (focused.value && key != YakGraphicsUtils.CHAR_NONE) {
-                lastKeyDown.value = key
-                keyDown(key)
-            }
-        }
+//        eventScope(1, onMouseClick) { (key, state) ->
+//            if (isMouseOver.value && (state && (key == YakGraphicsUtils.MOUSE_LEFT_BUTTON))) mouseDown()// onMouseDown.ifPresent { obj: Runnable -> obj.run() }
+//            if (key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && state) {
+//                if (System.currentTimeMillis() - lastClick.value <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME && isMouseOver.value) {
+//                    focused.value = true
+//                    doubleClick()// { obj: Runnable -> obj.run() }
+//                    lastClick.value = 0L
+//                } else {
+//                    if (!isMouseOver.value) focused.value = false else {
+//                        lastClick.value = System.currentTimeMillis()
+//                        focused.value = true
+//                        mouseClick()// { obj: Runnable -> obj.run() }
+//                    }
+//                }
+//            }
+//        }
+//
+//        eventScope(2, onKeyboardAction) { (key) ->
+//            if (focused.value && key != YakGraphicsUtils.CHAR_NONE) {
+//                lastKeyDown.value = key
+//                keyDown(key)
+//            }
+//        }
 
 
 //        if (isMouseOver) onMouseOver()//.ifPresent { obj: Runnable -> obj.run() }

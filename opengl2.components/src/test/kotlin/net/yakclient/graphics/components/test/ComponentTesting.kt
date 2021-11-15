@@ -4,12 +4,10 @@ import net.yakclient.graphics.api.Component
 import net.yakclient.graphics.api.FunctionalComponent
 import net.yakclient.graphics.api.GuiComponent
 import net.yakclient.graphics.api.PropertyFactory
-import net.yakclient.graphics.api.hook.HookManager
-import net.yakclient.graphics.api.hook.MouseMoveData
-import net.yakclient.graphics.api.hook.MouseMoveSubscriber
 import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.components.Text
 import net.yakclient.graphics.util.YakTextureFactory
+import java.util.function.Consumer
 
 fun main() {
 //    println(OpenGL2Box::class.java.module.name)
@@ -51,22 +49,36 @@ fun BasicTestComponent(): Component = { props ->
         set("value") to "AYYY"
     }
 
-    HookManager.subscribe<MouseMoveSubscriber, MouseMoveData> {
-        state.value = it.x
-//        println("x: ${it.x} y: ${it.y}")
+    build(use<Box>(1)) {
+        set("x") to 100
+        set("y") to 100
+        set("width") to 64
+        set("height") to 64
+        set("backgroundimage") to YakTextureFactory.loadTexture(
+            javaClass.getResource("/wood.png") ?: throw RuntimeException("Resource not found!")
+        )
+//                set("onclick") to Runnable {
+//                    println("CLICKED!")
+//                }
+//
+                set("ondbclick") to Runnable {
+                    println("double cooked")
+                }
+//
+//                set("onmousedown") to Runnable {
+//                    println("mouse down")
+//                }
+//
+//                set("onmousemove") to Runnable {
+//                    println("mouse up")
+//                }
+//
+//                set("onmouseout") to Runnable {
+//                    println("mouse out")
+//                }
+//
+//                set("onkeydown") to Consumer<Int> {
+//                    println("key down: $it")
+//                }
     }
-
-    var id = 1
-    for (x in 0 until 1000 step 100)
-        for (y in 0 until 1000 step 100)
-            build(use<Box>(id++)) {
-                set("x") to x
-                set("y") to y
-                set("width") to 64
-                set("height") to 64
-                set("backgroundimage") to YakTextureFactory.loadTexture(
-                    javaClass.getResource("/wood.png") ?: throw RuntimeException("Resource not found!")
-                )
-                set("")
-            }
 }

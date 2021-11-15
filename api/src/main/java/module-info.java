@@ -1,21 +1,25 @@
 import net.yakclient.graphics.api.DeferredComponentProvider;
-import net.yakclient.graphics.api.hook.*;
+import net.yakclient.graphics.api.event.*;
 
 module yakclient.graphics.api {
+    requires java.base;
     exports net.yakclient.graphics.api;
     exports net.yakclient.graphics.api.state;
     exports net.yakclient.graphics.api.render;
-    exports net.yakclient.graphics.api.hook;
+    exports net.yakclient.graphics.api.event;
 
     requires yakclient.graphics.util;
+    requires kotlinx.coroutines.core.jvm;
 
 //    requires lwjgl;
 //    requires lwjgl.util;
 //    requires slick.util;
     requires kotlin.stdlib;
+    requires kotlin.reflect;
 
+    uses EventDispatcher;
     uses DeferredComponentProvider;
-    uses MouseMoveSubscriber;
-    uses MouseButtonEventSubscriber;
-    uses KeyboardActionSubscriber;
+//    uses MouseMoveSubscriber;
+//    uses MouseButtonEventSubscriber;
+//    uses KeyboardActionSubscriber;
 }
