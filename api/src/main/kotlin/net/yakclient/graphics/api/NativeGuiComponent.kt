@@ -1,12 +1,14 @@
 package net.yakclient.graphics.api
 
 import net.yakclient.graphics.api.event.*
-import net.yakclient.graphics.api.event.stage.StagedEventPipe
-import net.yakclient.graphics.api.event.stage.predicate.FailingEventStage
+import net.yakclient.graphics.api.event.fsm.EventFSM
+import net.yakclient.graphics.api.event.fsm.EventFSMScope
+import net.yakclient.graphics.api.event.stage.StagedEventFSM
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.api.state.GuiState
 import net.yakclient.graphics.api.state.ObservableState
 import net.yakclient.graphics.api.state.Stateful
+import kotlin.apply
 
 public abstract class NativeGuiComponent {
     //    private val events: MutableSet<Int> = HashSet()
@@ -33,30 +35,25 @@ public abstract class NativeGuiComponent {
 //        return this.useState(key, triggersReRender) { null }
 //    }
 
-//    public fun <T: EventData> eventScope(id: Int, event: Class<out EventSubscriber<T>>, callback: EventHook<T>) : Unit = if (events.add(id)) { EventManager.subscribe(event, callback); } else Unit
-
-    public fun eventScope(callback: ChainedEventReceiver.() -> Unit): Unit = if (!eventsScoped) {
+    //    public fun <T: EventData> eventScope(id: Int, event: Class<out EventSubscriber<T>>, callback: EventHook<T>) : Unit = if (events.add(id)) { EventManager.subscribe(event, callback); } else Unit
+    public fun eventScope(callback: EventScopeReceiver.() -> Unit): Unit = if (!eventsScoped) {
         eventsScoped = true
-        val receiver = ChainedEventReceiver()
-        callback(receiver)
-        receiver.pipelines.forEach { pipe ->
-            pipe.add(CustomStageChainer(pipe, FailingEventStage()))
-            CommonEventPipe.commonPipe.add(StagedEventPipe(pipe.toPipe()))
-
-            pipe.events.values.forEach { CommonEventPipe.commonPipe.subscribeTo(it as Class<out EventDispatcher<EventData>>) }
-//            pipe.events.mapNotNull { EventDispatchManager.load(it.value as Class<out EventDispatcher<EventData>>) }
-//                .forEach { CommonEventPipe.commonPipe.subscribeTo(it::class.java) }
+        EventScopeReceiver().apply(callback).`fsm's`.forEach {
+            CommonEventPipe.commonPipe.add(StagedEventFSM(it))
+            if (it is EventFSMScope) it.neededDispatchers.forEach { (_, v) ->
+                CommonEventPipe.commonPipe.subscribeTo(v as Class<out EventDispatcher<EventData>>)
+            }
         }
-
     } else Unit
 
 //    public fun <T : EventData> useChainedEvent(id: Int, first: Class<out EventSubscriber<T>>, firstPredicate: Predicate<T>) : UnaryEventNode<T> = UnaryEventNode(
 //        EventNodeDispatcher(), first, null, firstPredicate)
 
-    public inner class ChainedEventReceiver internal constructor() {
-        internal val pipelines: MutableList<EventPipelineChainer> = ArrayList()
+    public inner class EventScopeReceiver internal constructor() {
+        internal val `fsm's`: MutableList<EventFSM> = ArrayList()
 
-        public fun chain(): EventPipelineChainer = EventPipelineChainer().also { pipelines.add(it) }
+        public fun useFSM(callback: EventFSMScope.() -> Unit): Unit =
+            EventFSMScope().also(callback).let { `fsm's`.add(it) }
 //        public fun <T : EventData> chain(
 //            first: Class<T>,
 //            firstPredicate: Predicate<T>

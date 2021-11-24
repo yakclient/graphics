@@ -14,6 +14,6 @@ public class GL2MouseMoveDispatcher : MouseMoveDispatcher(), Ticking {
     override fun tick() {
         val dx = Mouse.getDX()
         val dy = Mouse.getDY()
-        if (dx > 0 || dy > 0) dispatch(MouseMoveData(dx, dy, Mouse.getX(), Mouse.getY()))
+        if (dx > 0 || dy > 0) dispatch(MouseMoveData(Mouse.getX(), Mouse.getY(), dx, dy))
     }
 }

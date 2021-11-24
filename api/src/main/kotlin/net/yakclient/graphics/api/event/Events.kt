@@ -11,19 +11,30 @@ public val onKeyboardAction: Class<KeyboardActionDispatcher> = KeyboardActionDis
 public data class MouseMoveData(
     public val x: Int,
     public val y: Int,
-    public val absoluteX: Int,
-    public val absoluteY: Int,
+    public val deltaX: Int,
+    public val deltaY: Int,
 ) : EventData
 
 public abstract class MouseMoveDispatcher : EventDispatcher<MouseMoveData>() {
     override val eventType: Class<MouseMoveData> = MouseMoveData::class.java
 }
 
-public data class KeyActionData(
-    public val key: Int,
+public interface KeyActionData : EventData {
+    public val key: Int
     //false up, true down
     public val state: Boolean
-) : EventData
+}
+
+public data class MouseActionData(
+    override val key: Int,
+    override val state: Boolean
+) : KeyActionData
+
+public data class KeyboardActionData(
+    override val key: Int,
+    override val state: Boolean
+) : KeyActionData
+
 
 public abstract class MouseButtonEventDispatcher : EventDispatcher<KeyActionData>() {
     override val eventType: Class<KeyActionData> = KeyActionData::class.java

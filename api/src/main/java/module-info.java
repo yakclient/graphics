@@ -16,6 +16,7 @@ module yakclient.graphics.api {
 //    requires slick.util;
     requires kotlin.stdlib;
     requires kotlin.reflect;
+    requires java.logging;
 
     uses EventDispatcher;
     uses DeferredComponentProvider;

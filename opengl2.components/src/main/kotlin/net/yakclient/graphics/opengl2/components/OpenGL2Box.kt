@@ -1,8 +1,9 @@
 package net.yakclient.graphics.opengl2.components
 
 import net.yakclient.graphics.api.GuiProperties
-import net.yakclient.graphics.api.event.*
-import net.yakclient.graphics.api.event.supply
+import net.yakclient.graphics.api.event.KeyActionData
+import net.yakclient.graphics.api.event.ignore
+import net.yakclient.graphics.api.hook.onMouseClick
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.opengl2.render.GLRenderingData
@@ -12,7 +13,7 @@ import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
 import java.util.function.Consumer
 
-public class OpenGL2Box : Box() {
+public class OpenGL2Box: Box() {
 
     override fun renderNatively(props: GuiProperties): List<RenderingContext> {
         val width: Double = props.requireAs("width")
@@ -28,19 +29,19 @@ public class OpenGL2Box : Box() {
         val doubleClick = props.getAs<Runnable>("ondbclick") ?: Runnable {}
         val mouseDown = props.getAs<Runnable>("onmousedown") ?: Runnable {}
         val mouseUp = props.getAs<Runnable>("onmouseup") ?: Runnable {}
-//        val mouseOver = props.getAs<Runnable>("onmouseover") ?: Runnable {}
+        val mouseOver = props.getAs<Runnable>("onmouseover") ?: Runnable {}
         val mouseMove = props.getAs<Runnable>("onmousemove") ?: Runnable {}
         val mouseOut = props.getAs<Runnable>("onmouseout") ?: Runnable {}
         val keyDown = props.getAs<Consumer<Int>>("onkeydown") ?: Consumer<Int> {}
-//        val keyUp = props.getAs<Consumer<Int>>("onkeyup") ?: Consumer<Int> {}
+        val keyUp = props.getAs<Consumer<Int>>("onkeyup") ?: Consumer<Int> {}
 //        val hover = props.getAs<Runnable>("onhover") ?: Runnable {}
 
         //  State
-        val lastClick = this.useState(0, false) { System.currentTimeMillis() }
-        val wasLastTickMouseDown = this.useState(1, false) { false }
-        val focused = this.useState(3, false) { false }
-        val lastKeyDown = this.useState(4, false) { YakGraphicsUtils.CHAR_NONE }
-        val wasLastTickKeyDown = this.useState(5, false) { false }
+//        val lastClick = this.useState(0, false) { System.currentTimeMillis() }
+//        val wasLastTickMouseDown = this.useState(1, false) { false }
+//        val focused = this.useState(3, false) { false }
+//        val lastKeyDown = this.useState(4, false) { YakGraphicsUtils.CHAR_NONE }
+//        val wasLastTickKeyDown = this.useState(5, false) { false }
 
 //        val isMouseOver =
 
@@ -52,16 +53,19 @@ public class OpenGL2Box : Box() {
         val isMouseOver = useState(6, false) { false }
         //TODO the reason this doesnt work is because the key press has an up AND down event, so the first one is getting called with down then the second one is getting called with up, fails and then returns to the beginning.... it sucks... ya
         eventScope {
-            chain().ignore<KeyActionData> {
-                !it.state
-            }.next(onMouseClick) {
-                it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state
-            }.supply {
-                System.currentTimeMillis()
-            }.next(onMouseClick) { event, data ->
-                event.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && event.state && System.currentTimeMillis() - data <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME
-            }.event(onMouseClick, doubleClick)
+//            useFSM().ignore<KeyActionData> {
+//                !it.state
+//            }.next(onMouseClick) {
+//                it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state
+//            }.supply {
+//                System.currentTimeMillis()
+//            }.next(onMouseClick) { event, data ->
+//                event.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && event.state && System.currentTimeMillis() - data <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME
+//            }.event(onMouseClick, doubleClick)
 
+            useFSM {
+                val
+            }
 
         }
 //            chain(onMouseClick) {

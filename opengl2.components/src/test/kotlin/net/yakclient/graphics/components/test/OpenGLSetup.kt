@@ -28,7 +28,7 @@ object OpenGLSetup {
         GL11.glMatrixMode(GL11.GL_PROJECTION)
         GL11.glLoadIdentity()
         //        GLU.gluPerspective(100, 640f/480f, 0.001f, 100f);
-        GL11.glOrtho(0.0, Display.getWidth().toDouble(), Display.getHeight().toDouble(), 0.0, 0.0, -1.0)
+        GL11.glOrtho(0.0, Display.getWidth().toDouble(), 0.0, Display.getHeight().toDouble(), 0.0, -1.0)
         GL11.glMatrixMode(GL11.GL_MODELVIEW)
         GL11.glLoadIdentity()
         var highestFPS = 0
