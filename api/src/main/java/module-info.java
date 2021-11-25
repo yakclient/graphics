@@ -7,6 +7,7 @@ module yakclient.graphics.api {
     exports net.yakclient.graphics.api.state;
     exports net.yakclient.graphics.api.render;
     exports net.yakclient.graphics.api.event;
+    exports net.yakclient.graphics.api.event.fsm;
 
     requires yakclient.graphics.util;
     requires kotlinx.coroutines.core.jvm;

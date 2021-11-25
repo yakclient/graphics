@@ -8,7 +8,7 @@ public open class EventFSMScope(
     debug: Boolean = false
 ) : EventFSM(StatePlaceholder(), debug) {
     private val ref = FSMReference(this)
-    internal val neededDispatchers: MutableMap<String, Class<out EventDispatcher<*>>> = HashMap()
+//    internal val neededDispatchers: MutableMap<String, Class<out EventDispatcher<*>>> = HashMap()
 
     public fun of(name: String = EventState.defaultName()): MutableEventState =
         of(TypedPredicateEventState(name, ArrayList()))
@@ -23,9 +23,9 @@ public open class EventFSMScope(
     public fun of(delegate: EventState): MutableEventState =
         MutableEventState(delegate).also { if (current is StatePlaceholder) current = it }
 
-    public fun <T : EventData> require(dispatcher: Class<out EventDispatcher<T>>): EventFSMScope = apply {
-        neededDispatchers[dispatcher.name] = dispatcher
-    }
+//    public fun <T : EventData> require(dispatcher: Class<out EventDispatcher<T>>): EventFSMScope = apply {
+//        neededDispatchers[dispatcher.name] = dispatcher
+//    }
 
 
     public open inner class MutableEventState(

@@ -38,11 +38,9 @@ public abstract class NativeGuiComponent {
     //    public fun <T: EventData> eventScope(id: Int, event: Class<out EventSubscriber<T>>, callback: EventHook<T>) : Unit = if (events.add(id)) { EventManager.subscribe(event, callback); } else Unit
     public fun eventScope(callback: EventScopeReceiver.() -> Unit): Unit = if (!eventsScoped) {
         eventsScoped = true
-        EventScopeReceiver().apply(callback).`fsm's`.forEach {
-            CommonEventPipe.commonPipe.add(StagedEventFSM(it))
-            if (it is EventFSMScope) it.neededDispatchers.forEach { (_, v) ->
-                CommonEventPipe.commonPipe.subscribeTo(v as Class<out EventDispatcher<EventData>>)
-            }
+        EventScopeReceiver().apply(callback).run {
+            `fsm's`.forEach { CommonEventPipe.commonPipe.add(StagedEventFSM(it)) }
+            neededDispatchers.forEach { (_, event) -> CommonEventPipe.commonPipe.subscribeTo(event as Class<out EventDispatcher<EventData>>) }
         }
     } else Unit
 
@@ -51,13 +49,18 @@ public abstract class NativeGuiComponent {
 
     public inner class EventScopeReceiver internal constructor() {
         internal val `fsm's`: MutableList<EventFSM> = ArrayList()
+        internal val neededDispatchers: MutableMap<String, Class<out EventDispatcher<*>>> = HashMap()
 
-        public fun useFSM(callback: EventFSMScope.() -> Unit): Unit =
-            EventFSMScope().also(callback).let { `fsm's`.add(it) }
-//        public fun <T : EventData> chain(
+        public fun useFSM(debug: Boolean = false,callback: EventFSMScope.() -> Unit): EventScopeReceiver = apply {
+            EventFSMScope(debug).also(callback).let { `fsm's`.add(it) }
+        }
+
+        //        public fun <T : EventData> chain(
 //            first: Class<T>,
 //            firstPredicate: Predicate<T>
 //        ): PredicateStageBuilder<T> = EventPipelineBuilder().start(first, firstPredicate)
+        public fun <T : EventData> require(dispatcher: Class<out EventDispatcher<T>>): EventScopeReceiver =
+            apply { neededDispatchers[dispatcher.name] = dispatcher }
 
         public fun <T : EventData> subscribe(event: Class<out EventDispatcher<T>>, callback: EventHook<T>): Unit =
             EventDispatchManager.load(event).subscribe(callback)

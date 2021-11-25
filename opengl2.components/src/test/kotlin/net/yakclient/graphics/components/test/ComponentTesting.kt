@@ -6,6 +6,9 @@ import net.yakclient.graphics.api.GuiComponent
 import net.yakclient.graphics.api.PropertyFactory
 import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.components.Text
+import net.yakclient.graphics.util.ColorCodes
+import net.yakclient.graphics.util.ColorFunction
+import net.yakclient.graphics.util.SolidColor
 import net.yakclient.graphics.util.YakTextureFactory
 import java.util.function.Consumer
 
@@ -38,18 +41,18 @@ fun main() {
 //        set("value") to "Why is this text rendering weirdly?"
 //    }
 fun BasicTestComponent(): Component = { props ->
-    val state = useState(0) { 0 }
+    val doubleClicked = useState(0) { false }
     println("RENDERING")
 
 
 
-    build(use<Text>(0)) {
-        set("x") to 10
-        set("y") to 10
-        set("value") to "AYYY"
-    }
+//    build(use<Text>(0)) {
+//        set("x") to 10
+//        set("y") to 10
+//        set("value") to "AYYY"
+//    }
 
-    build(use<Box>(1)) {
+    build(use<Box>(0)) {
         set("x") to 100
         set("y") to 100
         set("width") to 64
@@ -57,28 +60,29 @@ fun BasicTestComponent(): Component = { props ->
         set("backgroundimage") to YakTextureFactory.loadTexture(
             javaClass.getResource("/wood.png") ?: throw RuntimeException("Resource not found!")
         )
-//                set("onclick") to Runnable {
-//                    println("CLICKED!")
-//                }
-//
-                set("ondbclick") to Runnable {
-                    println("double cooked")
-                }
-//
-//                set("onmousedown") to Runnable {
-//                    println("mouse down")
-//                }
-//
-//                set("onmousemove") to Runnable {
-//                    println("mouse up")
-//                }
-//
-//                set("onmouseout") to Runnable {
-//                    println("mouse out")
-//                }
-//
-//                set("onkeydown") to Consumer<Int> {
-//                    println("key down: $it")
-//                }
+        set("ondbclick") to Runnable {
+            println("double cooked")
+        }
+    }
+
+    build(use<Box>(1)) {
+        set("x") to 400
+        set("y") to 400
+        set("width") to 64
+        set("height") to 64
+//        set("backgroundimage") to YakTextureFactory.loadTexture(
+//            javaClass.getResource("/wood.png") ?: throw RuntimeException("Resource not found!")
+//        )
+        set("ondbclick") to Runnable {
+            doubleClicked.value = true
+        }
+    }
+
+   if (doubleClicked.value) build(use<Box>(2)) {
+        set("x") to 20
+        set("y") to 20
+        set("width") to 64
+        set("height") to 500
+        set("backgroundcolor") to SolidColor(ColorCodes.RED)
     }
 }

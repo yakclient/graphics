@@ -12,7 +12,7 @@ public class GL2KeyboardActionDispatcher : KeyboardActionDispatcher(), Ticking {
 
     override fun tick() {
         while (Keyboard.next()) {
-            dispatch(KeyActionData(Keyboard.getEventKey(), Keyboard.getEventKeyState()))
+            dispatch(KeyboardActionData(Keyboard.getEventKey(), Keyboard.getEventKeyState()))
         }
     }
 }

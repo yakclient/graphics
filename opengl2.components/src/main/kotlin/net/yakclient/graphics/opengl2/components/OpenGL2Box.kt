@@ -1,9 +1,9 @@
 package net.yakclient.graphics.opengl2.components
 
 import net.yakclient.graphics.api.GuiProperties
-import net.yakclient.graphics.api.event.KeyActionData
-import net.yakclient.graphics.api.event.ignore
-import net.yakclient.graphics.api.hook.onMouseClick
+import net.yakclient.graphics.api.event.*
+import net.yakclient.graphics.api.event.fsm.transitionsTo
+import net.yakclient.graphics.api.event.fsm.*
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.opengl2.render.GLRenderingData
@@ -11,6 +11,8 @@ import net.yakclient.graphics.opengl2.render.VerticeRenderingContext
 import net.yakclient.graphics.util.*
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
+import java.time.Duration
+import java.time.Instant
 import java.util.function.Consumer
 
 public class OpenGL2Box: Box() {
@@ -53,6 +55,7 @@ public class OpenGL2Box: Box() {
         val isMouseOver = useState(6, false) { false }
         //TODO the reason this doesnt work is because the key press has an up AND down event, so the first one is getting called with down then the second one is getting called with up, fails and then returns to the beginning.... it sucks... ya
         eventScope {
+
 //            useFSM().ignore<KeyActionData> {
 //                !it.state
 //            }.next(onMouseClick) {
@@ -63,9 +66,44 @@ public class OpenGL2Box: Box() {
 //                event.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && event.state && System.currentTimeMillis() - data <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME
 //            }.event(onMouseClick, doubleClick)
 
-            useFSM {
-                val
-            }
+            useFSM(true) {
+                val initial = of("Initial")
+                val inBox = of("Mouse in box")
+                val clicked = timedOf("Clicked")
+
+                //Happy path
+                (initial transitionsTo inBox).with<MouseMoveData> {
+                    rectBounding(it.x, it.y, x, y, x + width, y + height)
+                }
+
+                (inBox transitionsTo clicked).with<MouseActionData> {
+                    it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state
+                }
+
+                (clicked transitionsTo inBox).withTime<MouseActionData> { (it, instant) ->
+                    println("This here")
+                    println(Duration.between(
+                        instant,
+                        Instant.now()
+                    ).toMillis())
+                    val b = it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state && Duration.between(
+                        instant,
+                        Instant.now()
+                    ).toMillis() < YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME
+                    if (b) println("happened!!!")
+                    if (b) doubleClick()
+                    b
+                }
+
+                //To fail
+                (inBox transitionsTo initial).with<MouseMoveData> {
+                    !rectBounding(it.x, it.y, x, y, x + width, y + height)
+                }
+
+                (clicked transitionsTo initial).with<MouseMoveData> {
+                    !rectBounding(it.x, it.y, x, y, x + width, y + height)
+                }
+            }.require(onMouseMove).require(onMouseClick)
 
         }
 //            chain(onMouseClick) {

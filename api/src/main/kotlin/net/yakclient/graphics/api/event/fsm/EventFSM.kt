@@ -16,7 +16,7 @@ public open class EventFSM(
     }
 
     public fun dispatch(t: EventData) {
-        if (debug) logger.log(Level.INFO, "Received an event of type : ${t::class.java}")
+//        if (debug) logger.log(Level.INFO, "Received an event of type : ${t::class.java}")
 
         current.accept(t)
     }

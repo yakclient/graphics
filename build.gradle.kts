@@ -31,6 +31,10 @@ subprojects {
         implementation(kotlin("stdlib"))
     }
 
+    tasks.compileJava {
+        dependsOn(tasks.clean)
+    }
+
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
         destinationDirectory.set(tasks.compileJava.get().destinationDirectory.asFile.get())
         kotlinOptions.jvmTarget = "11"

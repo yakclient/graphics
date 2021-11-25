@@ -15,7 +15,7 @@ public class GL2MouseButtonEventDispatcher : MouseButtonEventDispatcher(), Ticki
             val key = Mouse.getEventButton()
 
             if (key != -1)
-                dispatch(KeyActionData(key, Mouse.getEventButtonState()))
+                dispatch(MouseActionData(key, Mouse.getEventButtonState()))
         }
     }
 }

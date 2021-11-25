@@ -4,8 +4,9 @@ import net.yakclient.graphics.util.YakFont.FontCharacterMetaData
 import java.awt.Color
 import java.awt.Font
 import java.awt.Graphics2D
-import java.awt.RenderingHints
+import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
+
 
 //private class LazyHashMap<K, out V>(
 //    private val  _delegate: MutableMap<K, V> = HashMap(),
@@ -83,11 +84,19 @@ public class YakGLFont(
 //            RenderingHints.VALUE_ANTIALIAS_ON
 //        )
         graphics.font = type
-
+//        graphics.transform = AffineTransform().apply {
+//            concatenate(AffineTransform.getScaleInstance(1.0, -1.0))
+//            concatenate(AffineTransform.getTranslateInstance(0.0, metrics.height.toDouble()));
+//        }
         graphics.color = Color.white
 
-        graphics.drawString(c.toString(), 0, 0 + metrics.ascent)
 
+        graphics.drawString(c.toString(), 0, 0 + metrics.ascent)
+//        graphics
+//        val at = AffineTransform()
+//        at.concatenate(AffineTransform.getScaleInstance(1.0, -1.0))
+//        at.concatenate(AffineTransform.getTranslateInstance(0.0, -image.getHeight()))
+//        return createTransformed(image, at)
 
 //        fontImage.getSubimage(0,0,width, metrics.height)
 //        org.newdawn.slick.Font
