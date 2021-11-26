@@ -1,18 +1,21 @@
 package net.yakclient.graphics.api.event.fsm
 
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.yakclient.graphics.api.event.EventData
 import java.time.Instant
 import java.util.function.Predicate
 
-public class TimedEventState(
+public open class TimedEventState(
     override val name: String,
     override val exits: List<Transition>
-) : PredicateEventState() {
+) : PredicateEventState {
     private lateinit var last: Instant
 
-    override fun accept() {
+    override fun accept(): Unit = runBlocking {
         last = Instant.now()
     }
+
 
     override fun <T : EventData> accept(event: T): Unit = find(event)?.run {
         this@run.accept(if (this@run is TimedTransition<*>) TimedEventData(event, last) else event)

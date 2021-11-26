@@ -1,35 +1,29 @@
 package net.yakclient.graphics.api.event.fsm
 
 import net.yakclient.graphics.api.event.EventData
-import net.yakclient.graphics.api.event.EventDispatcher
 import java.util.function.Predicate
 
-public open class EventFSMScope(
+public class EventFSMScope(
     debug: Boolean = false
 ) : EventFSM(StatePlaceholder(), debug) {
-    private val ref = FSMReference(this)
+    public val ref: FSMReference = FSMReference(this)
 //    internal val neededDispatchers: MutableMap<String, Class<out EventDispatcher<*>>> = HashMap()
 
     public fun of(name: String = EventState.defaultName()): MutableEventState =
         of(TypedPredicateEventState(name, ArrayList()))
-//        MutableEventState(TypedPredicateEventState(name, ArrayList())).also {
-//            if (current is StatePlaceholder) current = it
-//        }
 
     public fun timedOf(name: String = EventState.defaultName()): MutableEventState =
         of(TimedEventState(name, ArrayList()))
 
+    public fun timingOutOf(to: EventState, timeOut: Long, name: String = EventState.defaultName()): MutableEventState = of(TimingOutEventState(name, arrayListOf(TimingOutTransition(to, ref)), timeOut))
 
-    public fun of(delegate: EventState): MutableEventState =
+    public fun of(delegate: PredicateEventState): MutableEventState =
         MutableEventState(delegate).also { if (current is StatePlaceholder) current = it }
 
-//    public fun <T : EventData> require(dispatcher: Class<out EventDispatcher<T>>): EventFSMScope = apply {
-//        neededDispatchers[dispatcher.name] = dispatcher
-//    }
+    public fun <T: EventState> of(delegate: T): T = delegate.also { if (current is StatePlaceholder) current = it }
 
-
-    public open inner class MutableEventState(
-        private val delegate: EventState = TypedPredicateEventState(EventState.defaultName(), ArrayList()),
+    public inner class MutableEventState(
+        private val delegate: PredicateEventState = TypedPredicateEventState(EventState.defaultName(), ArrayList()),
     ) : EventState by delegate, MutableList<Transition> by delegate.exits as? MutableList<Transition>
         ?: throw IllegalStateException("Event state must be mutable!") {
 
@@ -39,7 +33,7 @@ public open class EventFSMScope(
             private val to: EventState
         ) {
             public fun <T : EventData> with(type: Class<T>, predicate: Predicate<T>) {
-                add(TypedPredicateTransition(to, ref, predicate, type))
+                add(TypedPredicateTransition(to, ref, type, predicate))
             }
 
             public fun <T : EventData> withTime(
@@ -53,7 +47,6 @@ public open class EventFSMScope(
 
 
     private class StatePlaceholder : EventState {
-        override val exits: List<Transition> = ArrayList()
         override val name: String = "placeholder"
 
         override fun <T : EventData> accept(event: T) {}

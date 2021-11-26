@@ -52,20 +52,20 @@ fun BasicTestComponent(): Component = { props ->
 //        set("value") to "AYYY"
 //    }
 
-    build(use<Box>(0)) {
-        set("x") to 100
-        set("y") to 100
-        set("width") to 64
-        set("height") to 64
-        set("backgroundimage") to YakTextureFactory.loadTexture(
-            javaClass.getResource("/wood.png") ?: throw RuntimeException("Resource not found!")
-        )
-        set("ondbclick") to Runnable {
-            println("double cooked")
-        }
-    }
+//    build(use<Box>(0)) {
+//        set("x") to 100
+//        set("y") to 100
+//        set("width") to 64
+//        set("height") to 64
+//        set("backgroundimage") to YakTextureFactory.loadTexture(
+//            javaClass.getResource("/wood.png") ?: throw RuntimeException("Resource not found!")
+//        )
+//        set("ondbclick") to Runnable {
+//            println("double cooked")
+//        }
+//    }
 
-    build(use<Box>(1)) {
+    build(use<Box>(0)) {
         set("x") to 400
         set("y") to 400
         set("width") to 64
@@ -74,15 +74,30 @@ fun BasicTestComponent(): Component = { props ->
 //            javaClass.getResource("/wood.png") ?: throw RuntimeException("Resource not found!")
 //        )
         set("ondbclick") to Runnable {
-            doubleClicked.value = true
+            println("double click")
+        }
+        set("onclick") to Runnable {
+            println("Clicked!")
+        }
+        set("onmouseover") to Runnable {
+            println("Mouse over")
+        }
+        set("onmouseup") to Runnable {
+            println("mouse up!")
+        }
+        set("onmousedown") to Runnable {
+            println("mouse down!")
+        }
+        set("onmouseout") to Runnable {
+            println("mouse out")
         }
     }
 
-   if (doubleClicked.value) build(use<Box>(2)) {
-        set("x") to 20
-        set("y") to 20
-        set("width") to 64
-        set("height") to 500
-        set("backgroundcolor") to SolidColor(ColorCodes.RED)
-    }
+//   if (doubleClicked.value) build(use<Box>(2)) {
+//        set("x") to 20
+//        set("y") to 20
+//        set("width") to 64
+//        set("height") to 500
+//        set("backgroundcolor") to SolidColor(ColorCodes.RED)
+//    }
 }

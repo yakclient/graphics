@@ -3,7 +3,7 @@ package net.yakclient.graphics.api.event.fsm
 import net.yakclient.graphics.api.event.EventData
 
 public interface EventState {
-    public val exits: List<Transition>
+//    public val exits: List<Transition>
     public val name: String
 
     public fun accept() {}

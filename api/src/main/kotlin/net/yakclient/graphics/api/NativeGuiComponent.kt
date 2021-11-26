@@ -51,6 +51,7 @@ public abstract class NativeGuiComponent {
         internal val `fsm's`: MutableList<EventFSM> = ArrayList()
         internal val neededDispatchers: MutableMap<String, Class<out EventDispatcher<*>>> = HashMap()
 
+        @JvmOverloads
         public fun useFSM(debug: Boolean = false,callback: EventFSMScope.() -> Unit): EventScopeReceiver = apply {
             EventFSMScope(debug).also(callback).let { `fsm's`.add(it) }
         }

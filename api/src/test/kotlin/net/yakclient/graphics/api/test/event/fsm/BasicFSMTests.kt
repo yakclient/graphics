@@ -1,5 +1,6 @@
 package net.yakclient.graphics.api.test.event.fsm
 
+import kotlinx.coroutines.*
 import net.yakclient.graphics.api.event.EventData
 import net.yakclient.graphics.api.event.KeyboardActionData
 import net.yakclient.graphics.api.event.MouseActionData
@@ -80,6 +81,33 @@ class BasicFSMTests {
         fsm.dispatch(MouseMoveData(500, 500, 11, 1))
         fsm.dispatch(KeyboardActionData(1, true))
         fsm.dispatch(MouseActionData(1, true))
+    }
+
+    @Test
+    fun basicCoroutineTest() {
+        println("First")
+        GlobalScope.async {
+            launch {
+                delay(1000)
+                println("second")
+            }
+        }
+//        runBlocking{
+//            async {
+//                launch {
+//                    delay(1000)
+//                    println("second")
+//                }
+//            }
+            println("third")
+//        }
+        println("fourth")
+
+        runBlocking {
+            launch {
+                delay(3000L) // only used to keep the JVM alive
+            }
+        }
     }
 
     @Test

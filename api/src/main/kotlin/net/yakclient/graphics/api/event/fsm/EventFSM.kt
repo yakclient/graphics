@@ -10,14 +10,12 @@ public open class EventFSM(
     private val debug: Boolean = false
 ) {
     private val logger = Logger.getLogger("net.yakclient.graphics.api.event.fsm")
-    public var current: EventState by Delegates.observable(first) { _, old, new ->
+    internal var current: EventState by Delegates.observable(first) { _, old, new ->
         new.accept()
         if (debug) logger.log(Level.INFO, "State changed from ${old.name} to ${new.name}")
     }
 
     public fun dispatch(t: EventData) {
-//        if (debug) logger.log(Level.INFO, "Received an event of type : ${t::class.java}")
-
         current.accept(t)
     }
 }
@@ -25,5 +23,6 @@ public open class EventFSM(
 public class FSMReference(
     fsm: EventFSM
 ) : SoftReference<EventFSM>(fsm) {
+    @Synchronized
     public fun set(state: EventState): Unit = let { get()?.current = state }
 }
