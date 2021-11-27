@@ -84,33 +84,6 @@ class BasicFSMTests {
     }
 
     @Test
-    fun basicCoroutineTest() {
-        println("First")
-        GlobalScope.async {
-            launch {
-                delay(1000)
-                println("second")
-            }
-        }
-//        runBlocking{
-//            async {
-//                launch {
-//                    delay(1000)
-//                    println("second")
-//                }
-//            }
-            println("third")
-//        }
-        println("fourth")
-
-        runBlocking {
-            launch {
-                delay(3000L) // only used to keep the JVM alive
-            }
-        }
-    }
-
-    @Test
     fun testWithTiming() {
         val fsm = EventFSMScope(true).apply {
             val initialTimed = timedOf("Initial")
