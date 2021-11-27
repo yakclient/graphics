@@ -11,8 +11,6 @@ import net.yakclient.graphics.opengl2.render.VerticeRenderingContext
 import net.yakclient.graphics.util.*
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
-import java.time.Duration
-import java.time.Instant
 import java.util.function.Consumer
 
 public class OpenGL2Box : Box() {
@@ -36,283 +34,99 @@ public class OpenGL2Box : Box() {
         val mouseOut = props.getAs<Runnable>("onmouseout") ?: Runnable {}
         val keyDown = props.getAs<Consumer<Int>>("onkeydown") ?: Consumer<Int> {}
         val keyUp = props.getAs<Consumer<Int>>("onkeyup") ?: Consumer<Int> {}
-//        val hover = props.getAs<Runnable>("onhover") ?: Runnable {}
+        //TODO val hover = props.getAs<Runnable>("onhover") ?: Runnable {}
 
-        //  State
-//        val lastClick = this.useState(0, false) { System.currentTimeMillis() }
-//        val wasLastTickMouseDown = this.useState(1, false) { false }
-//        val focused = this.useState(3, false) { false }
-//        val lastKeyDown = this.useState(4, false) { YakGraphicsUtils.CHAR_NONE }
-//        val wasLastTickKeyDown = this.useState(5, false) { false }
-
-//        val isMouseOver =
-
-        //  Event implementation
-//        val lmbDown: Boolean = Mouse.isButtonDown(YakGraphicsUtils.MOUSE_LEFT_BUTTON)
-//        if (wasLastTickMouseDown.value && !lmbDown) onMouseUp()// .ifPresent { obj: Runnable -> obj.run() }
-        val lastTickMousePos = this.useState(2, false) { Vertice(Mouse.getX(), Mouse.getY()) }
-
-        val isMouseOver = useState(6, false) { false }
-        //TODO the reason this doesnt work is because the key press has an up AND down event, so the first one is getting called with down then the second one is getting called with up, fails and then returns to the beginning.... it sucks... ya
         eventScope {
-            fun EventFSMScope.MutableEventState.TransitionProvider.withBounding(event: Runnable = Runnable {}) =
+            fun EventFSMScope.TransitionProvider.withBounding(event: Runnable = Runnable {}) =
                 with<MouseMoveData> {
                     rectBounding(it.x, it.y, x, y, x + width, y + height).also { b -> if (b) event.run() }
                 }
 
-            fun EventFSMScope.MutableEventState.TransitionProvider.withNotBounding(event: Runnable = Runnable {}) =
+            fun EventFSMScope.TransitionProvider.withNotBounding(event: Runnable = Runnable {}) =
                 with<MouseMoveData> {
                     (!rectBounding(it.x, it.y, x, y, x + width, y + height)).also { b -> if (b) event.run() }
                 }
-//            useFSM().ignore<KeyActionData> {
-//                !it.state
-//            }.next(onMouseClick) {
-//                it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state
-//            }.supply {
-//                System.currentTimeMillis()
-//            }.next(onMouseClick) { event, data ->
-//                event.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && event.state && System.currentTimeMillis() - data <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME
-//            }.event(onMouseClick, doubleClick)
 
-            // All mouse events
-            useFSM(true) {
+            // Mouse click, double click, mouse down, mouse up, mouse over, mouse move and mouse out.
+            useFSM {
+                // Initial state
                 val initial = of("Initial")
+                // State representing that the mouse is currently bounding within this box
                 val inBox = of("Mouse in box")
+                // State representing that the mouse is in the up position after being in the down position. This state times out after 500ms
+                val up = timingOutOf(inBox, YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME.toLong(), "Mouse up in box")
+                // State representing that the mouse is bounding within the box and is in a down position
                 val down = of(object : DelegatingEventState("Mouse down in box") {
-                    lateinit var to_inBox: Transition
-                    lateinit var to_mouseUp: Transition
-                    lateinit var to_initial: Transition
+                    // The transition for moving back to the "mouse in box" state
+                    private val to_inBox: Transition = transition(inBox).with()
 
-                    override fun <T : EventData> find(event: T): Transition? =
-                        when (event) {
-                            is MouseActionData -> (
-                                    if (!event.state && event.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON) to_mouseUp
-                                    else to_inBox)
-                            is MouseMoveData -> to_initial
-                            else -> null }
+                    // The transition representing that the mouse has gone into an up position
+                    private val to_mouseUp: Transition = eventTransition(up) { mouseClick(); mouseUp() }
+
+                    // The transition representing that the mouse has moved outside the box and goes back into the initial position
+                    private val to_initial: Transition = transition(initial).with<MouseMoveData> { e ->
+                        (!rectBounding(
+                            e.x,
+                            e.y,
+                            x,
+                            y,
+                            x + width,
+                            y + height
+                        )).also { if (it) mouseOut() }
+                    }
+
+                    // Custom logic for delegating to transitions
+                    override fun <T : EventData> find(event: T): Transition? = when (event) {
+                        is MouseActionData -> (if (!event.state && event.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON) to_mouseUp else to_inBox)
+                        is MouseMoveData -> to_initial
+                        else -> null
+                    }
                 })
 
-                val up = timingOutOf(inBox, YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME.toLong(), "Mouse up in box")
-
-                (initial transitionsTo inBox).withBounding {
-                    mouseOver()
+                // The transition for moving to inBox when the mouse is bounding with this box
+                (initial transitionsTo inBox).withBounding(mouseOver)
+                // The transition for moving to "mouse down" when the left mouse button has been clicked(mouse down)
+                (inBox transitionsTo down).with<MouseActionData> { e ->
+                    // Checks if the mouse action data and calls events accordingly
+                    (e.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON).also {
+                        if (it && e.state) mouseDown() else if (it) mouseUp()
+                    }.let { it && e.state }
                 }
-
-                (inBox transitionsTo down).with<MouseActionData> {
-                    if (it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON) {
-                        if (it.state) mouseDown()
-                        else mouseUp()
-                    }
-                    it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state
-                }
-
-                down.to_inBox = Transition(inBox, ref)
-                down.to_mouseUp = object : Transition(up, ref) {
-                    override fun accept(t: EventData) {
-                        mouseUp()
-                        super.accept(t)
+                // The transition for moving from the up state to inBox after a double click(or timing out)
+                (up transitionsTo inBox).with<MouseActionData> { e -> (e.state && e.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON).also { if (it) doubleClick() } }
+                // Transition for moving from the inBox state to the initial if the mouse moves outside the box
+                (inBox transitionsTo initial).with<MouseMoveData> {
+                    // Checks if the mouse is bounding, then calls events accordingly
+                    (!rectBounding(it.x, it.y, x, y, x + width, y + height)).also { b ->
+                        if (b) mouseOut()
+                        else mouseMove()
                     }
                 }
-                down.to_initial = TypedPredicateTransition(initial, ref, MouseMoveData::class.java) {
-                    val b = !rectBounding(it.x, it.y, x, y, x + width, y + height)
-                    if (b) mouseOut()
-                    b
-                }
-//                down.(down transitionsTo up).with<MouseActionData> {
-//                    val b = !it.state && it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON
-//                    if (b) {
-//                        mouseClick()
-//                        mouseUp()
-//                    }
-//                    b
-//                }
-                (up transitionsTo inBox).with<MouseActionData> {
-                    val b = (it.state && it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON)
-                    if (b) doubleClick()
-                    b
-                }
-
-                //Failing
-//                (down transitionsTo inBox).with<MouseActionData> {
-//
-//                }
-                (inBox transitionsTo initial).withNotBounding(mouseOut)
-//                (down transitionsTo initial).withNotBounding(mouseOut)
+                // Transition for moving to initial from up if the mouse is no longer bounding
                 (up transitionsTo initial).withNotBounding(mouseOut)
-            }.require(onMouseMove).require(onMouseClick)
+            }.require(onMouseMove, onMouseClick)
 
-//            useFSM {
-//                val initial = of("Initial")
-//                val inBox = of("Mouse in box")
-//                val clicked = timedOf("Clicked")
-//
-//                //Happy path
-//                (initial transitionsTo inBox).withBounding()
-//
-//                (inBox transitionsTo clicked).with<MouseActionData> {
-//                    it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state
-//                }
-//
-//                (clicked transitionsTo inBox).withTime<MouseActionData> { (it, instant) ->
-//                    println("This here")
-//                    println(
-//                        Duration.between(
-//                            instant,
-//                            Instant.now()
-//                        ).toMillis()
-//                    )
-//                    val b = it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state && Duration.between(
-//                        instant,
-//                        Instant.now()
-//                    ).toMillis() < YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME
-//                    if (b) println("happened!!!")
-//                    if (b) doubleClick()
-//                    b
-//                }
-//
-//                //To fail
-//                (inBox transitionsTo initial).withNotBounding()
-//
-//                (clicked transitionsTo initial).withNotBounding()
-//            }.require(onMouseMove).require(onMouseClick)
-//
-//            // Click event
-//            useFSM {
-//                val initial = of("Initial")
-//                val inBox = of("In box")
-//
-//                (initial transitionsTo inBox).withBounding()
-//
-//                (inBox transitionsTo inBox).with<MouseActionData> {
-//                    if (it.state && it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON) mouseClick()
-//                    true
-//                }
-//
-//                (inBox transitionsTo initial).withNotBounding()
-//            }
+            // Handles key up and down
+            useFSM {
+                val initial = of("Initial")
+                val inBox = of("In box")
+                val clicked = of("Clicked in box")
 
-//            useFSM {
-//                val initial = of("Initial")
-//                val inBox
-//            }
+                // Happy path
+                (initial transitionsTo inBox).withBounding()
+                (inBox transitionsTo clicked).with<MouseActionData> { it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state }
+                (clicked transitionsTo clicked).with<KeyboardActionData> {
+                    if (it.state) keyUp(it.key)
+                    else keyDown(it.key)
+                    false // Doesn't matter, just less work for the FSM to do if no state transitions have to happen
+                }
 
+                // Failure path
+                (inBox transitionsTo initial).withNotBounding()
+                (clicked transitionsTo inBox).with<MouseActionData> { it.key != YakGraphicsUtils.MOUSE_LEFT_BUTTON }
+                (clicked transitionsTo initial).withNotBounding()
+            }.require(onMouseMove, onMouseClick, onKeyboardAction)
         }
-//            chain(onMouseClick) {
-//                it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state
-//            }.provide {
-//                System.currentTimeMillis()
-//            }.next(onMouseClick) { event, data ->
-//                event.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && event.state && System.currentTimeMillis() - data <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME
-//            }.ignore {
-//                it.state
-//            }.event { doubleClick() }
-//
-//            chain(onMouseClick) {
-//                it.state
-//            }.next(onMouseClick) {
-//                !it.state
-//            }.event { mouseClick() }
-//
-//            chain(onMouseMove) {
-//                rectBounding(it.x, it.y, x, y, x + width, y + height)
-//            }.next(onMouseClick).event {
-//                if (it.state) mouseDown()
-//                else mouseUp()
-//            }
-//
-//            subscribe(onMouseClick) {
-//                if (it.state) mouseDown
-//                else mou
-//            }
-////            subscribe(onMouseMove) {
-////                isMouseOver.value = rectBounding(it.absoluteX, it.absoluteY, y, x, x + width, y + height)
-////
-////                if (isMouseOver.value) mouseMove()
-////                else mouseOut()
-////
-//////            val lastMousePosition: Vertice = lastTickMousePos.value
-//////            if (lastMousePosition == Vertice(
-//////                    Mouse.getX(),
-//////                    Mouse.getY()
-//////                ) && isMouseOver.value!!
-//////            ) onHover()
-//////            if (lastMousePosition != Vertice(
-//////                    Mouse.getX(),
-//////                    Mouse.getY()
-//////                ) && isMouseOver.value!!
-//////            ) onMouseMove()
-////            }
-//        }
-
-
-//        eventScope(1, onMouseClick) { (key, state) ->
-//            if (isMouseOver.value && (state && (key == YakGraphicsUtils.MOUSE_LEFT_BUTTON))) mouseDown()// onMouseDown.ifPresent { obj: Runnable -> obj.run() }
-//            if (key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && state) {
-//                if (System.currentTimeMillis() - lastClick.value <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME && isMouseOver.value) {
-//                    focused.value = true
-//                    doubleClick()// { obj: Runnable -> obj.run() }
-//                    lastClick.value = 0L
-//                } else {
-//                    if (!isMouseOver.value) focused.value = false else {
-//                        lastClick.value = System.currentTimeMillis()
-//                        focused.value = true
-//                        mouseClick()// { obj: Runnable -> obj.run() }
-//                    }
-//                }
-//            }
-//        }
-//
-//        eventScope(2, onKeyboardAction) { (key) ->
-//            if (focused.value && key != YakGraphicsUtils.CHAR_NONE) {
-//                lastKeyDown.value = key
-//                keyDown(key)
-//            }
-//        }
-
-
-//        if (isMouseOver) onMouseOver()//.ifPresent { obj: Runnable -> obj.run() }
-//        if (isMouseOver && lmbDown) onMouseDown()// onMouseDown.ifPresent { obj: Runnable -> obj.run() }
-
-//        if (rectBounding(
-//                ltPos.x,
-//                ltPos.y,
-//                y,
-//                x,
-//                x + width,
-//                y + height
-//            ) && !isMouseOver
-//        ) onMouseOut()//.ifPresent { obj: Runnable -> obj.run() }
-
-//        while (Keyboard.next()) {
-//            val eventKey: Int = Keyboard.getEventKey()
-//            if (focused.value && eventKey != YakGraphicsUtils.CHAR_NONE) lastKeyDown.value = eventKey
-//        }
-//        val key: Int = lastKeyDown.value
-//        if (Keyboard.isKeyDown(key)) {
-//            onKeyDown(key)//.ifPresent { consumer -> consumer.accept(key) }
-//            wasLastTickKeyDown.value = true
-//        } else if (wasLastTickKeyDown.value) {
-//            onKeyUp(key)// { consumer -> consumer.accept(key) }
-//            wasLastTickKeyDown.value = false
-//        }
-//        if (isMouseOver) wasLastTickMouseDown.value = lmbDown
-//        while (Mouse.next()) {
-//            val button: Int = Mouse.getEventButton()
-//            if (button == YakGraphicsUtils.MOUSE_LEFT_BUTTON && Mouse.getEventButtonState()) {
-//                if (System.currentTimeMillis() - lastClick.value <= YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME && isMouseOver) {
-//                    focused.value = true
-//                    doubleClick()// { obj: Runnable -> obj.run() }
-//                    lastClick.value = 0L
-//                } else {
-//                    if (!isMouseOver) focused.value = false else {
-//                        lastClick.value = System.currentTimeMillis()
-//                        focused.value = true
-//                        mouseClick()// { obj: Runnable -> obj.run() }
-//                    }
-//                }
-//            }
-//        }
-//        lastTickMousePos.value = Vertice(Mouse.getX(), Mouse.getY())
 
 
         //  Rendering

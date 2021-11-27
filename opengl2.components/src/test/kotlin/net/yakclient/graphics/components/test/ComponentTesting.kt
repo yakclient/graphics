@@ -91,6 +91,15 @@ fun BasicTestComponent(): Component = { props ->
         set("onmouseout") to Runnable {
             println("mouse out")
         }
+        set("onmousemove") to Runnable {
+            println("mouse move")
+        }
+        set("onkeydown") to Consumer<Int> {
+            println("Key $it down")
+        }
+        set("onkeyup") to Consumer<Int> {
+            println("Key $it up")
+        }
     }
 
 //   if (doubleClicked.value) build(use<Box>(2)) {

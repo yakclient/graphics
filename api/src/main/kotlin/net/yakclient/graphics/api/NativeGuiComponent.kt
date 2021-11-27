@@ -52,7 +52,7 @@ public abstract class NativeGuiComponent {
         internal val neededDispatchers: MutableMap<String, Class<out EventDispatcher<*>>> = HashMap()
 
         @JvmOverloads
-        public fun useFSM(debug: Boolean = false,callback: EventFSMScope.() -> Unit): EventScopeReceiver = apply {
+        public fun useFSM(debug: Boolean = false, callback: EventFSMScope.() -> Unit): EventScopeReceiver = apply {
             EventFSMScope(debug).also(callback).let { `fsm's`.add(it) }
         }
 
@@ -60,8 +60,8 @@ public abstract class NativeGuiComponent {
 //            first: Class<T>,
 //            firstPredicate: Predicate<T>
 //        ): PredicateStageBuilder<T> = EventPipelineBuilder().start(first, firstPredicate)
-        public fun <T : EventData> require(dispatcher: Class<out EventDispatcher<T>>): EventScopeReceiver =
-            apply { neededDispatchers[dispatcher.name] = dispatcher }
+        public fun require(vararg dispatchers: Class<out EventDispatcher<*>>): EventScopeReceiver =
+            apply { dispatchers.forEach { neededDispatchers[it.name] = it } }
 
         public fun <T : EventData> subscribe(event: Class<out EventDispatcher<T>>, callback: EventHook<T>): Unit =
             EventDispatchManager.load(event).subscribe(callback)
