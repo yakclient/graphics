@@ -8,13 +8,13 @@ import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.api.state.GuiState
 import net.yakclient.graphics.api.state.ObservableState
 import net.yakclient.graphics.api.state.Stateful
+import java.util.function.Consumer
 import kotlin.apply
 
 public abstract class NativeGuiComponent {
-    //    private val events: MutableSet<Int> = HashSet()
     private val states: MutableMap<Int, Stateful<*>> = HashMap()
     public var needsReRender: Boolean = true
-    private var eventsScoped = false
+    private var subscriptionCyclePassed = false
 
     public abstract fun renderNatively(props: GuiProperties): List<RenderingContext>
 
@@ -30,47 +30,27 @@ public abstract class NativeGuiComponent {
             needsReRender = true
         } else GuiState(provider())).also { states[key] = it }) as Stateful<T>
 
-//    @JvmOverloads
-//    public fun <T> useState(key: Int, triggersReRender: Boolean = true): Stateful<T> {
-//        return this.useState(key, triggersReRender) { null }
-//    }
-
-    //    public fun <T: EventData> eventScope(id: Int, event: Class<out EventSubscriber<T>>, callback: EventHook<T>) : Unit = if (events.add(id)) { EventManager.subscribe(event, callback); } else Unit
-    public fun eventScope(callback: EventScopeReceiver.() -> Unit): Unit = if (!eventsScoped) {
-        eventsScoped = true
+    public fun eventScope(callback: EventScopeReceiver.() -> Unit): Unit = if (!subscriptionCyclePassed) {
+        subscriptionCyclePassed = true
         EventScopeReceiver().apply(callback).run {
-            `fsm's`.forEach { CommonEventPipe.commonPipe.add(StagedEventFSM(it)) }
+            fsms.forEach { CommonEventPipe.commonPipe.add(StagedEventFSM(it)) }
             neededDispatchers.forEach { (_, event) -> CommonEventPipe.commonPipe.subscribeTo(event as Class<out EventDispatcher<EventData>>) }
         }
     } else Unit
 
-//    public fun <T : EventData> useChainedEvent(id: Int, first: Class<out EventSubscriber<T>>, firstPredicate: Predicate<T>) : UnaryEventNode<T> = UnaryEventNode(
-//        EventNodeDispatcher(), first, null, firstPredicate)
-
     public inner class EventScopeReceiver internal constructor() {
-        internal val `fsm's`: MutableList<EventFSM> = ArrayList()
+        internal val fsms: MutableList<EventFSM> = ArrayList()
         internal val neededDispatchers: MutableMap<String, Class<out EventDispatcher<*>>> = HashMap()
 
         @JvmOverloads
         public fun useFSM(debug: Boolean = false, callback: EventFSMScope.() -> Unit): EventScopeReceiver = apply {
-            EventFSMScope(debug).also(callback).let { `fsm's`.add(it) }
+            EventFSMScope(debug).also(callback).let { fsms.add(it) }
         }
 
-        //        public fun <T : EventData> chain(
-//            first: Class<T>,
-//            firstPredicate: Predicate<T>
-//        ): PredicateStageBuilder<T> = EventPipelineBuilder().start(first, firstPredicate)
         public fun require(vararg dispatchers: Class<out EventDispatcher<*>>): EventScopeReceiver =
             apply { dispatchers.forEach { neededDispatchers[it.name] = it } }
 
-        public fun <T : EventData> subscribe(event: Class<out EventDispatcher<T>>, callback: EventHook<T>): Unit =
-            EventDispatchManager.load(event).subscribe(callback)
+        public fun <T : EventData> subscribe(event: Class<out EventDispatcher<T>>, callback: Consumer<T>): Unit =
+            CommonEventPipe.commonPipe.apply { subscribe(event, callback) }.subscribeTo(event)
     }
-
-
-//    public fun onMouseMove(callback: Hook<MouseMoveData>): Unit = HookManager.subscribe<MouseMoveSubscriber, MouseMoveData>(callback)
-//
-//    public fun onMouseEvent(callback: Hook<KeyActionData>) : Unit = HookManager.subscribe<MouseButtonEventSubscriber, KeyActionData>(callback)
-//
-//    public fun onKeyboardEvent(callback: Hook<KeyActionData>) : Unit = HookManager.subscribe<KeyboardActionSubscriber, KeyActionData>(callback)
 }

@@ -10,7 +10,6 @@ public open class EventPipeline(
     public open class MutablePipeline(
         stages: MutableList<EventStage> = ArrayList()
     ) : EventPipeline(stages), MutableList<EventStage> by stages
-
 }
 
 

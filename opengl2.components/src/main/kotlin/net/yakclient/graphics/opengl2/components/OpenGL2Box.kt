@@ -104,7 +104,7 @@ public class OpenGL2Box : Box() {
                 }
                 // Transition for moving to initial from up if the mouse is no longer bounding
                 (up transitionsTo initial).withNotBounding(mouseOut)
-            }.require(onMouseMove, onMouseClick)
+            }
 
             // Handles key up and down
             useFSM {
@@ -125,7 +125,9 @@ public class OpenGL2Box : Box() {
                 (inBox transitionsTo initial).withNotBounding()
                 (clicked transitionsTo inBox).with<MouseActionData> { it.key != YakGraphicsUtils.MOUSE_LEFT_BUTTON }
                 (clicked transitionsTo initial).withNotBounding()
-            }.require(onMouseMove, onMouseClick, onKeyboardAction)
+            }
+
+            require(onMouseMove, onMouseClick, onKeyboardAction)
         }
 
 

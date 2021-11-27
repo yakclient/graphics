@@ -41,7 +41,5 @@ public class OpenGL2Text : Text() {
                 x += data.width
             }
         }
-//        return ArrayList()
-
     }
 }
