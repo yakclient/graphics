@@ -1,6 +1,3 @@
 rootProject.name = "graphics"
 
-include( ":util", ":components", ":api")
-include("opengl2")
-include("opengl3")
-include("opengl2.components")
+include( ":util", ":components", ":api", "opengl2", "opengl3", "opengl2.components", "opengl2.util")

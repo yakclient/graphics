@@ -10,7 +10,12 @@ public object DeferredComponentLoader {
             .sortedWith { first, second -> first.priority - second.priority }
 
     public fun <T : DeferredComponent> find(type: Class<T>): Class<out DeferredComponent> =
-        providers.firstNotNullOf { it.providesWith(type) }
+        providers.firstNotNullOfOrNull { it.providesWith(type) }
+            ?: throw IllegalStateException(
+                if (providers.isEmpty())
+                    "Failed to load Deferred component providers, this is most likely an issue with the provider modules not being on your classpath path"
+                else "No deferred component provider loaded manages type: ${type.name}"
+            )
 
     public fun <T : DeferredComponent> create(type: Class<T>): T = find(type).let {
         it.getDeclaredConstructor().newInstance() as? T
@@ -34,7 +39,7 @@ public fun <T : DeferredComponent> provideWith(
     assert(type.superclass == DeferredComponent::class.java).let { inputs.firstOrNull { type.isAssignableFrom(it.java) }?.java as? Class<out T> }
 
 public abstract class DeferredComponent : NativeGuiComponent() {
-    private val backingComponent : DeferredComponent by lazy {
+    private val backingComponent: DeferredComponent by lazy {
         DeferredComponentLoader.create(this::class.java)
     }
 

@@ -26,14 +26,14 @@ public class OpenGL2Text : Text() {
                     verticesOf(
                         Vertice(x, y),
                         Vertice(x + data.width, y),
-                        Vertice(x, y + data.height),
                         Vertice(x + data.width, y + data.height),
+                        Vertice(x, y + data.height),
                     ),
                     texs = texsOf(
                         TexNode(0f, 0f),
                         TexNode(1f, 0f),
-                        TexNode(0f, 1f),
                         TexNode(1f, 1f),
+                        TexNode(0f, 1f),
                     ),
                     texture = data.backingTexture
                 )

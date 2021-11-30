@@ -10,6 +10,7 @@ import net.yakclient.graphics.util.ColorCodes
 import net.yakclient.graphics.util.ColorFunction
 import net.yakclient.graphics.util.SolidColor
 import net.yakclient.graphics.util.YakTextureFactory
+import java.io.File
 import java.util.function.Consumer
 
 fun main() {
@@ -49,7 +50,7 @@ fun BasicTestComponent(): Component = { props ->
 //    build(use<Text>(0)) {
 //        set("x") to 10
 //        set("y") to 10
-//        set("value") to "AYYY"
+//        set("value") to "Hello, how messed up is this text?"
 //    }
 
 //    build(use<Box>(0)) {
@@ -68,11 +69,12 @@ fun BasicTestComponent(): Component = { props ->
     build(use<Box>(0)) {
         set("x") to 400
         set("y") to 400
-        set("width") to 64
-        set("height") to 64
-//        set("backgroundimage") to YakTextureFactory.loadTexture(
-//            javaClass.getResource("/wood.png") ?: throw RuntimeException("Resource not found!")
-//        )
+        set("width") to 200
+        set("height") to 300
+        set("backgroundimage") to YakTextureFactory.loadTexture(
+            javaClass.getResource("/wood_pickaxe.png") ?: throw RuntimeException("Resource not found!")
+        )
+//        set("backgroundcolor") to SolidColor(ColorCodes.WHEAT)
         set("ondbclick") to Runnable {
             println("double click")
         }

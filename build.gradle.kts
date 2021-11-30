@@ -17,7 +17,7 @@ tasks.wrapper {
 
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
-    apply(plugin="org.javamodularity.moduleplugin")
+    apply(plugin = "org.javamodularity.moduleplugin")
 
     repositories {
         mavenCentral()
@@ -35,8 +35,25 @@ subprojects {
         dependsOn(tasks.clean)
     }
 
+//    sourceSets {
+//        main {
+//            java {
+//                resources.destinationDirectory.set(java.destinationDirectory)
+//            }
+//        }
+//    }
+
+//    tasks.processResources {
+//        println(destinationDir.absolutePath)
+//    }
+
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
         destinationDirectory.set(tasks.compileJava.get().destinationDirectory.asFile.get())
+//       sourceSets.main.get().resources.destinationDirectory.set(tasks.compileJava.get().destinationDirectory)
+//        println("The dir is" + sourceSets.main.get().resources.destinationDirectory.get().asFile.absoluteFile)
+
+//        resources.
+//        tasks.proce
         kotlinOptions.jvmTarget = "11"
     }
 }

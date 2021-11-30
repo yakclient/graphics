@@ -7,7 +7,6 @@ module yakclient.graphics.open2gl {
     requires yakclient.graphics.util;
     requires lwjgl;
     requires java.base;
-    requires io.github.emilyydev.asp;
 
     provides MouseMoveDispatcher with GL2MouseMoveDispatcher;
     provides MouseButtonEventDispatcher with GL2MouseButtonEventDispatcher;

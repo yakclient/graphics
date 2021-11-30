@@ -1,6 +1,6 @@
 package net.yakclient.graphics.util
 
-public class PaddingFunc private constructor(
+public data class PaddingFunc(
     public val paddingTop: Double,
     public val paddingBottom: Double,
     public val paddingRight: Double,

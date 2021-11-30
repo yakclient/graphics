@@ -12,16 +12,10 @@ module yakclient.graphics.api {
     requires yakclient.graphics.util;
     requires kotlinx.coroutines.core.jvm;
 
-//    requires lwjgl;
-//    requires lwjgl.util;
-//    requires slick.util;
     requires kotlin.stdlib;
     requires kotlin.reflect;
     requires java.logging;
 
     uses EventDispatcher;
     uses DeferredComponentProvider;
-//    uses MouseMoveSubscriber;
-//    uses MouseButtonEventSubscriber;
-//    uses KeyboardActionSubscriber;
 }

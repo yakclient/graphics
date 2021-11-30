@@ -21,7 +21,7 @@ public class OpenGL2Box : Box() {
         val x: Double = props.requireAs("x")
         val y: Double = props.requireAs("y")
         //  Transparency is defined in the background color.
-        val backgroundColor = props.getAs<ColorFunction>("backgroundcolor")
+        val backgroundColor = props.getAs<ColorFunction>("backgroundcolor") ?: VacantColorFunction()
         val texture = props.getAs<YakTexture>("backgroundimage") ?: VacantTexture()
 
         //  Events
@@ -139,20 +139,17 @@ public class OpenGL2Box : Box() {
             Vertice(x, y + height)
         )
 
-        val colors: ColorFunction =
-            backgroundColor ?: VacantColorFunction()// ?:  backgroundColor.or(Supplier<Optional<out ColorFunction>> {
-
         return ofAll(
             VerticeRenderingContext(
                 GL11.GL_QUADS,
                 GL11.GL_TEXTURE_2D,
                 GLRenderingData(
-                    vertices, colors.toAggregation(vertices),
+                    vertices, backgroundColor.toAggregation(vertices),
                     texs = texsOf(
                         TexNode(0f, 0f),
                         TexNode(1f, 0f),
-                        TexNode(0f, 1f),
                         TexNode(1f, 1f),
+                        TexNode(0f, 1f),
                     ),
                     texture = texture
                 )
