@@ -1,6 +1,10 @@
 plugins {
-    kotlin("jvm") version "1.5.31"
-    kotlin("kapt") version "1.5.31"
+    kotlin("jvm") version "1.6.0"
+    kotlin("kapt") version "1.6.0"
+    id("signing")
+    id("maven-publish")
+    id("org.jetbrains.dokka") version "1.4.32"
+    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
     id("org.javamodularity.moduleplugin") version "1.8.10"
 
 }
@@ -11,15 +15,34 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
 }
+
+dependencies {
+
+}
 tasks.wrapper {
-    gradleVersion = "7.2"
+    gradleVersion = "7.3.1"
+}
+
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            username.set(project.findProperty("mavenUsername") as String)
+            password.set(project.findProperty("mavenPassword") as String)
+        }
+    }
 }
 
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.javamodularity.moduleplugin")
 
+    project.ext.set("lwjgl.version", "3.3.1")
+
     repositories {
+        mavenLocal()
         mavenCentral()
     }
 
@@ -29,31 +52,29 @@ subprojects {
 
     dependencies {
         implementation(kotlin("stdlib"))
+        testImplementation(kotlin("test"))
+    }
+
+    tasks.compileKotlin {
+        destinationDirectory.set(tasks.compileJava.get().destinationDirectory.asFile.get())
+
+        kotlinOptions {
+            jvmTarget = "17"
+        }
+    }
+
+    tasks.compileTestKotlin {
+        kotlinOptions {
+            jvmTarget = "17"
+        }
+    }
+
+    tasks.test {
+        useJUnitPlatform()
     }
 
     tasks.compileJava {
-        dependsOn(tasks.clean)
-    }
-
-//    sourceSets {
-//        main {
-//            java {
-//                resources.destinationDirectory.set(java.destinationDirectory)
-//            }
-//        }
-//    }
-
-//    tasks.processResources {
-//        println(destinationDir.absolutePath)
-//    }
-
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
-        destinationDirectory.set(tasks.compileJava.get().destinationDirectory.asFile.get())
-//       sourceSets.main.get().resources.destinationDirectory.set(tasks.compileJava.get().destinationDirectory)
-//        println("The dir is" + sourceSets.main.get().resources.destinationDirectory.get().asFile.absoluteFile)
-
-//        resources.
-//        tasks.proce
-        kotlinOptions.jvmTarget = "11"
+        targetCompatibility = "17"
+        sourceCompatibility = "17"
     }
 }

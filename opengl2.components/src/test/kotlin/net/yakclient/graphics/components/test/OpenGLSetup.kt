@@ -51,7 +51,6 @@ object OpenGLSetup {
             Display.update()
             Display.sync(FPS_GOAL)
         }
-//        HookTickManager.shouldTick = false
         println("Attempting to cleanup resources")
         println()
         println("----- RUNTIME STATS -----")

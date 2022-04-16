@@ -1,5 +1,5 @@
 import net.yakclient.graphics.api.DeferredComponentProvider;
-import net.yakclient.graphics.api.event.*;
+import net.yakclient.event.api.*;
 
 module yakclient.graphics.api {
     requires java.base;
@@ -7,9 +7,9 @@ module yakclient.graphics.api {
     exports net.yakclient.graphics.api.state;
     exports net.yakclient.graphics.api.render;
     exports net.yakclient.graphics.api.event;
-    exports net.yakclient.graphics.api.event.fsm;
 
-    requires yakclient.graphics.util;
+    requires transitive yakclient.event.api;
+    requires transitive yakclient.graphics.util;
     requires kotlinx.coroutines.core.jvm;
 
     requires kotlin.stdlib;

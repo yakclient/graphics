@@ -1,19 +1,18 @@
 package net.yakclient.graphics.api.test.event.fsm
 
-import kotlinx.coroutines.*
-import net.yakclient.graphics.api.event.EventData
+import net.yakclient.event.api.EventData
 import net.yakclient.graphics.api.event.KeyboardActionData
 import net.yakclient.graphics.api.event.MouseActionData
 import net.yakclient.graphics.api.event.MouseMoveData
-import net.yakclient.graphics.api.event.fsm.*
+import net.yakclient.event.api.fsm.EventFSMScope
+import net.yakclient.event.api.fsm.transitionsTo
+import net.yakclient.event.api.fsm.with
+import net.yakclient.event.api.fsm.withTime
 import net.yakclient.graphics.api.test.event.TestEventOne
 import org.junit.jupiter.api.Test
 import java.lang.Thread.sleep
 import java.time.Duration
 import java.time.Instant
-import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalUnit
-import java.util.concurrent.TimeUnit
 
 class BasicFSMTests {
     @Test

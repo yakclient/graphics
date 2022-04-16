@@ -8,8 +8,6 @@ module yakclient.graphics.opengl2.util {
     requires yakclient.graphics.util;
     requires lwjgl;
     requires lwjgl.util;
-//    requires io.github.emilyydev.asp;
-    requires slick2d.core;
     requires java.desktop;
 
     uses YakFontFactory.FontProvider;

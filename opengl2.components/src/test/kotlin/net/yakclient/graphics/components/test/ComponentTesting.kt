@@ -11,6 +11,7 @@ import net.yakclient.graphics.util.ColorFunction
 import net.yakclient.graphics.util.SolidColor
 import net.yakclient.graphics.util.YakTextureFactory
 import java.io.File
+import java.net.URL
 import java.util.function.Consumer
 
 fun main() {
@@ -42,7 +43,7 @@ fun main() {
 //        set("value") to "Why is this text rendering weirdly?"
 //    }
 fun BasicTestComponent(): Component = { props ->
-    val doubleClicked = useState(0) { false }
+    var doubleClicked by useState(0) { false }
     println("RENDERING")
 
 
@@ -66,13 +67,14 @@ fun BasicTestComponent(): Component = { props ->
 //        }
 //    }
 
+
     build(use<Box>(0)) {
         set("x") to 400
         set("y") to 400
         set("width") to 200
         set("height") to 300
         set("backgroundimage") to YakTextureFactory.loadTexture(
-            javaClass.getResource("/wood_pickaxe.png") ?: throw RuntimeException("Resource not found!")
+           File("/Users/durgan/IdeaProjects/yakclient/graphics/opengl2.components/src/test/resources/wood_pickaxe.png").toURI().toURL()  ?: throw RuntimeException("Resource not found!")
         )
 //        set("backgroundcolor") to SolidColor(ColorCodes.WHEAT)
         set("ondbclick") to Runnable {

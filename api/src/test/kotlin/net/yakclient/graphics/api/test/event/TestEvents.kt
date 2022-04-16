@@ -1,7 +1,7 @@
 package net.yakclient.graphics.api.test.event
 
-import net.yakclient.graphics.api.event.EventData
-import net.yakclient.graphics.api.event.EventDispatcher
+import net.yakclient.event.api.EventData
+import net.yakclient.event.api.EventDispatcher
 
 val testEventOne : Class<TestEventOneDispatcher> = TestEventOneDispatcher::class.java
 val testEventTwo : Class<TestEventTwoDispatcher> = TestEventTwoDispatcher::class.java

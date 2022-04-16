@@ -1,9 +1,9 @@
 package net.yakclient.graphics.api
 
-import net.yakclient.graphics.api.event.*
-import net.yakclient.graphics.api.event.fsm.EventFSM
-import net.yakclient.graphics.api.event.fsm.EventFSMScope
-import net.yakclient.graphics.api.event.stage.StagedEventFSM
+import net.yakclient.event.api.*
+import net.yakclient.event.api.fsm.EventFSM
+import net.yakclient.event.api.fsm.MutableEventFSM
+import net.yakclient.event.api.stage.StagedEventFSM
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.api.state.GuiState
 import net.yakclient.graphics.api.state.ObservableState
@@ -43,8 +43,8 @@ public abstract class NativeGuiComponent {
         internal val neededDispatchers: MutableMap<String, Class<out EventDispatcher<*>>> = HashMap()
 
         @JvmOverloads
-        public fun useFSM(debug: Boolean = false, callback: EventFSMScope.() -> Unit): EventScopeReceiver = apply {
-            EventFSMScope(debug).also(callback).let { fsms.add(it) }
+        public fun useFSM(debug: Boolean = false, callback: MutableEventFSM.() -> Unit): EventScopeReceiver = apply {
+            MutableEventFSM(debug).also(callback).let { fsms.add(it) }
         }
 
         public fun require(vararg dispatchers: Class<out EventDispatcher<*>>): EventScopeReceiver =

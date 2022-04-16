@@ -1,12 +1,13 @@
-import net.yakclient.graphics.api.event.*;
+import net.yakclient.graphics.api.event.KeyboardActionDispatcher;
+import net.yakclient.graphics.api.event.MouseButtonEventDispatcher;
+import net.yakclient.graphics.api.event.MouseMoveDispatcher;
 import net.yakclient.graphics.opengl2.event.*;
 
 module yakclient.graphics.open2gl {
     requires kotlin.stdlib;
-    requires yakclient.graphics.api;
-    requires yakclient.graphics.util;
-    requires lwjgl;
+    requires transitive yakclient.graphics.api;
     requires java.base;
+    requires lwjgl;
 
     provides MouseMoveDispatcher with GL2MouseMoveDispatcher;
     provides MouseButtonEventDispatcher with GL2MouseButtonEventDispatcher;

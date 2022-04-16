@@ -1,6 +1,5 @@
 package net.yakclient.graphics.opengl2.util
 
-import io.github.emilyydev.asp.Provides
 import net.yakclient.graphics.util.YakGraphicsUtils
 import net.yakclient.graphics.util.YakTexture
 import net.yakclient.graphics.util.YakTextureFactory
@@ -29,7 +28,6 @@ public data class YakGLTexture(
 
 private const val BYTES_PER_PIXEL = 4 //3 for RGB, 4 for RGBA
 
-@Provides(YakTextureFactory.TextureProvider::class)
 public class YakGL2TextureProvider : YakTextureFactory.TextureProvider {
     //Credit : https://stackoverflow.com/questions/10801016/lwjgl-textures-and-strings
     override fun load(image: BufferedImage): YakTexture {

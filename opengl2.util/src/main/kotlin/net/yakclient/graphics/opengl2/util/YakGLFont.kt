@@ -1,6 +1,5 @@
 package net.yakclient.graphics.opengl2.util
 
-import io.github.emilyydev.asp.Provides
 import net.yakclient.graphics.util.YakFont
 import net.yakclient.graphics.util.YakFont.FontCharacterMetaData
 import net.yakclient.graphics.util.YakFontFactory
@@ -50,7 +49,6 @@ public class YakGLFont(
     }
 }
 
-@Provides(YakFontFactory.FontProvider::class)
 public class YakGL2FontProvider : YakFontFactory.FontProvider {
     override fun load(font: Font, name: String, meta: YakFont.FontMetaData): YakFont = YakGLFont(font, name, meta)
 }

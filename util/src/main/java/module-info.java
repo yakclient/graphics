@@ -3,7 +3,7 @@ import net.yakclient.graphics.util.YakTextureFactory;
 
 module yakclient.graphics.util {
     exports net.yakclient.graphics.util;
-    exports net.yakclient.graphics.util.func;
+//    exports net.yakclient.graphics.util.func;
 
     requires java.desktop;
     requires kotlin.stdlib;

@@ -8,9 +8,6 @@ module yakclient.graphics.open2gl.components {
     requires yakclient.graphics.open2gl;
     requires yakclient.graphics.components;
     requires lwjgl;
-    requires io.github.emilyydev.asp;
 
-
-    uses DeferredComponentProvider;
     provides DeferredComponentProvider with OpenGL2ComponentProvider;
 }

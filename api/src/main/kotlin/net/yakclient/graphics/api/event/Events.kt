@@ -2,6 +2,9 @@
 
 package net.yakclient.graphics.api.event
 
+import net.yakclient.event.api.EventData
+import net.yakclient.event.api.EventDispatcher
+
 public val onMouseMove: Class<MouseMoveDispatcher> = MouseMoveDispatcher::class.java
 
 public val onMouseClick: Class<MouseButtonEventDispatcher> = MouseButtonEventDispatcher::class.java

@@ -1,15 +1,14 @@
 package net.yakclient.graphics.opengl2.components
 
 import net.yakclient.graphics.api.GuiProperties
+import net.yakclient.event.api.*
+import net.yakclient.event.api.fsm.*
 import net.yakclient.graphics.api.event.*
-import net.yakclient.graphics.api.event.fsm.transitionsTo
-import net.yakclient.graphics.api.event.fsm.*
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.opengl2.render.GLRenderingData
 import net.yakclient.graphics.opengl2.render.VerticeRenderingContext
 import net.yakclient.graphics.util.*
-import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
 import java.util.function.Consumer
 
@@ -37,12 +36,12 @@ public class OpenGL2Box : Box() {
         //TODO val hover = props.getAs<Runnable>("onhover") ?: Runnable {}
 
         eventScope {
-            fun EventFSMScope.TransitionProvider.withBounding(event: Runnable = Runnable {}) =
+            fun MutableEventFSM.TransitionProvider.withBounding(event: Runnable = Runnable {}) =
                 with<MouseMoveData> {
                     rectBounding(it.x, it.y, x, y, x + width, y + height).also { b -> if (b) event.run() }
                 }
 
-            fun EventFSMScope.TransitionProvider.withNotBounding(event: Runnable = Runnable {}) =
+            fun MutableEventFSM.TransitionProvider.withNotBounding(event: Runnable = Runnable {}) =
                 with<MouseMoveData> {
                     (!rectBounding(it.x, it.y, x, y, x + width, y + height)).also { b -> if (b) event.run() }
                 }

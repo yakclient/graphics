@@ -1,12 +1,13 @@
 package net.yakclient.graphics.opengl2.event
 
-import io.github.emilyydev.asp.Provides
-import net.yakclient.graphics.api.event.*
+import net.yakclient.graphics.api.event.MouseMoveData
+import net.yakclient.graphics.api.event.MouseMoveDispatcher
+import net.yakclient.graphics.api.event.TickManager
+import net.yakclient.graphics.api.event.Ticking
 
 import org.lwjgl.input.Mouse
 
-@Provides(MouseMoveDispatcher::class)
-public class GL2MouseMoveDispatcher : MouseMoveDispatcher(), Ticking {
+public class GL2MouseMoveDispatcher : MouseMoveDispatcher(),Ticking {
     init {
         TickManager.register(this)
     }
