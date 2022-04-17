@@ -1,6 +1,5 @@
 package net.yakclient.graphics.opengl2.event
 
-import net.yakclient.event.api.*
 import net.yakclient.graphics.api.event.KeyboardActionData
 import net.yakclient.graphics.api.event.KeyboardActionDispatcher
 import net.yakclient.graphics.api.event.TickManager
