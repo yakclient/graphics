@@ -1,16 +1,13 @@
 package net.yakclient.graphics.opengl2.render
 
-import net.yakclient.graphics.util.ColorAggregation
-import net.yakclient.graphics.util.TexAggregation
-import net.yakclient.graphics.util.VerticeAggregation
 import net.yakclient.graphics.util.YakGraphicsUtils
 import org.lwjgl.opengl.GL11
 
 public class VerticeVAORenderer(context: VerticeRenderingContext) : VerticeRenderer(context) {
     override fun bindPointers() {
-        GL11.glVertexPointer(VerticeAggregation.VERTICE_SIZE, 0, YakGraphicsUtils.flipBuf(data.verticeBuf))
-        GL11.glColorPointer(ColorAggregation.COLOR_SIZE, 0, YakGraphicsUtils.flipBuf(data.colorBuf))
+        GL11.glVertexPointer(data.verticeSize, 0, YakGraphicsUtils.flipBuf(data.verticeBuf))
+        GL11.glColorPointer(data.colorSize, 0, YakGraphicsUtils.flipBuf(data.colorBuf))
         GL11.glNormalPointer(0, YakGraphicsUtils.flipBuf(data.normalBuf))
-        GL11.glTexCoordPointer(TexAggregation.VERTICE_SIZE, 0, YakGraphicsUtils.flipBuf(data.texBuf))
+        GL11.glTexCoordPointer(data.texSize, 0, YakGraphicsUtils.flipBuf(data.texBuf))
     }
 }

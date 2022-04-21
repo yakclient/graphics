@@ -1,6 +1,9 @@
 package net.yakclient.graphics.opengl2.render
 
 import net.yakclient.graphics.util.*
+import net.yakclient.graphics.util.buffer.SafeFloatBuffer
+import net.yakclient.graphics.util.buffer.safeFloatBufOf
+import java.io.Closeable
 import java.nio.DoubleBuffer
 import java.nio.FloatBuffer
 
@@ -22,20 +25,31 @@ import java.nio.FloatBuffer
  * @see YakTexture
  */
 public class GLRenderingData @JvmOverloads constructor(
-    private val vertices: VerticeAggregation,
-    private val colors: ColorAggregation = ColorAggregation(),
-    private val normals: NormalAggregation = NormalAggregation(),
-    private val texs: TexAggregation = TexAggregation(),
+    private val vertices: SafeFloatBuffer,
+    public val verticeSize: Int = 4, // The size of 1 vertice: X, Z, Y, R
+    private val colors: SafeFloatBuffer = safeFloatBufOf(),
+    public val colorSize: Int = 4, // The size of 1 color: R, G, B, A
+    private val normals: SafeFloatBuffer = safeFloatBufOf(),
+    public val normalSize: Int = 3, // The size of 1 normal : X, Z, Y
+    private val texs: SafeFloatBuffer = safeFloatBufOf(),
+    public val texSize: Int = 3, // The size of 1 tex coordinate: X, Z, Y
     public val texture: YakTexture = VacantTexture(),
     public val verticeCount: Int = vertices.size,
-) {
-    public val verticeBuf: DoubleBuffer by lazy { vertices.asBuffer()}
-    public val colorBuf: FloatBuffer by lazy { colors.asBuffer() }
-    public val normalBuf: DoubleBuffer by lazy { normals.asBuffer() }
-    public val texBuf: FloatBuffer by lazy { texs.asBuffer() }
+) : Closeable {
+    public val verticeBuf: FloatBuffer by vertices::buffer
+    public val colorBuf: FloatBuffer by colors::buffer
+    public val normalBuf: FloatBuffer by normals::buffer
+    public val texBuf: FloatBuffer by texs::buffer
 
-    public fun hasVertices(): Boolean = !vertices.isEmpty()
-    public fun hasColors(): Boolean = !colors.isEmpty()
-    public fun hasNormals(): Boolean = !normals.isEmpty()
-    public fun hasTexs(): Boolean = !texs.isEmpty()
+    public fun hasVertices(): Boolean = vertices.size != 0
+    public fun hasColors(): Boolean = colors.size != 0
+    public fun hasNormals(): Boolean = normals.size != 0
+    public fun hasTexs(): Boolean = texs.size != 0
+
+    override fun close() {
+        vertices.close()
+        colors.close()
+        normals.close()
+        texs.close()
+    }
 }

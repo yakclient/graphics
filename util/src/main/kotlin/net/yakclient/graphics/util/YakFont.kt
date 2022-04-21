@@ -14,5 +14,10 @@ public interface YakFont {
 
     public data class FontMetaData(val name: String, val style: Int, val size: Int, val isAliased: Boolean)
 
-    public data class FontCharacterMetaData(val c: Char, val height: Int, val width: Int, val backingTexture: YakTexture)
+    public data class FontCharacterMetaData(
+        val c: Char,
+        val width: Int,
+        val height: Int,
+        val backingTexture: YakTexture
+    )
 }

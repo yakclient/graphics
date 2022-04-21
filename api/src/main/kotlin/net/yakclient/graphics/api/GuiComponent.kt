@@ -3,9 +3,7 @@ package net.yakclient.graphics.api
 import net.yakclient.graphics.api.render.RenderingContext
 import kotlin.reflect.KFunction
 
-public abstract class GuiComponent: NativeGuiComponent(
-
-) {
+public abstract class GuiComponent: NativeGuiComponent() {
     private val maintainedChildren: MutableList<NativeGuiComponent> = ArrayList()
     private val childSettings: MutableList<ComponentRenderingContext<*>> = ArrayList()
 

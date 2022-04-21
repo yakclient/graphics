@@ -9,16 +9,17 @@ import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.opengl2.render.GLRenderingData
 import net.yakclient.graphics.opengl2.render.VerticeRenderingContext
 import net.yakclient.graphics.util.*
+import net.yakclient.graphics.util.buffer.safeFloatBufOf
 import org.lwjgl.opengl.GL11
 import java.util.function.Consumer
 
 public class OpenGL2Box : Box() {
 
     override fun renderNatively(props: GuiProperties): List<RenderingContext> {
-        val width: Double = props.requireAs("width")
-        val height: Double = props.requireAs("height")
-        val x: Double = props.requireAs("x")
-        val y: Double = props.requireAs("y")
+        val width: Float = props.requireAs("width")
+        val height: Float = props.requireAs("height")
+        val x: Float = props.requireAs("x")
+        val y: Float = props.requireAs("y")
         //  Transparency is defined in the background color.
         val backgroundColor = props.getAs<ColorFunction>("backgroundcolor") ?: VacantColorFunction()
         val texture = props.getAs<YakTexture>("backgroundimage") ?: VacantTexture()
@@ -131,25 +132,20 @@ public class OpenGL2Box : Box() {
 
 
         //  Rendering
-        val vertices: VerticeAggregation = verticesOf(
-            Vertice(x, y),
-            Vertice(x + width, y),
-            Vertice(x + width, y + height),
-            Vertice(x, y + height)
-        )
+        val vertices = safeFloatBufOf(8)
+            .put(x).put(y)
+            .put(x + width).put(y)
+            .put(x + width).put(y + height)
+            .put(x).put(y + height)
+
 
         return ofAll(
             VerticeRenderingContext(
                 GL11.GL_QUADS,
                 GL11.GL_TEXTURE_2D,
                 GLRenderingData(
-                    vertices, backgroundColor.toAggregation(vertices),
-                    texs = texsOf(
-                        TexNode(0f, 0f),
-                        TexNode(1f, 0f),
-                        TexNode(1f, 1f),
-                        TexNode(0f, 1f),
-                    ),
+                    vertices, 2, backgroundColor.toAggregation(vertices),
+                    texs = safeFloatBufOf(arrayOf(0f, 0f, 1f, 0f, 1f, 1f, 0f, 1f)), texSize = 2,
                     texture = texture
                 )
             ), this.applyChildren(props)
@@ -157,7 +153,7 @@ public class OpenGL2Box : Box() {
 
     }
 
-    private fun rectBounding(x: Int, y: Int, top: Double, left: Double, bottom: Double, right: Double): Boolean {
+    private fun rectBounding(x: Int, y: Int, top: Float, left: Float, bottom: Float, right: Float): Boolean {
         return top < y && bottom > y && left < x && right > x
     }
 }

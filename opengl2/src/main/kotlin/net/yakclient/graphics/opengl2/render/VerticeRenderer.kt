@@ -1,9 +1,7 @@
 package net.yakclient.graphics.opengl2.render
 
 import net.yakclient.graphics.api.render.Renderer
-import net.yakclient.graphics.util.TexAggregation
 import net.yakclient.graphics.util.YakGraphicsUtils
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 
 public abstract class VerticeRenderer(override val context: VerticeRenderingContext) : Renderer<VerticeRenderingContext> {
@@ -29,12 +27,11 @@ public abstract class VerticeRenderer(override val context: VerticeRenderingCont
         }
 
         data.texture.bind()
-        glTexCoordPointer(TexAggregation.VERTICE_SIZE, 0, YakGraphicsUtils.flipBuf(data.texBuf))
+        glTexCoordPointer(data.texSize, 0, YakGraphicsUtils.flipBuf(data.texBuf))
         glDrawArrays(context.drawType, 0, data.verticeCount)
 //        data.texture.release()
         if (data.hasTexs()) {
 //            GL11.glDisable(GL11.GL_BLEND)
-            glDisable(GL_CULL_FACE)
             glDisable(context.textureType)
             glDisableClientState(GL_TEXTURE_COORD_ARRAY)
         }

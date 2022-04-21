@@ -2,4 +2,6 @@
 
 package net.yakclient.graphics.util
 
-public class VacantColorFunction : ColorFunction by functionalColorFunc({ ColorAggregation() })
+import net.yakclient.graphics.util.buffer.safeFloatBufOf
+
+public class VacantColorFunction : ColorFunction by functionalColorFunc({ safeFloatBufOf() })

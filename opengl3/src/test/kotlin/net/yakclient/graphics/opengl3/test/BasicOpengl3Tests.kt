@@ -8,7 +8,6 @@ import org.lwjgl.opengl.GL15.*
 import org.lwjgl.system.MemoryStack.stackPush
 import kotlin.test.Test
 
-
 private const val WINDOW_HEIGHT = 400
 private const val WINDOW_WIDTH = 400
 
@@ -98,7 +97,6 @@ class BasicOpengl3Tests {
             glEnableClientState(GL_VERTEX_ARRAY)
             glEnableClientState(GL_COLOR_ARRAY)
 
-            glEnable(GL_BLEND)
 
             glBindBuffer(GL_ARRAY_BUFFER, vbo)
             GL11.glVertexPointer(2, GL_FLOAT, 24, 0)
