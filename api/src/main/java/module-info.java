@@ -1,5 +1,8 @@
 import net.yakclient.graphics.api.DeferredComponentProvider;
 import net.yakclient.event.api.*;
+import net.yakclient.graphics.api.event.KeyboardActionDispatcher;
+import net.yakclient.graphics.api.event.MouseButtonEventDispatcher;
+import net.yakclient.graphics.api.event.MouseMoveDispatcher;
 
 module yakclient.graphics.api {
     requires java.base;
@@ -16,6 +19,8 @@ module yakclient.graphics.api {
     requires kotlin.reflect;
     requires java.logging;
 
-    uses EventDispatcher;
+    uses MouseMoveDispatcher;
+    uses KeyboardActionDispatcher;
+    uses MouseButtonEventDispatcher;
     uses DeferredComponentProvider;
 }

@@ -23,7 +23,6 @@ tasks.wrapper {
     gradleVersion = "7.3.1"
 }
 
-
 nexusPublishing {
     repositories {
         sonatype {

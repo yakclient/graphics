@@ -25,8 +25,8 @@ public class VerticeRenderingContext(
 
     public override fun useRenderer(type: RenderingType): Renderer<VerticeRenderingContext> {
         return when (type) {
-            RenderingType.VBO -> VerticeVBORenderer(this)
-            RenderingType.VAO -> VerticeVAORenderer(this)
+            RenderingType.VBO -> VerticeVBORenderer()
+            RenderingType.VAO -> VerticeVAORenderer()
             else -> throw UnsupportedRenderingTypeException(type, this.javaClass.name)
         }
     }

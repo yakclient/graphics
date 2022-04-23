@@ -10,4 +10,8 @@ public interface SafeBuffer<out B : Buffer, N : Number> : Closeable {
     public fun put(number: N): SafeBuffer<B, N>
 
     public fun putAll(numbers: Array<N>): SafeBuffer<B, N>
+
+    public fun get(index: Int) : N
+
+    public fun get(start: Int, end: Int) : Array<N>
 }

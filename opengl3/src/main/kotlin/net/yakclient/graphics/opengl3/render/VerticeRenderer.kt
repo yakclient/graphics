@@ -4,16 +4,16 @@ import net.yakclient.graphics.api.render.Renderer
 import net.yakclient.graphics.util.YakGraphicsUtils
 import org.lwjgl.opengl.GL11.*
 
-public abstract class VerticeRenderer(override val context: VerticeRenderingContext) : Renderer<VerticeRenderingContext> {
+public abstract class VerticeRenderer : Renderer<VerticeRenderingContext> {
 
-    protected abstract fun bindPointers()
+    protected abstract fun bindPointers(data: GLRenderingData)
 
-    protected val data: GLRenderingData
-        get() = context.data
-
-    override fun render() {
+    override fun render(context: VerticeRenderingContext) {
         //TODO batch rendering, seems like textures arent the issue but instead lots of draw calls...
-        bindPointers()
+        val data = context.data
+
+        bindPointers(data)
+
         if (data.hasVertices()) glEnableClientState(GL_VERTEX_ARRAY)
         if (data.hasColors()) glEnableClientState(GL_COLOR_ARRAY)
         if (data.hasNormals()) glEnableClientState(GL_NORMAL_ARRAY)
@@ -40,5 +40,6 @@ public abstract class VerticeRenderer(override val context: VerticeRenderingCont
         if (data.hasColors()) glDisableClientState(GL_COLOR_ARRAY)
         if (data.hasVertices()) glDisableClientState(GL_VERTEX_ARRAY)
 
+        context.data.close()
     }
 }

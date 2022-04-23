@@ -11,7 +11,7 @@ version = "1.0-SNAPSHOT"
 dependencies {
     implementation(project(":util"))
     implementation(project(":api"))
-    implementation(project(":opengl2"))
+//    implementation(project(":opengl2"))
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")

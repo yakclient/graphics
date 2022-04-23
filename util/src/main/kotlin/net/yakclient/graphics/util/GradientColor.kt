@@ -10,7 +10,7 @@ public class GradientColor(
 
     public constructor(offset: Int, vararg colors: Color) : this(colors.toList(), offset)
 
-    override fun toAggregation(vertices: SafeFloatBuffer): SafeFloatBuffer {
-        return ColorFunction.applyColorEffect(offset, vertices, *colors.toTypedArray())
+    override fun toAggregation(buf: SafeFloatBuffer, verticeSize: Int): SafeFloatBuffer {
+        return ColorFunction.applyColorEffect(offset, buf, *colors.toTypedArray())
     }
 }

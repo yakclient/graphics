@@ -5,13 +5,8 @@ import net.yakclient.graphics.api.FunctionalComponent
 import net.yakclient.graphics.api.GuiComponent
 import net.yakclient.graphics.api.PropertyFactory
 import net.yakclient.graphics.components.Box
-import net.yakclient.graphics.components.Text
-import net.yakclient.graphics.util.ColorCodes
-import net.yakclient.graphics.util.ColorFunction
-import net.yakclient.graphics.util.SolidColor
 import net.yakclient.graphics.util.YakTextureFactory
 import java.io.File
-import java.net.URL
 import java.util.function.Consumer
 
 fun main() {
@@ -22,7 +17,7 @@ fun main() {
 
         val contexts = component.renderNatively(PropertyFactory().build())
         for (context in contexts) {
-            context.useRenderer().render()
+            context.renderUsingDefault()
         }
     }
 }

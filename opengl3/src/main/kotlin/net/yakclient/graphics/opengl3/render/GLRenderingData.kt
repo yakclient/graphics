@@ -25,16 +25,16 @@ import java.nio.FloatBuffer
  * @see YakTexture
  */
 public class GLRenderingData @JvmOverloads constructor(
-    private val vertices: SafeFloatBuffer,
+    public val vertices: SafeFloatBuffer,
     public val verticeSize: Int = 4, // The size of 1 vertice: X, Z, Y, R
-    private val colors: SafeFloatBuffer = safeFloatBufOf(),
+    public val colors: SafeFloatBuffer = safeFloatBufOf(),
     public val colorSize: Int = 4, // The size of 1 color: R, G, B, A
-    private val normals: SafeFloatBuffer = safeFloatBufOf(),
+    public val normals: SafeFloatBuffer = safeFloatBufOf(),
     public val normalSize: Int = 3, // The size of 1 normal : X, Z, Y
-    private val texs: SafeFloatBuffer = safeFloatBufOf(),
+    public val texs: SafeFloatBuffer = safeFloatBufOf(),
     public val texSize: Int = 3, // The size of 1 tex coordinate: X, Z, Y
     public val texture: YakTexture = VacantTexture(),
-    public val verticeCount: Int = vertices.size,
+    public val verticeCount: Int = vertices.size / verticeSize,
 ) : Closeable {
     public val verticeBuf: FloatBuffer by vertices::buffer
     public val colorBuf: FloatBuffer by colors::buffer

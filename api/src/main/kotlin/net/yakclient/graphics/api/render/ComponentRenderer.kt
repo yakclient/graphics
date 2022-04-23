@@ -3,8 +3,7 @@ package net.yakclient.graphics.api.render
 import net.yakclient.graphics.api.ComponentRenderingContext
 
 public class ComponentRenderer(
-    override val context: ComponentRenderingContext<*>,
     private val propagatingType: RenderingType,
 ) : Renderer<ComponentRenderingContext<*>> {
-    override fun render(): Unit = context.applyContext().forEach { it.useRenderer(propagatingType).render() }
+    override fun render(context: ComponentRenderingContext<*>): Unit = context.applyContext().forEach { (it.renderUsingDefault(propagatingType)) }
 }

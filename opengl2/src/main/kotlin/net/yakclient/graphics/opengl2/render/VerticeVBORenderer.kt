@@ -4,8 +4,8 @@ import net.yakclient.graphics.util.YakGraphicsUtils
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL15.*
 
-public class VerticeVBORenderer(context: VerticeRenderingContext) : VerticeRenderer(context) {
-    override fun bindPointers() {
+public class VerticeVBORenderer : VerticeRenderer() {
+    override fun bindPointers(data: GLRenderingData) {
         val verticesHandle: Int = glGenBuffers()
         glBindBuffer(GL_ARRAY_BUFFER, verticesHandle)
         glBufferData(GL_ARRAY_BUFFER, YakGraphicsUtils.flipBuf(data.verticeBuf), GL_STATIC_DRAW)

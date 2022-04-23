@@ -1,4 +1,4 @@
-package net.yakclient.graphics.opengl2.components
+package net.yakclient.graphics.opengl3.components
 
 import net.yakclient.graphics.api.GuiProperties
 import net.yakclient.event.api.*
@@ -6,14 +6,14 @@ import net.yakclient.event.api.fsm.*
 import net.yakclient.graphics.api.event.*
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.components.Box
-import net.yakclient.graphics.opengl2.render.GLRenderingData
-import net.yakclient.graphics.opengl2.render.VerticeRenderingContext
+import net.yakclient.graphics.opengl3.render.GLRenderingData
+import net.yakclient.graphics.opengl3.render.VerticeRenderingContext
 import net.yakclient.graphics.util.*
 import net.yakclient.graphics.util.buffer.safeFloatBufOf
 import org.lwjgl.opengl.GL11
 import java.util.function.Consumer
 
-public class OpenGL2Box : Box() {
+public class OpenGl3Box : Box() {
 
     override fun renderNatively(props: GuiProperties): List<RenderingContext> {
         val width: Float = props.requireAs("width")
