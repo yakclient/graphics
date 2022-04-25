@@ -43,6 +43,6 @@ public abstract class DeferredComponent : NativeGuiComponent() {
         DeferredComponentLoader.create(this::class.java)
     }
 
-    override fun renderNatively(props: GuiProperties): List<RenderingContext> =
+    override fun renderNatively(props: GuiPropertiesMap): List<RenderingContext> =
         backingComponent.renderNatively(props)
 }

@@ -8,6 +8,7 @@ module yakclient.graphics.util {
     requires kotlin.stdlib;
     requires kotlin.reflect;
     requires kotlinx.coroutines.core.jvm;
+    requires java.logging;
 
     exports net.yakclient.graphics.util;
     exports net.yakclient.graphics.util.buffer;

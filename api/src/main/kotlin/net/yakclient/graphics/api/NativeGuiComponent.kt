@@ -16,9 +16,9 @@ public abstract class NativeGuiComponent {
     public var needsReRender: Boolean = true
     private var subscriptionCyclePassed = false
 
-    public abstract fun renderNatively(props: GuiProperties): List<RenderingContext>
+    public abstract fun renderNatively(props: GuiPropertiesMap): List<RenderingContext>
 
-    public fun applyChildren(properties: GuiProperties): List<RenderingContext> =
+    public fun applyChildren(properties: GuiPropertiesMap): List<RenderingContext> =
         properties.getAs<List<ComponentRenderingContext<*>>>(CHILD_NAME) ?: ArrayList()
 
     public fun ofAll(initial: RenderingContext, all: List<RenderingContext>): List<RenderingContext> =

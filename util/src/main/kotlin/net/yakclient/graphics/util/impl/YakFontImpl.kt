@@ -1,12 +1,16 @@
 package net.yakclient.graphics.util.impl
 
-import net.yakclient.graphics.util.YakFont
-import net.yakclient.graphics.util.YakFontFactory
-import net.yakclient.graphics.util.YakTextureFactory
+import net.yakclient.graphics.util.*
+import net.yakclient.graphics.util.YakTextureFactory.identifyBy
 import java.awt.Color
 import java.awt.Font
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
+import java.io.File
+import java.util.Stack
+import java.util.logging.Level
+import java.util.logging.Logger
+import javax.imageio.ImageIO
 
 
 public class YakFontImpl(
@@ -14,26 +18,40 @@ public class YakFontImpl(
     override val name: String,
     override val meta: YakFont.FontMetaData,
 ) : YakFont {
-    private val characters: Map<Char, YakFont.FontCharacterMetaData> = run {
-        val tmp = BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)
+    private val characters: Map<Char, YakFont.FontCharacterMetaData>
+    override val chars: Set<Char>
 
-        val tempGraphics = tmp.graphics as Graphics2D
+    init {
+        val tmp = BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)
+
+        val tempGraphics = tmp.graphics
+        tempGraphics.dispose()
         tempGraphics.font = type
 
         val metrics = tempGraphics.fontMetrics
 
-        YakTextureFactory.loadImages((0..Character.MAX_VALUE.code).filter(type::canDisplay).map { c ->
+        val images = (0..Char.MAX_VALUE.code).asSequence().mapNotNull { c ->
             val char = c.toChar()
-            BufferedImage(metrics.charWidth(char), metrics.height, BufferedImage.TYPE_INT_RGB).also { image ->
+            if (!type.canDisplay(char)) null
+            else if (metrics.charWidth(char) > 0) (BufferedImage(
+                metrics.charWidth(char),
+                metrics.height,
+                BufferedImage.TYPE_INT_RGB
+            ) identifyBy c).also { (_, image) ->
                 val graphics = image.graphics
 
                 graphics.font = type
                 graphics.color = Color.white
 
                 graphics.drawString(char.toString(), 0, 0 + metrics.ascent)
-            }
-        }).withIndex().map { (c, tex) -> YakFont.FontCharacterMetaData(c.toChar(), tex.width, tex.height, tex) }
+                graphics.dispose()
+            } else null
+        }.filterNot { it.value.width < 1 }
+
+        characters = YakTextureFactory.loadImages(images).asSequence()
+            .map { (id, tex) -> YakFont.FontCharacterMetaData(id.toChar(), tex.width, tex.height, tex) }
             .associateBy { it.c }
+        chars = characters.keys
     }
 
     override operator fun get(char: Char): YakFont.FontCharacterMetaData? = characters[char]
@@ -43,27 +61,6 @@ public class YakFontImpl(
 
     override fun getHeight(value: String): Int =
         value.fold(0) { acc, char -> ((characters[char]?.height) ?: acc).takeIf { it > acc } ?: acc }
-
-//    private fun getChar(c: Char): YakFont.FontCharacterMetaData {
-//        val temp = BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)
-//
-//        val tempGraphics = temp.graphics as Graphics2D
-//        tempGraphics.font = type
-//
-//        val metrics = tempGraphics.fontMetrics
-//
-//        val width = metrics.charWidth(c)
-//
-//        val fontImage = BufferedImage(width, metrics.height, BufferedImage.TYPE_INT_ARGB)
-//        val graphics = fontImage.graphics as Graphics2D
-//
-//        graphics.font = type
-//        graphics.color = Color.white
-//
-//        graphics.drawString(c.toString(), 0, 0 + metrics.ascent)
-//
-//        return YakFont.FontCharacterMetaData(c, width, metrics.height, YakTextureFactory.loadTexture(fontImage))
-//    }
 }
 
 public class YakFontProviderImpl : YakFontFactory.FontProvider {

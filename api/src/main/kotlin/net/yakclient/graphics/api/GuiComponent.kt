@@ -9,10 +9,10 @@ public abstract class GuiComponent: NativeGuiComponent() {
 
     private var lastPropertyHash: Int = -1
 
-    protected abstract fun render(properties: GuiProperties)
+    protected abstract fun render(properties: GuiPropertiesMap)
 
     //Should not render unless the properties have changed since last render cycle. Should always call render on children.
-    override fun renderNatively(props: GuiProperties): List<RenderingContext> {
+    override fun renderNatively(props: GuiPropertiesMap): List<RenderingContext> {
         val shouldReRender: Boolean = props.hashCode() != lastPropertyHash || super.needsReRender
 
         lastPropertyHash = props.hashCode()
@@ -53,19 +53,19 @@ public abstract class GuiComponent: NativeGuiComponent() {
 
 //public fun interface Component<T: Properties> : GuiProperties.(T) -> Unit;
 
-public typealias Component = GuiComponent.(props: GuiProperties) -> Unit
+public typealias Component = GuiComponent.(props: GuiPropertiesMap) -> Unit
 
 public class FunctionalComponent constructor(
     private val component: Component
 ) : GuiComponent() {
-    override fun render(properties: GuiProperties): Unit = component(this, properties)
+    override fun render(properties: GuiPropertiesMap): Unit = component(this, properties)
 }
 
 public class ComponentBuilder(
 //    private val backingComponent: GuiComponent,
     internal val component: NativeGuiComponent
 ) {
-    internal val properties: PropertyFactory = PropertyFactory()
+    internal val properties: MutableGuiPropertiesMap = MutableGuiPropertiesMap()
 
     public fun set(name: String, value: Any): Unit = Unit.also { properties[name] = value }
 

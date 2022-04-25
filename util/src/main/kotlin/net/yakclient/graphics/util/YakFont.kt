@@ -7,6 +7,8 @@ public interface YakFont {
     public val name: String
     public val meta: FontMetaData
 
+    public val chars: Set<Char>
+
     public operator fun get(char: Char) : FontCharacterMetaData?
 
     public fun getWidth(value: String): Int

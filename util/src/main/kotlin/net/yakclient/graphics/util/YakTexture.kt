@@ -12,10 +12,4 @@ public interface YakTexture {
 
     public fun bind()
     public fun release()
-
-    public val fullWidth: Int
-        get() = width + (parent?.width ?: 0)
-
-    public val fullHeight: Int
-        get() = height + (parent?.height ?: 0)
 }

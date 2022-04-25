@@ -1,11 +1,17 @@
 package net.yakclient.client.util
 
+import net.yakclient.graphics.util.YakTextureFactory
+import org.w3c.dom.css.Rect
 import java.awt.Color
+import java.awt.Graphics
+import java.awt.Rectangle
 import java.awt.image.BufferedImage
 import kotlin.math.ceil
 import kotlin.math.log
 import kotlin.math.pow
 import kotlin.math.sqrt
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -78,8 +84,99 @@ class TextureLoadingTests {
             break
         }
 
-        checkNotNull(buf) {"Buf must not be null"}
+        checkNotNull(buf) { "Buf must not be null" }
 
         println("here")
+    }
+
+
+    private data class PackedTexture(
+        val x: Int,
+        val y: Int,
+        val width: Int,
+        val height: Int
+    )
+
+    @Test
+    fun `Pack textures with max texture size`() {
+        val maxSize = 16_000
+
+        val ins = (0..250).asSequence().map {
+            BufferedImage(
+                (Math.random() * 25).toInt() + 1,
+                (Math.random() * 25).toInt() + 1,
+                BufferedImage.TYPE_INT_RGB
+            )
+        }.onEach {
+            val graphics = it.graphics
+
+            graphics.color = Color(Math.random().toFloat(), Math.random().toFloat(), Math.random().toFloat())
+            graphics.fillRect(0, 0, it.width, it.height)
+            graphics.dispose()
+        }
+
+        val images = ins.sortedByDescending(BufferedImage::getHeight)
+//        val bestArea = images.fold(0f) { area, image -> area + (image.width * image.height) }
+
+        val length = sqrt(maxSize.toFloat()).toInt()
+
+        val output = ArrayList<Pair<BufferedImage, List<PackedTexture>>>()
+
+        var buf = BufferedImage(length, length, BufferedImage.TYPE_INT_ARGB)
+        val graphics by object : ReadOnlyProperty<Nothing?, Graphics> {
+            private var lastId: Int = -1
+            private lateinit var lastGraphics: Graphics
+
+            override fun getValue(thisRef: Nothing?, property: KProperty<*>): Graphics {
+                if (buf.hashCode() != lastId) {
+                    lastId = buf.hashCode()
+                    lastGraphics = buf.graphics
+                }
+
+                return lastGraphics
+            }
+        }
+        var rects = ArrayList<PackedTexture>()
+
+        var height = 0
+        var rowHeight = 0
+        var x = 0
+
+        images.forEach {
+            if ((it.height * it.width) > maxSize) throw IllegalArgumentException("Image too big!")
+
+            if (it.height > height) height = it.height
+            if ((rowHeight + height) > buf.height) {
+                graphics.dispose()
+
+                height = 0
+                rowHeight = 0
+                x = 0
+
+                output.add(buf to rects)
+
+                rects = ArrayList()
+                buf = BufferedImage(length, length, BufferedImage.TYPE_INT_ARGB)
+            }
+            if (x + it.width > buf.width) {
+                rowHeight += height
+                height = it.height
+                x = 0
+            }
+
+            graphics.drawImage(it, x, rowHeight, null)
+            rects.add(PackedTexture(x, rowHeight, it.width, it.height))
+
+            x += it.width
+        }
+
+        val last = BufferedImage(length, rowHeight + height, BufferedImage.TYPE_INT_ARGB)
+        val lastG = last.graphics
+        lastG.drawImage(buf, 0, 0, null)
+        lastG.dispose()
+
+        output.add(last to rects)
+
+        println(output)
     }
 }

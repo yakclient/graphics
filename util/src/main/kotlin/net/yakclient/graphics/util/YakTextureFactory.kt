@@ -1,116 +1,135 @@
 package net.yakclient.graphics.util
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import java.awt.Graphics
 import java.awt.image.BufferedImage
 import java.io.InputStream
 import java.net.URL
 import java.util.*
 import javax.imageio.ImageIO
-import kotlin.math.ceil
-import kotlin.math.log
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 public object YakTextureFactory {
-    private val provider: TextureProvider
-
-    init {
-        provider = ServiceLoader.load(TextureProvider::class.java).firstOrNull()
+    private val provider: TextureProvider by lazy { providerProvider() }
+    public var providerProvider: () -> TextureProvider = {
+        ServiceLoader.load(TextureProvider::class.java).firstOrNull()
             ?: throw IllegalStateException("Failed to find a texture provider on the classpath!")
     }
 
-    private fun loadAtlas(ins: List<BufferedImage>): List<YakTexture> {
+    private fun loadAtlas(ins: Sequence<IdentifiedValue<BufferedImage>>): List<IdentifiedValue<YakTexture>> {
         val packed = packTextures(ins)
 
-        val parent = loadTexture(packed.first)
-        return packed.second.map { parent.subTexture(it.x, it.y, it.width, it.height) }
+        return packed.flatMap { (image, texs) ->
+            val parent = loadTexture(image)
+            texs.map { (id, it) -> parent.subTexture(it.x, it.y, it.width, it.height) identifyBy id }
+        }
     }
 
-    private fun packTextures(ins: List<BufferedImage>): Pair<BufferedImage, List<PackedTexture>> {
-        val images = ins.sortedByDescending(BufferedImage::getHeight)
-        val bestArea = images.fold(0f) { area, image -> area + (image.width * image.height) }
-        val length = sqrt(bestArea)
+    private fun packTextures(ins: Sequence<IdentifiedValue<BufferedImage>>): List<Pair<BufferedImage, List<IdentifiedValue<PackedTexture>>>> {
+        val images = ins
+            .sortedByDescending { it.value.height }
 
-        val n = ceil(log(length, 2f)).toInt()
-
-        for (i in n until ceil(log(sqrt(provider.maxTextureSize.toFloat()), 2f)).toInt()) {
-            attemptPack(i, images)?.let { return@packTextures it }
-        }
-
-        throw IllegalArgumentException(
-            "Failed to appropriately pack image data into atlas! Estimated atlas size: '${
-                2.0.pow(n).toInt()
-            } bytes', Max supported size: '${provider.maxTextureSize}'."
-        )
+        return attemptPack(images)
     }
 
     private data class PackedTexture(
-        val x: Int,
-        val y: Int,
-        val width: Int,
-        val height: Int
+        val x: Int, val y: Int, val width: Int, val height: Int
     )
 
+    private inline fun <K, V> Iterator<K>.map(transformer: (K) -> V): List<V> {
+        val list = ArrayList<V>()
+
+        for (v in this) list.add(transformer(v))
+
+        return list
+    }
+
+
     private fun attemptPack(
-        n: Int, // The x value of 2^x = image dimensions
-        images: List<BufferedImage> // Images to pack
-    ): Pair<BufferedImage, List<PackedTexture>>? {
-        val length: Int = 2.0.pow(n).toInt() // Get the length of one side of our atlas
+        images: Sequence<IdentifiedValue<BufferedImage>> // Images to pack
+    ): List<Pair<BufferedImage, List<IdentifiedValue<PackedTexture>>>> {
+        val length = provider.maxTextureLength
 
-        val image = BufferedImage(length, length, BufferedImage.TYPE_INT_RGB) // Create an image to pack the atlas in
-        val graphics = image.graphics // Get the graphics
+        val output = ArrayList<Pair<BufferedImage, List<IdentifiedValue<PackedTexture>>>>()
 
-        var height = 0 // The starting height of the largest image in the row
-        var rowHeight = 0 // The current height of the row
-        var x = 0 // The current X position
+        var buf = BufferedImage(length, length, BufferedImage.TYPE_INT_ARGB)
+        val graphics by object : ReadOnlyProperty<Nothing?, Graphics> {
+            private var lastId: Int = -1
+            private lateinit var lastGraphics: Graphics
 
-        val packedTextures = images.map {
-            if (it.height > height) height =
-                it.height // If the height of this image is greater than the height of any other image in the row, update it (will only happen if sorting methods change)
-            if ((rowHeight + height) > length) { // If the row height + the current height is greater than the maximum possible the atlas can be, then dispose the graphics and return null
-                graphics.dispose()
-                return null
+            override fun getValue(thisRef: Nothing?, property: KProperty<*>): Graphics {
+                if (buf.hashCode() != lastId) {
+                    lastId = buf.hashCode()
+                    lastGraphics = buf.graphics
+                }
+
+                return lastGraphics
             }
-            if ((x + it.width) > length) { // If the current x + the images width is greater than the maximum length of the atlas, then switch to a new row.
+        }
+        var rects = ArrayList<IdentifiedValue<PackedTexture>>()
+
+        var height = 0
+        var rowHeight = 0
+        var x = 0
+
+        images.forEach { (id, it) ->
+            if (it.height > length || it.width > length) throw IllegalArgumentException("Image too large! Maximum texture dimensions are '${length}x${length} pixels' but the provided texture is '${it.width}x${it.height} pixels'")
+
+            if (it.height > height) height = it.height
+            if ((rowHeight + height) > buf.height) {
+                graphics.dispose()
+
+                height = 0
+                rowHeight = 0
+                x = 0
+
+                output.add(buf to rects)
+
+                rects = ArrayList()
+                buf = BufferedImage(length, length, BufferedImage.TYPE_INT_ARGB)
+            }
+            if (x + it.width > buf.width) {
                 rowHeight += height
                 height = it.height
                 x = 0
             }
 
-            graphics.drawImage(it, x, rowHeight, null) // Draw the image
+            graphics.drawImage(it, x, rowHeight, null)
+            rects.add(PackedTexture(x, rowHeight, it.width, it.height) identifyBy id)
 
-            val tex = PackedTexture(x, rowHeight, it.width, it.height) // Create a packedTexture
-
-            x += it.width // Update current width
-
-            tex // Return texture
+            x += it.width
         }
 
-        return image to packedTextures
+        val last = BufferedImage(length, rowHeight + height, BufferedImage.TYPE_INT_ARGB)
+        val lastG = last.graphics
+        lastG.drawImage(buf, 0, 0, null)
+        lastG.dispose()
+
+        output.add(last to rects)
+
+        return output
     }
 
     private fun loadTexture(image: BufferedImage) = provider.load(image)
 
-    internal fun loadImages(images: List<BufferedImage>) : List<YakTexture> = loadAtlas(images)
+    internal fun loadImages(images: Sequence<IdentifiedValue<BufferedImage>>): List<IdentifiedValue<YakTexture>> = loadAtlas(images)
 
-    public fun loadTextures(ins: List<InputStream>): List<YakTexture> {
-        val images = runBlocking {
-            ins.map { async(Dispatchers.IO) { ImageIO.read(it) } }.onEach(Deferred<*>::start).map { it.await() }
-        }
-
-        return loadImages(images)
+    public fun loadTextures(ins: Sequence<IdentifiedValue<InputStream>>): List<IdentifiedValue<YakTexture>> {
+        return loadImages(ins.map { (id, v) -> ImageIO.read(v) identifyBy id })
     }
 
-    public fun loadTexture(imageIn: InputStream) : YakTexture = loadTexture(ImageIO.read(imageIn))
+    public fun loadTexture(imageIn: InputStream): YakTexture = loadTexture(ImageIO.read(imageIn))
 
-    public fun loadTexture(url: URL) : YakTexture = loadTexture(ImageIO.read(url))
+    public fun loadTexture(url: URL): YakTexture = loadTexture(ImageIO.read(url))
 
     public interface TextureProvider {
-        public val maxTextureSize: Int
+        public val maxTextureLength: Int
 
         public fun load(image: BufferedImage): YakTexture
     }
+
+    public data class IdentifiedValue<T>(public val id: Int, public val value: T)
+
+    public infix fun <T> T.identifyBy(id: Int): IdentifiedValue<T> = IdentifiedValue(id, this)
 }
+

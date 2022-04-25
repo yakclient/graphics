@@ -4,7 +4,7 @@ import net.yakclient.graphics.api.render.*
 
 public class ComponentRenderingContext<in T : NativeGuiComponent>(
     private val component: T,
-    private val properties: GuiProperties,
+    private val properties: GuiPropertiesMap,
 ) : RenderingContext {
     override var needsReRender: Boolean by component::needsReRender
 
