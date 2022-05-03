@@ -1,3 +1,4 @@
+import net.yakclient.graphics.util.ScreenAccess;
 import net.yakclient.graphics.util.YakFontFactory;
 import net.yakclient.graphics.util.YakTextureFactory;
 import net.yakclient.graphics.util.buffer.SafeFloatBufferProvider;
@@ -12,10 +13,12 @@ module yakclient.graphics.util {
 
     exports net.yakclient.graphics.util;
     exports net.yakclient.graphics.util.buffer;
+    exports net.yakclient.graphics.util.unit;
 
     uses YakTextureFactory.TextureProvider;
     uses YakFontFactory.FontProvider;
     uses SafeFloatBufferProvider;
+    uses ScreenAccess;
 
     provides YakFontFactory.FontProvider with YakFontProviderImpl;
 }

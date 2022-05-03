@@ -10,18 +10,21 @@ import net.yakclient.graphics.lwjgl.render.GLRenderingData
 import net.yakclient.graphics.lwjgl.render.VerticeRenderingContext
 import net.yakclient.graphics.util.*
 import net.yakclient.graphics.util.buffer.safeFloatBufOf
+import net.yakclient.graphics.util.unit.ScreenUnit
 import org.lwjgl.opengl.GL11
 import java.util.function.Consumer
 
 public class OpenGl3Box : Box() {
 
     override fun renderNatively(props: GuiPropertiesMap): List<RenderingContext> {
-        val width: Float = props.requireAs("width")
-        val height: Float = props.requireAs("height")
-        val x: Float = props.requireAs("x")
-        val y: Float = props.requireAs("y")
+        fun ScreenUnit.orthoForm() : ScreenUnit = OrthographicTransformer.transform(this)
+
+        val width = props.requireAs<ScreenUnit>("width").orthoForm().asX
+        val height = props.requireAs<ScreenUnit>("height").orthoForm().asY
+        val x = props.requireAs<ScreenUnit>("x").orthoForm().asX
+        val y = props.requireAs<ScreenUnit>("y").orthoForm().asY
         //  Transparency is defined in the background color.
-        val backgroundColor = props.getAs<ColorFunction>("backgroundcolor") ?: VacantColorFunction()
+        val backgroundColor = props.getAs<ColorFunction>("backgroundcolor") ?: ColorCodes.WHITE.toColorFunc()
         val texture = props.getAs<YakTexture>("backgroundimage") ?: VacantTexture()
 
         //  Events
@@ -39,7 +42,9 @@ public class OpenGl3Box : Box() {
         eventScope {
             fun MutableEventFSM.TransitionProvider.withBounding(event: Runnable = Runnable {}) =
                 with<MouseMoveData> {
-                    rectBounding(it.x, it.y, x, y, x + width, y + height).also { b -> if (b) event.run() }
+                    println("x: ${ it.x } y: ${ it.y }")
+                    val rectBounding = rectBounding(it.x, it.y, x, y, x + width, y + height)
+                    rectBounding.also { b -> if (b) event.run() }
                 }
 
             fun MutableEventFSM.TransitionProvider.withNotBounding(event: Runnable = Runnable {}) =
@@ -139,13 +144,14 @@ public class OpenGl3Box : Box() {
             .put(x).put(y + height)
 
 
+        val hasTexture = texture !is VacantTexture
         return ofAll(
             VerticeRenderingContext(
                 GL11.GL_QUADS,
                 GL11.GL_TEXTURE_2D,
                 GLRenderingData(
                     vertices, 2, backgroundColor.toAggregation(vertices, 2),
-                    texs = safeFloatBufOf(arrayOf(0f, 0f, 1f, 0f, 1f, 1f, 0f, 1f)), texSize = 2,
+                    texs = if (hasTexture) safeFloatBufOf(arrayOf(0f, 0f, 1f, 0f, 1f, 1f, 0f, 1f)) else safeFloatBufOf(), texStride = if (hasTexture) 2 else 0,
                     texture = texture
                 )
             ), this.applyChildren(props)

@@ -13,6 +13,7 @@ public class OpenGL3Text : Text() {
     override fun renderNatively(props: GuiPropertiesMap): List<RenderingContext> {
         val value = props.requireAs<String>("value")
         val font: YakFont = props.getAs<YakFont>("font") ?: YakFontFactory.fontOf()
+        val color = props.getAs<ColorFunction>("color") ?: ColorCodes.WHITE.toColorFunc()
 
         var x = props.requireAs<Float>("x")
         val y = props.requireAs<Float>("y")
@@ -21,22 +22,26 @@ public class OpenGL3Text : Text() {
             val data = checkNotNull(font[it]) { "Failed to find character: $it" }
             val tex = data.backingTexture
 
+            val vertices = safeFloatBufOf(8)
+                .put(x).put(y)
+                .put(x + data.width).put(y)
+                .put(x + data.width).put(y + data.height)
+                .put(x).put(y + data.height)
+
             VerticeRenderingContext(
                 GL11.GL_QUADS,
                 GL11.GL_TEXTURE_2D,
                 GLRenderingData(
-                    vertices = safeFloatBufOf(8)
-                        .put(x).put(y)
-                        .put(x + data.width).put(y)
-                        .put(x + data.width).put(y + data.height)
-                        .put(x).put(y + data.height),
-                    verticeSize = 2,
+                    vertices = vertices,
+                    verticeStride = 2,
+                    colors = color.toAggregation(vertices, 2),
+                    colorStride = 4,
                     texs = safeFloatBufOf(8)
                         .put(tex.totalOffsetX.toFloat() / tex.totalWidth).put(tex.totalOffsetY.toFloat() / tex.totalHeight)
                         .put((tex.totalOffsetX + tex.width).toFloat() / tex.totalWidth).put(tex.totalOffsetY.toFloat() / tex.totalHeight)
                         .put((tex.totalOffsetX + tex.width).toFloat() / tex.totalWidth).put((tex.totalOffsetY + tex.height).toFloat() / tex.totalHeight)
                         .put(tex.totalOffsetX.toFloat() / tex.totalWidth).put((tex.totalOffsetY + tex.height).toFloat() / tex.totalHeight),
-                    texSize = 2,
+                    texStride = 2,
                     texture = data.backingTexture
                 )
             ).also {

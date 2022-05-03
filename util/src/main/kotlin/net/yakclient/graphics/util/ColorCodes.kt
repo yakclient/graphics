@@ -4,13 +4,11 @@ package net.yakclient.graphics.util
  * A full list of HTML color codes can be found at:
  * https://htmlcolorcodes.com/color-names/
  */
+private const val COLOR_MAX: Float = 255f
 
+public fun rgb(red: Int, green: Int, blue: Int): Color = Color(red / COLOR_MAX, green / COLOR_MAX, blue / COLOR_MAX)
 
 public object ColorCodes {
-    private const val COLOR_MAX: Float = 255f
-
-    public fun rgb(red: Int, green: Int, blue: Int): Color = Color(red / COLOR_MAX, green / COLOR_MAX, blue / COLOR_MAX)
-
     //Red color codes
     public val INDIAN_RED: Color = rgb(205, 92, 92)
     public val LIGHT_CORAL: Color = rgb(240, 128, 128)

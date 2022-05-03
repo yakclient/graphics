@@ -33,8 +33,8 @@ public abstract class GuiComponent: NativeGuiComponent() {
 
     public inline fun <reified T : NativeGuiComponent> use(id: Int): T = use(T::class.java, id)
 
-    public fun <T : NativeGuiComponent> use(func: KFunction<Component>, id: Int): T =
-        (maintainedChildren.getOrNull(id) ?: FunctionalComponent(func.call()).also {
+    public fun <T : NativeGuiComponent> use(func: Component, id: Int): T =
+        (maintainedChildren.getOrNull(id) ?: FunctionalComponent(func).also {
             maintainedChildren.add(id, it)
         }) as T
 

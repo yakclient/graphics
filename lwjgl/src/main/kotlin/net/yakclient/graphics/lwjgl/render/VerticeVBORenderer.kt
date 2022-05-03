@@ -29,13 +29,13 @@ public class VerticeVBORenderer : VerticeRenderer() {
         val verticesHandle: Int = glGenBuffers()
         glBindBuffer(GL_ARRAY_BUFFER, verticesHandle)
         glBufferData(GL_ARRAY_BUFFER, YakGraphicsUtils.flipBuf(data.verticeBuf), GL_STATIC_DRAW)
-        glVertexPointer(data.verticeSize, GL_FLOAT, 0, 0)
+        glVertexPointer(data.verticeStride, GL_FLOAT, 0, 0)
 
         if (data.hasColors()) {
             val colorsHandle: Int = glGenBuffers()
             glBindBuffer(GL_ARRAY_BUFFER, colorsHandle)
             glBufferData(GL_ARRAY_BUFFER, YakGraphicsUtils.flipBuf(data.colorBuf), GL_STATIC_DRAW)
-            glColorPointer(data.colorSize, GL_FLOAT, 0, 0L)
+            glColorPointer(data.colorStride, GL_FLOAT, 0, 0L)
         }
 
         if (data.hasNormals()) {
@@ -49,7 +49,7 @@ public class VerticeVBORenderer : VerticeRenderer() {
             val texsHandle: Int = glGenBuffers()
             glBindBuffer(GL_ARRAY_BUFFER, texsHandle)
             glBufferData(GL_ARRAY_BUFFER, YakGraphicsUtils.flipBuf(data.texBuf), GL_STATIC_DRAW)
-            glTexCoordPointer(data.texSize, GL_FLOAT, 0, 0L)
+            glTexCoordPointer(data.texStride, GL_FLOAT, 0, 0L)
         }
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)

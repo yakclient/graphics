@@ -8,7 +8,10 @@ public class ComponentRenderingContext<in T : NativeGuiComponent>(
 ) : RenderingContext {
     override var needsReRender: Boolean by component::needsReRender
 
-    internal fun applyContext() : List<RenderingContext> = component.renderNatively(properties)
+    override fun reduce(): List<RenderingContext> = component.renderNatively(properties)
+
+    override fun combine(other: RenderingContext): RenderingContext? = null
+    override fun combinable(other: RenderingContext): Boolean = false
 
     override fun useRenderer(type: RenderingType): Renderer<ComponentRenderingContext<*>> = ComponentRenderer(type)
 }

@@ -6,16 +6,19 @@ import net.yakclient.graphics.api.GuiComponent
 import net.yakclient.graphics.api.MutableGuiPropertiesMap
 import net.yakclient.graphics.api.render.Renderer
 import net.yakclient.graphics.api.render.RenderingContext
+import net.yakclient.graphics.api.render.plus
 import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.components.Text
-import net.yakclient.graphics.util.ColorCodes
-import net.yakclient.graphics.util.YakTextureFactory
+import net.yakclient.graphics.util.*
+import net.yakclient.graphics.util.unit.ScreenUnit
+import net.yakclient.graphics.util.unit.px
+import net.yakclient.graphics.util.unit.vh
+import net.yakclient.graphics.util.unit.vw
 import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
-import java.util.function.Consumer
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -49,97 +52,164 @@ class BasicOpengl3ComponentTest {
         GL.createCapabilities()
     }
 
-    @AfterTest
-    fun destroyGL() {
+    @Test
+    fun `Test basic components`() {
+//        GL11.glOrtho(0.0, WINDOW_WIDTH.toDouble(), WINDOW_HEIGHT.toDouble(), 0.0, 0.0, -1.0)
+        GL11.glOrtho(1.0,1.0,1.0,1.0, 0.0, -1.0)
+
+//        OrthographicTransformer.setOrtho(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0)
+
+        val component: GuiComponent = FunctionalComponent(MinecraftHomePage)
+
+        fun List<RenderingContext>.reduceWhile(): List<RenderingContext> {
+            return flatMap { r -> r.reduce().let { if (it.isNotEmpty()) it.reduceWhile() else listOf(r) } }
+        }
+
+
+
+        while (!glfwWindowShouldClose(window)) {
+            glfwPollEvents()
+            GL15.glClear(GL15.GL_COLOR_BUFFER_BIT or GL15.GL_DEPTH_BUFFER_BIT)
+
+            val contexts = component.renderNatively(MutableGuiPropertiesMap().build()).reduceWhile()
+
+            var toRender = contexts
+            val batched = ArrayList<RenderingContext>()
+
+            while (toRender.isNotEmpty()) {
+                val context = toRender.first()
+                val part = toRender.partition { other ->
+                    context.combinable(other)
+                }
+
+                toRender = part.second
+
+                val element = part.first.reduce { acc, renderingContext ->
+                    (acc + renderingContext) ?: throw IllegalStateException("Contexts should be combinable!")
+                }
+
+                batched.add(element)
+
+            }
+
+            batched.forEach(RenderingContext::renderUsingDefault)
+            glfwSwapBuffers(window)
+        }
+
+        println("Ending LWJGL")
         glfwFreeCallbacks(window)
         glfwDestroyWindow(window)
 
         glfwTerminate()
         glfwSetErrorCallback(null)?.free()
     }
-
-    @Test
-    fun `Test basic components`() {
-        GL11.glOrtho(0.0, WINDOW_WIDTH.toDouble(), WINDOW_HEIGHT.toDouble(), 0.0, 0.0, -1.0)
-
-        val component: GuiComponent = FunctionalComponent(BasicTestComponent)
-
-        while (!glfwWindowShouldClose(window)) {
-            glfwPollEvents()
-            GL15.glClear(GL15.GL_COLOR_BUFFER_BIT or GL15.GL_DEPTH_BUFFER_BIT)
-
-            val contexts = component.renderNatively(MutableGuiPropertiesMap().build())
-            for (context in contexts) {
-                val renderer = context.useRenderer() as Renderer<RenderingContext>
-                renderer.render(context)
-            }
-            println("Doing good")
-            glfwSwapBuffers(window)
-        }
-    }
 }
 
-val BasicTestComponent: Component = { props ->
-    println("RENDERING")
+val MinecraftHomePage: Component = { props ->
+//    val background = useTexture("/img_1.png")
 
-    var backgroundColor by useState(0) { ColorCodes.RED }
-    var dbClicked by useState(1) { false }
+    var id = 0
+
+
+
+    build(use<Box>(id++)) {
+        set("x") to 500.px
+        set("y") to 500.px
+        set("width") to 100.px
+        set("height") to 100.px
+        set("backgroundcolor") to ColorCodes.RED.toColorFunc()
+    }
+//
+//    build(use<Box>(id++)) {
+//        set("x") to 0
+//        set("y") to 0
+//        set("width") to WINDOW_WIDTH
+//        set("height") to WINDOW_HEIGHT
+//        set("backgroundimage") to background
+//    }
+//
+//    build(use(MinecraftButton, id++)) {
+//        set("scale") to 1
+//        set("x") to 200
+//        set("y") to 300
+//        set("value") to "Singleplayer"
+//    }
+//
+//    build(use(MinecraftButton, id++)) {
+//        set("scale") to 1
+//        set("x") to 200
+//        set("y") to 380
+//        set("value") to "Multiplayer"
+//    }
+//
+//    build(use(MinecraftButton, id++)) {
+//        set("scale") to 1
+//        set("x") to 200
+//        set("y") to 460
+//        set("value") to "Minecraft Realms"
+//    }
+//
+//    build(use(MinecraftButton, id++)) {
+//        set("scale") to 2
+//        set("x") to 200
+//        set("y") to 540
+//        set("value") to "Options"
+//    }
+//
+//    @Suppress("UNUSED_CHANGED_VALUE")
+//    build(use(MinecraftButton,  id++)) {
+//        set("scale") to 2
+//        set("x") to 400
+//        set("y") to 540
+//        set("value") to "Quit game"
+//
+//        set("onclick") to Runnable {
+//            glfwSetWindowShouldClose(glfwGetCurrentContext(), true)
+//        }
+//    }
+}
+
+val MinecraftButton: Component = { props ->
+    val maxSize: Int = props.getAs("maxSize") ?: 400
+    val scale = props.requireAs<Int>("scale")
+    val size = (maxSize / scale - (scale - 1) * 10)
+
+    val x = props.requireAs<ScreenUnit>("x")
+    val y = props.requireAs<ScreenUnit>("y")
+
+    val value = props.requireAs<String>("value")
+
+    var backgroundColor by useState(0) {
+        rgb(112, 113, 113)
+    }
+    val height = 50
 
     build(use<Box>(0)) {
-        set("x") to 400
-        set("y") to 400
-        set("width") to 100
-        set("height") to 100
+
+        set("x") to x
+        set("y") to y
+        set("width") to size.px
+        set("height") to height.px
         set("backgroundcolor") to backgroundColor.toColorFunc()
-        set("backgroundimage") to YakTextureFactory.loadTexture(
-            checkNotNull(BasicOpengl3ComponentTest::class.java.getResource("/img.png")) { "Resource must not be null!" }
-        )
 
-        set("ondbclick") to Runnable {
-            dbClicked = true
-            backgroundColor = ColorCodes.GREEN
-
-            println("double click")
-        }
-        set("onclick") to Runnable {
-            println("Clicked!")
-        }
         set("onmouseover") to Runnable {
-           if (!dbClicked) backgroundColor = ColorCodes.BLUE else backgroundColor = ColorCodes.GREEN
+            println("Mouse into $value")
+            backgroundColor = rgb(126, 136, 184)
+        }
 
-            println("Mouse over")
-        }
-        set("onmouseup") to Runnable {
-            println("mouse up!")
-        }
-        set("onmousedown") to Runnable {
-            println("mouse down!")
-        }
         set("onmouseout") to Runnable {
-           if (!dbClicked) backgroundColor = ColorCodes.RED else backgroundColor = ColorCodes.LIME
+            backgroundColor = rgb(112, 113, 113)
+        }
 
-            println("mouse out")
-        }
-        set("onmousemove") to Runnable {
-            println("mouse move")
-        }
-        set("onkeydown") to Consumer<Int> {
-            println("Key $it down")
-        }
-        set("onkeyup") to Consumer<Int> {
-            println("Key $it up")
+        build(use<Text>(1)) {
+            val font = YakFontFactory.fontOf()
+            val textWidth = font.getWidth(value)
+            val textHeight = font.getHeight(value)
+
+            set("x") to x.asX + ((size - textWidth) / 2)
+            set("y") to y.asX + ((height - textHeight) / 2)
+            set("value") to value
         }
     }
-    build(use<Text>(1)) {
-        set("x") to 100
-        set("y") to 600
-        set("value") to "Hey dude, how are you? Lets see how much of this works!"
-    }
-//   if (doubleClicked.value) build(use<Box>(2)) {
-//        set("x") to 20
-//        set("y") to 20
-//        set("width") to 64
-//        set("height") to 500
-//        set("backgroundcolor") to SolidColor(ColorCodes.RED)
-//    }
+
 }

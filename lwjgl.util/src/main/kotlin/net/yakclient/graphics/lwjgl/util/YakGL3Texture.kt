@@ -10,8 +10,8 @@ import java.awt.image.BufferedImage
 
 
 public data class YakGL3Texture(
-    private val texId: Int,
-    private val target: Int,
+    public val texId: Int,
+    public val target: Int,
     override val height: Int,
     override val width: Int,
     override val offsetX: Int,

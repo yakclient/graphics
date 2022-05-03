@@ -36,7 +36,7 @@ public class YakFontImpl(
             else if (metrics.charWidth(char) > 0) (BufferedImage(
                 metrics.charWidth(char),
                 metrics.height,
-                BufferedImage.TYPE_INT_RGB
+                BufferedImage.TYPE_INT_ARGB
             ) identifyBy c).also { (_, image) ->
                 val graphics = image.graphics
 

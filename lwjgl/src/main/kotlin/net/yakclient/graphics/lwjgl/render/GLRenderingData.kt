@@ -25,22 +25,24 @@ import java.nio.FloatBuffer
  */
 public class GLRenderingData @JvmOverloads constructor(
     public val vertices: SafeFloatBuffer,
-    public val verticeSize: Int = 4, // The size of 1 vertice: X, Z, Y, R
+    public val verticeStride: Int = 4, // The size of 1 vertice: X, Z, Y, R
     public val colors: SafeFloatBuffer = safeFloatBufOf(),
-    public val colorSize: Int = 4, // The size of 1 color: R, G, B, A
+    public val colorStride: Int = 4, // The size of 1 color: R, G, B, A
     public val normals: SafeFloatBuffer = safeFloatBufOf(),
-    public val normalSize: Int = 3, // The size of 1 normal : X, Z, Y
+    public val normalStride: Int = 3, // The size of 1 normal : X, Z, Y
     public val texs: SafeFloatBuffer = safeFloatBufOf(),
-    public val texSize: Int = 3, // The size of 1 tex coordinate: X, Z, Y
+    public val texStride: Int = 3, // The size of 1 tex coordinate: X, Z, Y
     public val texture: YakTexture = VacantTexture(),
-    public val verticeCount: Int = vertices.size / verticeSize,
+    public val verticeCount: Int = vertices.size / verticeStride,
 ) : Closeable {
     public val verticeBuf: FloatBuffer by vertices::buffer
     public val colorBuf: FloatBuffer by colors::buffer
     public val normalBuf: FloatBuffer by normals::buffer
     public val texBuf: FloatBuffer by texs::buffer
+    init {
+        assert(verticeCount != 0 && vertices.size != 0) {"Must be $verticeCount vertices!"}
+    }
 
-    public fun hasVertices(): Boolean = vertices.size != 0
     public fun hasColors(): Boolean = colors.size != 0
     public fun hasNormals(): Boolean = normals.size != 0
     public fun hasTexs(): Boolean = texture !is VacantTexture

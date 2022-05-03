@@ -22,6 +22,11 @@ public class VerticeRenderingContext(
     public val data: GLRenderingData,
 ) : RenderingContext {
     override var needsReRender: Boolean = true
+    override fun reduce(): List<RenderingContext> = listOf()
+
+    override fun combine(other: RenderingContext): RenderingContext? = null
+
+    override fun combinable(other: RenderingContext): Boolean = false
 
     public override fun useRenderer(type: RenderingType): Renderer<VerticeRenderingContext> {
         return when (type) {

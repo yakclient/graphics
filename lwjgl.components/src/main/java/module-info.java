@@ -1,7 +1,7 @@
 import net.yakclient.graphics.api.DeferredComponentProvider;
 import net.yakclient.graphics.lwjgl.components.OpenGL3ComponentProvider;
 
-module yakclient.graphics.lwjgl.components {
+open module yakclient.graphics.lwjgl.components {
     requires kotlin.stdlib;
     requires yakclient.graphics.api;
     requires yakclient.graphics.components;

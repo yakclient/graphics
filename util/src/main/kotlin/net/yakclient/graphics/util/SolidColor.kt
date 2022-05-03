@@ -14,6 +14,5 @@ public class SolidColor(
         }
 
         return colorBuf
-    //        return ColorFunction.applyColorEffect(0, vertices, color)
     }
 }

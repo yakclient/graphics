@@ -8,10 +8,14 @@ import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.api.state.GuiState
 import net.yakclient.graphics.api.state.ObservableState
 import net.yakclient.graphics.api.state.Stateful
+import net.yakclient.graphics.util.YakTexture
+import net.yakclient.graphics.util.YakTextureFactory
+import java.net.URL
 import java.util.function.Consumer
 import kotlin.apply
 
 public abstract class NativeGuiComponent {
+    private val textures: MutableMap<String, YakTexture> = HashMap()
     private val states: MutableMap<Int, Stateful<*>> = HashMap()
     public var needsReRender: Boolean = true
     private var subscriptionCyclePassed = false
@@ -29,6 +33,24 @@ public abstract class NativeGuiComponent {
         (states[key] ?: (if (triggersReRender) ObservableState(provider()) { _, _ ->
             needsReRender = true
         } else GuiState(provider())).also { states[key] = it }) as Stateful<T>
+
+    public fun useTexture(path: String): YakTexture {
+        return if (textures.contains(path)) textures[path]!! else {
+            val callerElement = Thread.currentThread().stackTrace[2]
+            val caller = runCatching { Class.forName(callerElement.className) }.getOrNull()
+                ?: throw IllegalStateException("Failed to load caller class for useTexture call. Caller class is: $'${callerElement.className}'. Make sure that you have exported all applicable packages to 'yakclient.graphics.api'")
+
+            val url = caller.getResource(path) ?: throw IllegalArgumentException("Failed to find resource: '$path'.")
+            useTexture(url)
+        }
+    }
+
+    public fun useTexture(url: URL): YakTexture =
+        if (textures.contains(url.toString())) textures[url.toString()]!! else {
+            val tex = YakTextureFactory.loadTexture(url)
+            textures[url.toString()] = tex
+            tex
+        }
 
     public fun eventScope(callback: EventScopeReceiver.() -> Unit): Unit = if (!subscriptionCyclePassed) {
         subscriptionCyclePassed = true

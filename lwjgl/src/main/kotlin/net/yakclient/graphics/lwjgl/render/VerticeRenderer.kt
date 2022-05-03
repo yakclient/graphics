@@ -13,7 +13,7 @@ public abstract class VerticeRenderer : Renderer<VerticeRenderingContext> {
 
         bindPointers(data)
 
-        if (data.hasVertices()) glEnableClientState(GL_VERTEX_ARRAY)
+         glEnableClientState(GL_VERTEX_ARRAY)
         if (data.hasColors()) glEnableClientState(GL_COLOR_ARRAY)
         if (data.hasNormals()) glEnableClientState(GL_NORMAL_ARRAY)
         if (data.hasTexs()) {
@@ -32,7 +32,7 @@ public abstract class VerticeRenderer : Renderer<VerticeRenderingContext> {
         }
         if (data.hasNormals()) glDisableClientState(GL_NORMAL_ARRAY)
         if (data.hasColors()) glDisableClientState(GL_COLOR_ARRAY)
-        if (data.hasVertices()) glDisableClientState(GL_VERTEX_ARRAY)
+         glDisableClientState(GL_VERTEX_ARRAY)
 
         context.data.close()
     }

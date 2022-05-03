@@ -21,4 +21,9 @@ internal class OpenGl3SafeFloatBuffer(
 
     override fun get(start: Int, end: Int): Array<Float> =
         FloatArray(end - start).also { buffer.get(start, it) }.let { Array(end - start) { i -> it[i] } }
+
+    override fun putAll(buf: SafeBuffer<FloatBuffer, Float>): SafeBuffer<FloatBuffer, Float> {
+        buffer.put(buf.buffer)
+        return this
+    }
 }

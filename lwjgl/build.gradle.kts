@@ -10,6 +10,7 @@ dependencies {
     val lwjglVersion = project.ext.get("lwjgl.version")
 
     api(project(":api"))
+    implementation(project(":lwjgl.util"))
     implementation("org.lwjgl:lwjgl-opengl:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-glfw:$lwjglVersion")
     nativeBundle("org.lwjgl:lwjgl:$lwjglVersion:$nativeClassifier")
