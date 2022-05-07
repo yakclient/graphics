@@ -7,6 +7,7 @@ public interface ScreenAccess {
     public val height: Int
 
     public companion object {
+        @JvmStatic
         public val access: ScreenAccess = ServiceLoader.load(ScreenAccess::class.java).first()
     }
 }

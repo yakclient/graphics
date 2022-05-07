@@ -1,38 +1,44 @@
+//@file:JvmName("ScreenUnits")
+
 package net.yakclient.graphics.util.unit
 
-import net.yakclient.graphics.util.OrthographicTransformer
+import net.yakclient.graphics.util.Orthographics
 import net.yakclient.graphics.util.ScreenAccess
+
+//private class OrthographicallyPresentedUnit(
+//    private val unit: ScreenUnit
+//) : ScreenUnit by Orthographics.transform(unit)
 
 private class PixelScreenUnit(
     private val value: Float
 ) : ScreenUnit {
-    override val asX: Float
+    override val normalizedX: Float
         get() = value / ScreenAccess.access.width
-    override val asY: Float
+    override val normalizedY: Float
         get() = value / ScreenAccess.access.height
 }
 
 private class ViewWidthScreenUnit(
     private val value: Float
 ) : ScreenUnit {
-    override val asX: Float = value
-    override val asY: Float
+    override val normalizedX: Float = value
+    override val normalizedY: Float
         get() = value * ((ScreenAccess.access.width.toFloat()) / (ScreenAccess.access.height))
 }
 
 private class ViewHeightScreenUnit(
     private val value: Float
 ) : ScreenUnit {
-    override val asX: Float
+    override val normalizedX: Float
         get() = value * ((ScreenAccess.access.height.toFloat()) / (ScreenAccess.access.width))
-    override val asY: Float = value
+    override val normalizedY: Float = value
 }
 
 private class NativeScreenUnit(
     value: Float
 ) : ScreenUnit {
-    override val asX: Float = value
-    override val asY: Float = value
+    override val normalizedX: Float = value
+    override val normalizedY: Float = value
 }
 
 public val Int.px: ScreenUnit

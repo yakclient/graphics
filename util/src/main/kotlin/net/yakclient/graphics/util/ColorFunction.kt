@@ -3,7 +3,7 @@ package net.yakclient.graphics.util
 import net.yakclient.graphics.util.buffer.SafeFloatBuffer
 
 public fun interface ColorFunction {
-    public fun toAggregation(buf: SafeFloatBuffer, vertexSize: Int): SafeFloatBuffer
+    public fun toAggregation(buf: SafeFloatBuffer, stride: Int): SafeFloatBuffer
 
     public companion object {
         private fun rotateToArray(arr: List<Float>, d: Int) : FloatArray {

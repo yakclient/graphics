@@ -1,5 +1,6 @@
 package net.yakclient.graphics.util
 
+import java.awt.Color
 import java.awt.Graphics
 import java.awt.image.BufferedImage
 import java.io.InputStream
@@ -11,6 +12,17 @@ import kotlin.reflect.KProperty
 
 public object YakTextureFactory {
     private val provider: TextureProvider by lazy { providerProvider() }
+    private val placeholderTexture by lazy {
+        val buf = BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)
+        val graphics = buf.graphics
+
+        graphics.color = Color.RED
+        graphics.fillRect(0, 0, 1, 1)
+        graphics.dispose()
+
+        loadTexture(buf)
+    }
+
     public var providerProvider: () -> TextureProvider = {
         ServiceLoader.load(TextureProvider::class.java).firstOrNull()
             ?: throw IllegalStateException("Failed to find a texture provider on the classpath!")
@@ -26,8 +38,9 @@ public object YakTextureFactory {
     }
 
     private fun packTextures(ins: Sequence<IdentifiedValue<BufferedImage>>): List<Pair<BufferedImage, List<IdentifiedValue<PackedTexture>>>> {
-        val images = ins
-            .sortedByDescending { it.value.height }
+        val images = ins.sortedByDescending { it.value.height }.map { (id, image) ->
+            image identifyBy id
+        }
 
         return attemptPack(images)
     }
@@ -35,14 +48,6 @@ public object YakTextureFactory {
     private data class PackedTexture(
         val x: Int, val y: Int, val width: Int, val height: Int
     )
-
-    private inline fun <K, V> Iterator<K>.map(transformer: (K) -> V): List<V> {
-        val list = ArrayList<V>()
-
-        for (v in this) list.add(transformer(v))
-
-        return list
-    }
 
 
     private fun attemptPack(
@@ -100,7 +105,7 @@ public object YakTextureFactory {
             x += it.width
         }
 
-        val last = BufferedImage(length, rowHeight + height, BufferedImage.TYPE_INT_ARGB)
+        val last = BufferedImage(if (rowHeight == 0) x else length, rowHeight + height, BufferedImage.TYPE_INT_ARGB)
         val lastG = last.graphics
         lastG.drawImage(buf, 0, 0, null)
         lastG.dispose()
@@ -110,9 +115,12 @@ public object YakTextureFactory {
         return output
     }
 
-    private fun loadTexture(image: BufferedImage) = provider.load(image)
+    private fun loadTexture(image: BufferedImage): YakTexture {
+        return provider.load(image)
+    }
 
-    internal fun loadImages(images: Sequence<IdentifiedValue<BufferedImage>>): List<IdentifiedValue<YakTexture>> = loadAtlas(images)
+    internal fun loadImages(images: Sequence<IdentifiedValue<BufferedImage>>): List<IdentifiedValue<YakTexture>> =
+        loadAtlas(images)
 
     public fun loadTextures(ins: Sequence<IdentifiedValue<InputStream>>): List<IdentifiedValue<YakTexture>> {
         return loadImages(ins.map { (id, v) -> ImageIO.read(v) identifyBy id })

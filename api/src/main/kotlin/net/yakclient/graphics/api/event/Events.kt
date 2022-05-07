@@ -4,6 +4,7 @@ package net.yakclient.graphics.api.event
 
 import net.yakclient.event.api.EventData
 import net.yakclient.event.api.EventDispatcher
+import net.yakclient.graphics.util.unit.ScreenUnit
 
 public val onMouseMove: Class<MouseMoveDispatcher> = MouseMoveDispatcher::class.java
 
@@ -12,10 +13,10 @@ public val onMouseClick: Class<MouseButtonEventDispatcher> = MouseButtonEventDis
 public val onKeyboardAction: Class<KeyboardActionDispatcher> = KeyboardActionDispatcher::class.java
 
 public data class MouseMoveData(
-    public val x: Int,
-    public val y: Int,
-    public val deltaX: Int,
-    public val deltaY: Int,
+    public val x: Float,
+    public val y: Float,
+    public val deltaX: Float,
+    public val deltaY: Float,
 ) : EventData
 
 public abstract class MouseMoveDispatcher : EventDispatcher<MouseMoveData>() {

@@ -44,17 +44,21 @@ internal fun VerticeRenderingContext.tryBatch(other: VerticeRenderingContext): R
 
     val fullVertices = data.vertices.addRemaining(data.verticeStride * data.verticeCount - data.vertices.size)
     val fullColors = data.colors.addRemaining(data.colorStride * data.verticeCount - data.colors.size)
-    val fullNormals = data.normals.addRemaining(data.normalStride * data.verticeCount - data.normals.size)
+//    val fullNormals = data.normals.addRemaining(data.normalStride * data.verticeCount - data.normals.size)
     val fullTexs = data.texs.addRemaining(data.texStride * data.verticeCount - data.texs.size)
 
-    val fullOtherVertices = otherData.vertices.addRemaining((otherData.verticeStride * otherData.verticeCount) - otherData.vertices.size)
-    val fullOtherColors = otherData.colors.addRemaining((otherData.verticeStride * otherData.verticeCount) - otherData.colors.size)
-    val fullOtherNormals = otherData.normals.addRemaining((otherData.verticeStride * otherData.verticeCount) - otherData.normals.size)
-    val fullOtherTexs = otherData.texs.addRemaining((otherData.verticeStride * otherData.verticeCount) - otherData.texs.size)
+    val fullOtherVertices =
+        otherData.vertices.addRemaining((otherData.verticeStride * otherData.verticeCount) - otherData.vertices.size)
+    val fullOtherColors =
+        otherData.colors.addRemaining((otherData.verticeStride * otherData.verticeCount) - otherData.colors.size)
+//    val fullOtherNormals =
+//        otherData.normals.addRemaining((otherData.verticeStride * otherData.verticeCount) - otherData.normals.size)
+    val fullOtherTexs =
+        otherData.texs.addRemaining((otherData.verticeStride * otherData.verticeCount) - otherData.texs.size)
 
     val vertices = fullVertices.normalizeWith(fullOtherVertices, data.verticeStride, otherData.verticeStride)
     val colors = fullColors.normalizeWith(fullOtherColors, data.colorStride, otherData.colorStride)
-    val normals = fullNormals.normalizeWith(fullOtherNormals, data.normalStride, otherData.normalStride)
+//    val normals = fullNormals.normalizeWith(fullOtherNormals, data.normalStride, otherData.normalStride)
     val texs = fullTexs.normalizeWith(fullOtherTexs, data.texStride, otherData.texStride)
 
     val newData = GLRenderingData(
@@ -62,8 +66,10 @@ internal fun VerticeRenderingContext.tryBatch(other: VerticeRenderingContext): R
         data.verticeStride.coerceAtLeast(otherData.verticeStride),
         colors,
         data.colorStride.coerceAtLeast(otherData.colorStride),
-        normals,
-        data.normalStride.coerceAtLeast(otherData.normalStride),
+        safeFloatBufOf(),
+        0,
+//        normals,
+//        data.normalStride.coerceAtLeast(otherData.normalStride),
         texs,
         data.texStride.coerceAtLeast(otherData.texStride),
         if (data.texture is VacantTexture) otherData.texture else data.texture,

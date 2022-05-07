@@ -1,8 +1,8 @@
 package net.yakclient.graphics.lwjgl.components
 
-import net.yakclient.graphics.api.GuiPropertiesMap
-import net.yakclient.event.api.*
+import net.yakclient.event.api.EventData
 import net.yakclient.event.api.fsm.*
+import net.yakclient.graphics.api.GuiPropertiesMap
 import net.yakclient.graphics.api.event.*
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.components.Box
@@ -10,22 +10,21 @@ import net.yakclient.graphics.lwjgl.render.GLRenderingData
 import net.yakclient.graphics.lwjgl.render.VerticeRenderingContext
 import net.yakclient.graphics.util.*
 import net.yakclient.graphics.util.buffer.safeFloatBufOf
-import net.yakclient.graphics.util.unit.ScreenUnit
 import org.lwjgl.opengl.GL11
 import java.util.function.Consumer
 
 public class OpenGl3Box : Box() {
 
     override fun renderNatively(props: GuiPropertiesMap): List<RenderingContext> {
-        fun ScreenUnit.orthoForm() : ScreenUnit = OrthographicTransformer.transform(this)
+        val width = props.requireAs<Float>("width")
+        val height = props.requireAs<Float>("height")
 
-        val width = props.requireAs<ScreenUnit>("width").orthoForm().asX
-        val height = props.requireAs<ScreenUnit>("height").orthoForm().asY
-        val x = props.requireAs<ScreenUnit>("x").orthoForm().asX
-        val y = props.requireAs<ScreenUnit>("y").orthoForm().asY
+        val x = props.requireAs<Float>("x")
+        val y = props.requireAs<Float>("y")
+
         //  Transparency is defined in the background color.
         val backgroundColor = props.getAs<ColorFunction>("backgroundcolor") ?: ColorCodes.WHITE.toColorFunc()
-        val texture = props.getAs<YakTexture>("backgroundimage") ?: VacantTexture()
+        val tex = props.getAs<YakTexture>("backgroundimage") ?: VacantTexture()
 
         //  Events
         val mouseClick = props.getAs<Runnable>("onclick") ?: Runnable {}
@@ -42,9 +41,11 @@ public class OpenGl3Box : Box() {
         eventScope {
             fun MutableEventFSM.TransitionProvider.withBounding(event: Runnable = Runnable {}) =
                 with<MouseMoveData> {
-                    println("x: ${ it.x } y: ${ it.y }")
+//                    println("x: ${it.x} y: ${it.y} x1: $x y1: $y x2: ${x + width} y2: ${y + height}")
                     val rectBounding = rectBounding(it.x, it.y, x, y, x + width, y + height)
-                    rectBounding.also { b -> if (b) event.run() }
+                    if (rectBounding) event.run()
+                    rectBounding
+//                    rectBounding.also { b -> if (b) event.run() }
                 }
 
             fun MutableEventFSM.TransitionProvider.withNotBounding(event: Runnable = Runnable {}) =
@@ -143,23 +144,27 @@ public class OpenGl3Box : Box() {
             .put(x + width).put(y + height)
             .put(x).put(y + height)
 
-
-        val hasTexture = texture !is VacantTexture
+        val hasTexture = tex !is VacantTexture
         return ofAll(
             VerticeRenderingContext(
                 GL11.GL_QUADS,
                 GL11.GL_TEXTURE_2D,
                 GLRenderingData(
                     vertices, 2, backgroundColor.toAggregation(vertices, 2),
-                    texs = if (hasTexture) safeFloatBufOf(arrayOf(0f, 0f, 1f, 0f, 1f, 1f, 0f, 1f)) else safeFloatBufOf(), texStride = if (hasTexture) 2 else 0,
-                    texture = texture
+                    texs = if (hasTexture) tex.texToBuf() else safeFloatBufOf(),
+                    texStride = if (hasTexture) 2 else 0,
+                    texture = tex
                 )
             ), this.applyChildren(props)
         )
 
     }
 
-    private fun rectBounding(x: Int, y: Int, top: Float, left: Float, bottom: Float, right: Float): Boolean {
-        return top < y && bottom > y && left < x && right > x
+    // Create a function to check if coordinates are bounding the box
+    private fun rectBounding(x: Float, y: Float, x1: Float, y1: Float, x2: Float, y2: Float): Boolean {
+        return x in x1..x2 && y in y1..y2
     }
+//    private fun rectBounding(x: Float, y: Float, top: Float, left: Float, bottom: Float, right: Float): Boolean {
+//        return top < y && bottom > y && left < x && right > x
+//    }
 }

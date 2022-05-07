@@ -4,22 +4,18 @@ import net.yakclient.graphics.api.Component
 import net.yakclient.graphics.api.FunctionalComponent
 import net.yakclient.graphics.api.GuiComponent
 import net.yakclient.graphics.api.MutableGuiPropertiesMap
-import net.yakclient.graphics.api.render.Renderer
 import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.api.render.plus
 import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.components.Text
-import net.yakclient.graphics.util.*
-import net.yakclient.graphics.util.unit.ScreenUnit
-import net.yakclient.graphics.util.unit.px
-import net.yakclient.graphics.util.unit.vh
-import net.yakclient.graphics.util.unit.vw
+import net.yakclient.graphics.util.ColorCodes
+import net.yakclient.graphics.util.YakFontFactory
+import net.yakclient.graphics.util.rgb
 import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL
-import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL15
-import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -35,7 +31,7 @@ class BasicOpengl3ComponentTest {
 
         check(glfwInit()) { "GLFW not initialised." }
 
-        window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "VBO Quad Test", 0, 0)
+        window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "LWJGL 3 Component testing", 0, 0)
         assert(window != 0L)
 
         val vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor())!!
@@ -54,18 +50,13 @@ class BasicOpengl3ComponentTest {
 
     @Test
     fun `Test basic components`() {
-//        GL11.glOrtho(0.0, WINDOW_WIDTH.toDouble(), WINDOW_HEIGHT.toDouble(), 0.0, 0.0, -1.0)
-        GL11.glOrtho(1.0,1.0,1.0,1.0, 0.0, -1.0)
-
-//        OrthographicTransformer.setOrtho(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0)
+        glOrtho(0.0, WINDOW_WIDTH.toDouble(), WINDOW_HEIGHT.toDouble(), 0.0, 0.0, -1.0)
 
         val component: GuiComponent = FunctionalComponent(MinecraftHomePage)
 
         fun List<RenderingContext>.reduceWhile(): List<RenderingContext> {
             return flatMap { r -> r.reduce().let { if (it.isNotEmpty()) it.reduceWhile() else listOf(r) } }
         }
-
-
 
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents()
@@ -106,67 +97,56 @@ class BasicOpengl3ComponentTest {
 }
 
 val MinecraftHomePage: Component = { props ->
-//    val background = useTexture("/img_1.png")
-
+    val background = useTexture("/img_1.png")
     var id = 0
 
-
-
     build(use<Box>(id++)) {
-        set("x") to 500.px
-        set("y") to 500.px
-        set("width") to 100.px
-        set("height") to 100.px
-        set("backgroundcolor") to ColorCodes.RED.toColorFunc()
+        set("x") to 0f
+        set("y") to 0f
+        set("width") to WINDOW_WIDTH
+        set("height") to WINDOW_HEIGHT
+        set("backgroundimage") to background
     }
-//
-//    build(use<Box>(id++)) {
-//        set("x") to 0
-//        set("y") to 0
-//        set("width") to WINDOW_WIDTH
-//        set("height") to WINDOW_HEIGHT
-//        set("backgroundimage") to background
-//    }
-//
-//    build(use(MinecraftButton, id++)) {
-//        set("scale") to 1
-//        set("x") to 200
-//        set("y") to 300
-//        set("value") to "Singleplayer"
-//    }
-//
-//    build(use(MinecraftButton, id++)) {
-//        set("scale") to 1
-//        set("x") to 200
-//        set("y") to 380
-//        set("value") to "Multiplayer"
-//    }
-//
-//    build(use(MinecraftButton, id++)) {
-//        set("scale") to 1
-//        set("x") to 200
-//        set("y") to 460
-//        set("value") to "Minecraft Realms"
-//    }
-//
-//    build(use(MinecraftButton, id++)) {
-//        set("scale") to 2
-//        set("x") to 200
-//        set("y") to 540
-//        set("value") to "Options"
-//    }
-//
-//    @Suppress("UNUSED_CHANGED_VALUE")
-//    build(use(MinecraftButton,  id++)) {
-//        set("scale") to 2
-//        set("x") to 400
-//        set("y") to 540
-//        set("value") to "Quit game"
-//
-//        set("onclick") to Runnable {
-//            glfwSetWindowShouldClose(glfwGetCurrentContext(), true)
-//        }
-//    }
+
+     build(use(MinecraftButton, id++)) {
+        set("scale") to 1
+        set("x") to 200
+        set("y") to 300
+        set("value") to "Singleplayer"
+    }
+
+    build(use(MinecraftButton, id++)) {
+        set("scale") to 1
+        set("x") to 200
+        set("y") to 380
+        set("value") to "Multiplayer"
+    }
+
+    build(use(MinecraftButton, id++)) {
+        set("scale") to 1
+        set("x") to 200
+        set("y") to 460
+        set("value") to "Minecraft Realms"
+    }
+
+    build(use(MinecraftButton, id++)) {
+        set("scale") to 2
+        set("x") to 200
+        set("y") to 540
+        set("value") to "Options"
+    }
+
+    @Suppress("UNUSED_CHANGED_VALUE")
+    build(use(MinecraftButton,  id++)) {
+        set("scale") to 2
+        set("x") to 400
+        set("y") to 540
+        set("value") to "Quit game"
+
+        set("onclick") to Runnable {
+            glfwSetWindowShouldClose(glfwGetCurrentContext(), true)
+        }
+    }
 }
 
 val MinecraftButton: Component = { props ->
@@ -174,10 +154,11 @@ val MinecraftButton: Component = { props ->
     val scale = props.requireAs<Int>("scale")
     val size = (maxSize / scale - (scale - 1) * 10)
 
-    val x = props.requireAs<ScreenUnit>("x")
-    val y = props.requireAs<ScreenUnit>("y")
+    val x = props.requireAs<Float>("x")
+    val y = props.requireAs<Float>("y")
 
     val value = props.requireAs<String>("value")
+    val mouseClick = props.getAs<Runnable>("onclick") ?: Runnable {  }
 
     var backgroundColor by useState(0) {
         rgb(112, 113, 113)
@@ -188,8 +169,9 @@ val MinecraftButton: Component = { props ->
 
         set("x") to x
         set("y") to y
-        set("width") to size.px
-        set("height") to height.px
+        set("width") to size
+        set("height") to height
+        set("backgroundcolor") to ColorCodes.WHITE.toColorFunc()
         set("backgroundcolor") to backgroundColor.toColorFunc()
 
         set("onmouseover") to Runnable {
@@ -201,13 +183,15 @@ val MinecraftButton: Component = { props ->
             backgroundColor = rgb(112, 113, 113)
         }
 
+        set("onclick") to mouseClick
+
         build(use<Text>(1)) {
             val font = YakFontFactory.fontOf()
             val textWidth = font.getWidth(value)
             val textHeight = font.getHeight(value)
 
-            set("x") to x.asX + ((size - textWidth) / 2)
-            set("y") to y.asX + ((height - textHeight) / 2)
+            set("x") to (x + ((size - textWidth) / 2)).toInt()
+            set("y") to (y + ((height - textHeight) / 2)).toInt()
             set("value") to value
         }
     }

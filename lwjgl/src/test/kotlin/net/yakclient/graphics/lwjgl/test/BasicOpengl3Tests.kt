@@ -73,13 +73,20 @@ class BasicOpengl3Tests {
 
         GL.createCapabilities()
 
+        GL11.glOrtho(83.0, 75.0, 10.0, 40.0, 1.0, -1.0)
+
         val vbo = stackPush().use { stack ->
             val verts = stack.mallocFloat(4 * 6)
 
-            verts.put(0.5f).put(0.5f).put(1f).put(0f).put(0f).put(1f)
-            verts.put(0.5f).put(-0.5f).put(0f).put(1f).put(0f).put(1f)
-            verts.put(-0.5f).put(-0.5f).put(0f).put(0f).put(1f).put(1f)
-            verts.put(-0.5f).put(0.5f).put(0f).put(0f).put(0f).put(0f)
+//            verts.put(0.5f).put(0.5f).put(1f).put(0f).put(0f).put(1f)
+//            verts.put(0.5f).put(-0.5f).put(0f).put(1f).put(0f).put(1f)
+//            verts.put(-0.5f).put(-0.5f).put(0f).put(0f).put(1f).put(1f)
+//            verts.put(-0.5f).put(0.5f).put(0f).put(0f).put(0f).put(0f)
+
+            verts.put(50f).put(20f)//.put(1f).put(0f).put(0f).put(1f)
+            verts.put(50f).put(5f)//.put(0f).put(1f).put(0f).put(1f)
+            verts.put(-50f).put(5f)//.put(0f).put(0f).put(1f).put(1f)
+            verts.put(-50f).put(20f)//.put(0f).put(0f).put(0f).put(0f)
 
             verts.flip()
 
@@ -93,20 +100,23 @@ class BasicOpengl3Tests {
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents()
             glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-
-            glEnableClientState(GL_VERTEX_ARRAY)
-            glEnableClientState(GL_COLOR_ARRAY)
-
-
-            glBindBuffer(GL_ARRAY_BUFFER, vbo)
-            GL11.glVertexPointer(2, GL_FLOAT, 24, 0)
-            GL11.glColorPointer(4, GL_FLOAT, 24, 0)
-            glDrawArrays(GL_QUADS, 0, 4)
-
-            glDisableClientState(GL_COLOR_ARRAY)
-            glDisableClientState(GL_VERTEX_ARRAY)
-
-            println("Hey")
+//
+//            glEnableClientState(GL_VERTEX_ARRAY)
+//            glEnableClientState(GL_COLOR_ARRAY)
+//
+//
+//            glBindBuffer(GL_ARRAY_BUFFER, vbo)
+//            GL11.glVertexPointer(2, GL_FLOAT, 24, 0)
+//            GL11.glColorPointer(4, GL_FLOAT, 24, 0)
+//            glDrawArrays(GL_QUADS, 0, 4)
+//
+//            glDisableClientState(GL_COLOR_ARRAY)
+//            glDisableClientState(GL_VERTEX_ARRAY)
+            glBegin(GL_POINT)
+            glVertex2f(83f, 10f)
+//            glVertex2f(83f, 10f)
+//            glVertex2f(83f, 10f)
+            glEnd()
 
             glfwSwapBuffers(window)
         }

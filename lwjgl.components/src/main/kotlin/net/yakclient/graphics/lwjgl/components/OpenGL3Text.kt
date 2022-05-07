@@ -13,7 +13,7 @@ public class OpenGL3Text : Text() {
     override fun renderNatively(props: GuiPropertiesMap): List<RenderingContext> {
         val value = props.requireAs<String>("value")
         val font: YakFont = props.getAs<YakFont>("font") ?: YakFontFactory.fontOf()
-        val color = props.getAs<ColorFunction>("color") ?: ColorCodes.WHITE.toColorFunc()
+        val color: ColorFunction = props.getAs("backgroundColor") ?: ColorCodes.WHITE.toColorFunc()
 
         var x = props.requireAs<Float>("x")
         val y = props.requireAs<Float>("y")
@@ -28,6 +28,7 @@ public class OpenGL3Text : Text() {
                 .put(x + data.width).put(y + data.height)
                 .put(x).put(y + data.height)
 
+
             VerticeRenderingContext(
                 GL11.GL_QUADS,
                 GL11.GL_TEXTURE_2D,
@@ -36,11 +37,7 @@ public class OpenGL3Text : Text() {
                     verticeStride = 2,
                     colors = color.toAggregation(vertices, 2),
                     colorStride = 4,
-                    texs = safeFloatBufOf(8)
-                        .put(tex.totalOffsetX.toFloat() / tex.totalWidth).put(tex.totalOffsetY.toFloat() / tex.totalHeight)
-                        .put((tex.totalOffsetX + tex.width).toFloat() / tex.totalWidth).put(tex.totalOffsetY.toFloat() / tex.totalHeight)
-                        .put((tex.totalOffsetX + tex.width).toFloat() / tex.totalWidth).put((tex.totalOffsetY + tex.height).toFloat() / tex.totalHeight)
-                        .put(tex.totalOffsetX.toFloat() / tex.totalWidth).put((tex.totalOffsetY + tex.height).toFloat() / tex.totalHeight),
+                    texs = tex.texToBuf(),
                     texStride = 2,
                     texture = data.backingTexture
                 )
