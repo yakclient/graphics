@@ -1,10 +1,9 @@
 plugins {
     kotlin("jvm") version "1.6.0"
     kotlin("kapt") version "1.6.0"
-    id("signing")
+//    id("signing")
     id("maven-publish")
-    id("org.jetbrains.dokka") version "1.4.32"
-    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+    id("org.jetbrains.dokka") version "1.6.21"
     id("org.javamodularity.moduleplugin") version "1.8.10"
 
 }
@@ -20,29 +19,40 @@ dependencies {
 
 }
 tasks.wrapper {
-    gradleVersion = "7.3.1"
+    gradleVersion = "7.4.2"
 }
 
-nexusPublishing {
-    repositories {
-        sonatype {
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            username.set(project.findProperty("mavenUsername") as String)
-            password.set(project.findProperty("mavenPassword") as String)
-        }
-    }
-}
+
 
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.javamodularity.moduleplugin")
-
+    apply(plugin = "maven-publish")
     project.ext.set("lwjgl.version", "3.3.1")
 
     repositories {
         mavenLocal()
         mavenCentral()
+    }
+
+    publishing {
+        repositories {
+            maven {
+               val repo = if (project.findProperty("isSnapshot") == "true") "snapshots" else "releases"
+
+                isAllowInsecureProtocol = true
+
+                url = uri("http://repo.yakclient.net/$repo")
+
+                credentials {
+                    username = project.findProperty("maven-user") as? String ?: throw IllegalArgumentException("Failed to find maven username")
+                    password = project.findProperty("maven-pass") as? String  ?: throw IllegalArgumentException("Failed to find maven password")
+                }
+                authentication {
+                    create<BasicAuthentication>("basic")
+                }
+            }
+        }
     }
 
     kotlin {

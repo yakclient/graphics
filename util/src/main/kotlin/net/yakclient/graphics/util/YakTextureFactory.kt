@@ -1,17 +1,22 @@
 package net.yakclient.graphics.util
 
+import kotlinx.coroutines.*
 import java.awt.Color
 import java.awt.Graphics
 import java.awt.image.BufferedImage
 import java.io.InputStream
 import java.net.URL
 import java.util.*
+import java.util.concurrent.Executors
 import javax.imageio.ImageIO
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 public object YakTextureFactory {
     private val provider: TextureProvider by lazy { providerProvider() }
+    private val scope = CoroutineScope(Executors.newCachedThreadPool().asCoroutineDispatcher())
     private val placeholderTexture by lazy {
         val buf = BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)
         val graphics = buf.graphics
@@ -29,12 +34,21 @@ public object YakTextureFactory {
     }
 
     private fun loadAtlas(ins: Sequence<IdentifiedValue<BufferedImage>>): List<IdentifiedValue<YakTexture>> {
+//        val completed = HashMap<Int, YakTexture>()
+
+
+//        scope.launch {
         val packed = packTextures(ins)
 
         return packed.flatMap { (image, texs) ->
             val parent = loadTexture(image)
             texs.map { (id, it) -> parent.subTexture(it.x, it.y, it.width, it.height) identifyBy id }
         }
+//        }
+
+//        return ins.mapTo(ArrayList()) { (id, _) ->
+//            DeferredTexture { completed[id] } identifyBy id
+//        }
     }
 
     private fun packTextures(ins: Sequence<IdentifiedValue<BufferedImage>>): List<Pair<BufferedImage, List<IdentifiedValue<PackedTexture>>>> {
@@ -139,5 +153,30 @@ public object YakTextureFactory {
     public data class IdentifiedValue<T>(public val id: Int, public val value: T)
 
     public infix fun <T> T.identifyBy(id: Int): IdentifiedValue<T> = IdentifiedValue(id, this)
+
+    private class DeferredTexture(
+        private val awaiting: () -> YakTexture?
+    ) : YakTexture {
+        private val texOrNull
+            get() = awaiting()
+
+        override val parent: YakTexture?
+            get() = texOrNull?.parent ?: placeholderTexture.parent
+        override val height: Int = texOrNull?.height ?: placeholderTexture.height
+        override val width: Int = texOrNull?.width ?: placeholderTexture.width
+        override val offsetX: Int = texOrNull?.offsetX ?: placeholderTexture.offsetX
+        override val offsetY: Int = texOrNull?.offsetY ?: placeholderTexture.offsetY
+
+        override fun subTexture(x: Int, y: Int, width: Int, height: Int): YakTexture =
+            texOrNull?.subTexture(x, y, width, height) ?: this
+
+        override fun bind() {
+            texOrNull?.bind() ?: placeholderTexture.bind()
+        }
+
+        override fun release() {
+            texOrNull?.release() ?: placeholderTexture.release()
+        }
+    }
 }
 

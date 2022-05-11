@@ -1,5 +1,5 @@
 rootProject.name = "graphics"
 
-include( ":util", ":components", ":api", "lwjgl.legacy", "lwjgl", "lwjgl.legacy.components", "lwjgl.legacy.util")
+include( ":util", ":components", ":api", "lwjgl")
 include("lwjgl.util")
 include("lwjgl.components")

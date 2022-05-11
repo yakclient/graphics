@@ -1,7 +1,5 @@
 plugins {
-    id("maven-publish")
     id("org.jetbrains.dokka")
-    id("signing")
 }
 group = "net.yakclient"
 version = "1.0-SNAPSHOT"
@@ -25,6 +23,7 @@ task<Jar>("javadocJar") {
 }
 
 publishing {
+
     publications {
         create<MavenPublication>("util-maven") {
             from(components["java"])
@@ -64,6 +63,6 @@ publishing {
     }
 }
 
-signing {
-    sign(publishing.publications["util-maven"])
-}
+//signing {
+//    sign(publishing.publications["util-maven"])
+//}

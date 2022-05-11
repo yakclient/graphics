@@ -1,8 +1,5 @@
 plugins {
-    kotlin("kapt")
-    id("maven-publish")
     id("org.jetbrains.dokka")
-    id("signing")
 }
 group = "net.yakclient"
 version = "1.0-SNAPSHOT"
@@ -17,7 +14,6 @@ dependencies {
     api(project(":util"))
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
-//    implementation("net.yakclient:event:1.0-SNAPSHOT")
 }
 
 tasks.test {
@@ -80,8 +76,9 @@ publishing {
             }
         }
     }
+
 }
 
-signing {
-    sign(publishing.publications["api-maven"])
-}
+//signing {
+//    sign(publishing.publications["api-maven"])
+//}

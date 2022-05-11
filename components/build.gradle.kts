@@ -1,8 +1,5 @@
 plugins {
-    kotlin("kapt")
-    id("maven-publish")
     id("org.jetbrains.dokka")
-    id("signing")
 }
 group = "net.yakclient"
 version = "1.0-SNAPSHOT"
@@ -13,8 +10,6 @@ dependencies {
     implementation(project(":api"))
 //    implementation(project(":opengl2"))
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
 }
 
 tasks.test {
@@ -81,6 +76,6 @@ publishing {
     }
 }
 
-signing {
-    sign(publishing.publications["components-maven"])
-}
+//signing {
+//    sign(publishing.publications["components-maven"])
+//}

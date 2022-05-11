@@ -1,11 +1,17 @@
 package net.yakclient.client.util
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newFixedThreadPoolContext
 import net.yakclient.graphics.util.YakTextureFactory
 import org.w3c.dom.css.Rect
 import java.awt.Color
 import java.awt.Graphics
 import java.awt.Rectangle
 import java.awt.image.BufferedImage
+import java.util.concurrent.Executors
+import kotlin.coroutines.coroutineContext
 import kotlin.math.ceil
 import kotlin.math.log
 import kotlin.math.pow
@@ -178,5 +184,15 @@ class TextureLoadingTests {
         output.add(last to rects)
 
         println(output)
+    }
+
+    @Test
+    fun `Completely nonblocking coroutines`() {
+        val scope = CoroutineScope(Executors.newCachedThreadPool().asCoroutineDispatcher())
+
+        scope.launch {
+            println("hey")
+        }
+        println("aa")
     }
 }

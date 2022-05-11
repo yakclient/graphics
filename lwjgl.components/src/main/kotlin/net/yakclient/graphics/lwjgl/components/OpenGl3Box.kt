@@ -14,7 +14,6 @@ import org.lwjgl.opengl.GL11
 import java.util.function.Consumer
 
 public class OpenGl3Box : Box() {
-
     override fun renderNatively(props: GuiPropertiesMap): List<RenderingContext> {
         val width = props.requireAs<Float>("width")
         val height = props.requireAs<Float>("height")
@@ -160,11 +159,7 @@ public class OpenGl3Box : Box() {
 
     }
 
-    // Create a function to check if coordinates are bounding the box
     private fun rectBounding(x: Float, y: Float, x1: Float, y1: Float, x2: Float, y2: Float): Boolean {
         return x in x1..x2 && y in y1..y2
     }
-//    private fun rectBounding(x: Float, y: Float, top: Float, left: Float, bottom: Float, right: Float): Boolean {
-//        return top < y && bottom > y && left < x && right > x
-//    }
 }
