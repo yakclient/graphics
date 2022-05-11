@@ -35,25 +35,25 @@ subprojects {
         mavenCentral()
     }
 
-    publishing {
-        repositories {
-            maven {
-               val repo = if (project.findProperty("isSnapshot") == "true") "snapshots" else "releases"
-
-                isAllowInsecureProtocol = true
-
-                url = uri("http://repo.yakclient.net/$repo")
-
-                credentials {
-                    username = project.findProperty("maven-user") as? String ?: throw IllegalArgumentException("Failed to find maven username")
-                    password = project.findProperty("maven-pass") as? String  ?: throw IllegalArgumentException("Failed to find maven password")
-                }
-                authentication {
-                    create<BasicAuthentication>("basic")
-                }
-            }
-        }
-    }
+//    publishing {
+//        repositories {
+//            maven {
+//               val repo = if (project.findProperty("isSnapshot") == "true") "snapshots" else "releases"
+//
+//                isAllowInsecureProtocol = true
+//
+//                url = uri("http://repo.yakclient.net/$repo")
+//
+//                credentials {
+//                    username = project.findProperty("maven-user") as? String ?: throw IllegalArgumentException("Failed to find maven username")
+//                    password = project.findProperty("maven-pass") as? String  ?: throw IllegalArgumentException("Failed to find maven password")
+//                }
+//                authentication {
+//                    create<BasicAuthentication>("basic")
+//                }
+//            }
+//        }
+//    }
 
     kotlin {
         explicitApi()
