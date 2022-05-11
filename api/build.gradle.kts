@@ -4,13 +4,8 @@ plugins {
 group = "net.yakclient"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenLocal()
-}
-
 dependencies {
     api("net.yakclient:event-api:1.0-SNAPSHOT")
-
     api(project(":util"))
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")

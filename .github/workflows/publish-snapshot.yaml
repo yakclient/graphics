@@ -16,6 +16,6 @@ jobs:
       - name: Grant permissions to Gradle
         run: chmod +x gradlew
       - name: Publish with Gradle
-        run: ./gradlew clean jar publish -Pmaven-user=${{ secrets.MAVEN_REPO_USER }} -Pmaven-pass=${{ secrets.MAVEN_PASS }} -PisSnapshot=true -Plwjgl.natives.classifier=natives-linux
+        run: ./gradlew clean jar publish -Pmaven-user=${{ secrets.MAVEN_REPO_USER }} -Pmaven-pass=${{ secrets.MAVEN_REPO_PASS }} -PisSnapshot=true -Plwjgl.natives.classifier=natives-linux
 
 

@@ -22,8 +22,6 @@ tasks.wrapper {
     gradleVersion = "7.4.2"
 }
 
-
-
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.javamodularity.moduleplugin")
@@ -31,29 +29,33 @@ subprojects {
     project.ext.set("lwjgl.version", "3.3.1")
 
     repositories {
-        mavenLocal()
         mavenCentral()
+        maven {
+            isAllowInsecureProtocol = true
+            url = uri("http://repo.yakclient.net/snapshots")
+        }
     }
+    publishing {
+        repositories {
+            if (!project.hasProperty("maven-user") || !project.hasProperty("maven-pass")) return@repositories
 
-//    publishing {
-//        repositories {
-//            maven {
-//               val repo = if (project.findProperty("isSnapshot") == "true") "snapshots" else "releases"
-//
-//                isAllowInsecureProtocol = true
-//
-//                url = uri("http://repo.yakclient.net/$repo")
-//
-//                credentials {
-//                    username = project.findProperty("maven-user") as? String ?: throw IllegalArgumentException("Failed to find maven username")
-//                    password = project.findProperty("maven-pass") as? String  ?: throw IllegalArgumentException("Failed to find maven password")
-//                }
-//                authentication {
-//                    create<BasicAuthentication>("basic")
-//                }
-//            }
-//        }
-//    }
+            maven {
+                val repo = if (project.findProperty("isSnapshot") == "true") "snapshots" else "releases"
+
+                isAllowInsecureProtocol = true
+
+                url = uri("http://repo.yakclient.net/$repo")
+
+                credentials {
+                    username = project.findProperty("maven-user") as String
+                    password = project.findProperty("maven-pass") as String
+                }
+                authentication {
+                    create<BasicAuthentication>("basic")
+                }
+            }
+        }
+    }
 
     kotlin {
         explicitApi()
