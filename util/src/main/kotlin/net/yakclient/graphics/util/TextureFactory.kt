@@ -1,22 +1,17 @@
 package net.yakclient.graphics.util
 
-import kotlinx.coroutines.*
+import net.yakclient.common.util.immutableLateInit
 import java.awt.Color
 import java.awt.Graphics
 import java.awt.image.BufferedImage
 import java.io.InputStream
 import java.net.URL
-import java.util.*
-import java.util.concurrent.Executors
 import javax.imageio.ImageIO
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-public object YakTextureFactory {
-    private val provider: TextureProvider by lazy { providerProvider() }
-    private val scope = CoroutineScope(Executors.newCachedThreadPool().asCoroutineDispatcher())
+public object TextureFactory {
+    public var provider: TextureProvider by immutableLateInit()
     private val placeholderTexture by lazy {
         val buf = BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)
         val graphics = buf.graphics
@@ -28,27 +23,13 @@ public object YakTextureFactory {
         loadTexture(buf)
     }
 
-    public var providerProvider: () -> TextureProvider = {
-        ServiceLoader.load(TextureProvider::class.java).firstOrNull()
-            ?: throw IllegalStateException("Failed to find a texture provider on the classpath!")
-    }
-
-    private fun loadAtlas(ins: Sequence<IdentifiedValue<BufferedImage>>): List<IdentifiedValue<YakTexture>> {
-//        val completed = HashMap<Int, YakTexture>()
-
-
-//        scope.launch {
+    private fun loadAtlas(ins: Sequence<IdentifiedValue<BufferedImage>>): List<IdentifiedValue<Texture>> {
         val packed = packTextures(ins)
 
         return packed.flatMap { (image, texs) ->
             val parent = loadTexture(image)
             texs.map { (id, it) -> parent.subTexture(it.x, it.y, it.width, it.height) identifyBy id }
         }
-//        }
-
-//        return ins.mapTo(ArrayList()) { (id, _) ->
-//            DeferredTexture { completed[id] } identifyBy id
-//        }
     }
 
     private fun packTextures(ins: Sequence<IdentifiedValue<BufferedImage>>): List<Pair<BufferedImage, List<IdentifiedValue<PackedTexture>>>> {
@@ -129,25 +110,25 @@ public object YakTextureFactory {
         return output
     }
 
-    private fun loadTexture(image: BufferedImage): YakTexture {
+    private fun loadTexture(image: BufferedImage): Texture {
         return provider.load(image)
     }
 
-    internal fun loadImages(images: Sequence<IdentifiedValue<BufferedImage>>): List<IdentifiedValue<YakTexture>> =
+    internal fun loadImages(images: Sequence<IdentifiedValue<BufferedImage>>): List<IdentifiedValue<Texture>> =
         loadAtlas(images)
 
-    public fun loadTextures(ins: Sequence<IdentifiedValue<InputStream>>): List<IdentifiedValue<YakTexture>> {
+    public fun loadTextures(ins: Sequence<IdentifiedValue<InputStream>>): List<IdentifiedValue<Texture>> {
         return loadImages(ins.map { (id, v) -> ImageIO.read(v) identifyBy id })
     }
 
-    public fun loadTexture(imageIn: InputStream): YakTexture = loadTexture(ImageIO.read(imageIn))
+    public fun loadTexture(imageIn: InputStream): Texture = loadTexture(ImageIO.read(imageIn))
 
-    public fun loadTexture(url: URL): YakTexture = loadTexture(ImageIO.read(url))
+    public fun loadTexture(url: URL): Texture = loadTexture(ImageIO.read(url))
 
     public interface TextureProvider {
         public val maxTextureLength: Int
 
-        public fun load(image: BufferedImage): YakTexture
+        public fun load(image: BufferedImage): Texture
     }
 
     public data class IdentifiedValue<T>(public val id: Int, public val value: T)
@@ -155,19 +136,19 @@ public object YakTextureFactory {
     public infix fun <T> T.identifyBy(id: Int): IdentifiedValue<T> = IdentifiedValue(id, this)
 
     private class DeferredTexture(
-        private val awaiting: () -> YakTexture?
-    ) : YakTexture {
+        private val awaiting: () -> Texture?
+    ) : Texture {
         private val texOrNull
             get() = awaiting()
 
-        override val parent: YakTexture?
+        override val parent: Texture?
             get() = texOrNull?.parent ?: placeholderTexture.parent
         override val height: Int = texOrNull?.height ?: placeholderTexture.height
         override val width: Int = texOrNull?.width ?: placeholderTexture.width
         override val offsetX: Int = texOrNull?.offsetX ?: placeholderTexture.offsetX
         override val offsetY: Int = texOrNull?.offsetY ?: placeholderTexture.offsetY
 
-        override fun subTexture(x: Int, y: Int, width: Int, height: Int): YakTexture =
+        override fun subTexture(x: Int, y: Int, width: Int, height: Int): Texture =
             texOrNull?.subTexture(x, y, width, height) ?: this
 
         override fun bind() {

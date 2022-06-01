@@ -3,7 +3,7 @@ package net.yakclient.graphics.util
 import java.nio.Buffer
 import java.util.ArrayList
 
-public object YakGraphicsUtils {
+public object GraphicsUtils {
     public const val MAX_DOUBLE_CLICK_TIME: Int = 500
     public const val MOUSE_LEFT_BUTTON: Int = 0
     public const val MOUSE_RIGHT_BUTTON: Int = 1

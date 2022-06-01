@@ -23,7 +23,7 @@ public class OpenGl3Box : Box() {
 
         //  Transparency is defined in the background color.
         val backgroundColor = props.getAs<ColorFunction>("backgroundcolor") ?: ColorCodes.WHITE.toColorFunc()
-        val tex = props.getAs<YakTexture>("backgroundimage") ?: VacantTexture()
+        val tex = props.getAs<Texture>("backgroundimage") ?: VacantTexture()
 
         //  Events
         val mouseClick = props.getAs<Runnable>("onclick") ?: Runnable {}
@@ -59,7 +59,7 @@ public class OpenGl3Box : Box() {
                 // State representing that the mouse is currently bounding within this box
                 val inBox = of("Mouse in box")
                 // State representing that the mouse is in the up position after being in the down position. This state times out after 500ms
-                val up = timingOutOf(inBox, YakGraphicsUtils.MAX_DOUBLE_CLICK_TIME.toLong(), "Mouse up in box")
+                val up = timingOutOf(inBox, GraphicsUtils.MAX_DOUBLE_CLICK_TIME.toLong(), "Mouse up in box")
                 // State representing that the mouse is bounding within the box and is in a down position
                 val down = of(object : DelegatingEventState("Mouse down in box") {
                     // The transition for moving back to the "mouse in box" state
@@ -82,7 +82,7 @@ public class OpenGl3Box : Box() {
 
                     // Custom logic for delegating to transitions
                     override fun <T : EventData> find(event: T): Transition? = when (event) {
-                        is MouseActionData -> (if (!event.state && event.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON) to_mouseUp else to_inBox)
+                        is MouseActionData -> (if (!event.state && event.key == GraphicsUtils.MOUSE_LEFT_BUTTON) to_mouseUp else to_inBox)
                         is MouseMoveData -> to_initial
                         else -> null
                     }
@@ -93,12 +93,12 @@ public class OpenGl3Box : Box() {
                 // The transition for moving to "mouse down" when the left mouse button has been clicked(mouse down)
                 (inBox transitionsTo down).with<MouseActionData> { e ->
                     // Checks if the mouse action data and calls events accordingly
-                    (e.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON).also {
+                    (e.key == GraphicsUtils.MOUSE_LEFT_BUTTON).also {
                         if (it && e.state) mouseDown() else if (it) mouseUp()
                     }.let { it && e.state }
                 }
                 // The transition for moving from the up state to inBox after a double click(or timing out)
-                (up transitionsTo inBox).with<MouseActionData> { e -> (e.state && e.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON).also { if (it) doubleClick() } }
+                (up transitionsTo inBox).with<MouseActionData> { e -> (e.state && e.key == GraphicsUtils.MOUSE_LEFT_BUTTON).also { if (it) doubleClick() } }
                 // Transition for moving from the inBox state to the initial if the mouse moves outside the box
                 (inBox transitionsTo initial).with<MouseMoveData> {
                     // Checks if the mouse is bounding, then calls events accordingly
@@ -119,7 +119,7 @@ public class OpenGl3Box : Box() {
 
                 // Happy path
                 (initial transitionsTo inBox).withBounding()
-                (inBox transitionsTo clicked).with<MouseActionData> { it.key == YakGraphicsUtils.MOUSE_LEFT_BUTTON && it.state }
+                (inBox transitionsTo clicked).with<MouseActionData> { it.key == GraphicsUtils.MOUSE_LEFT_BUTTON && it.state }
                 (clicked transitionsTo clicked).with<KeyboardActionData> {
                     if (it.state) keyUp(it.key)
                     else keyDown(it.key)
@@ -128,7 +128,7 @@ public class OpenGl3Box : Box() {
 
                 // Failure path
                 (inBox transitionsTo initial).withNotBounding()
-                (clicked transitionsTo inBox).with<MouseActionData> { it.key != YakGraphicsUtils.MOUSE_LEFT_BUTTON }
+                (clicked transitionsTo inBox).with<MouseActionData> { it.key != GraphicsUtils.MOUSE_LEFT_BUTTON }
                 (clicked transitionsTo initial).withNotBounding()
             }
 

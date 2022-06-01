@@ -5,8 +5,8 @@ import net.yakclient.graphics.api.IllegalPropertyException
 import net.yakclient.graphics.api.SpecifiedProperties
 import net.yakclient.graphics.util.Color
 import net.yakclient.graphics.util.ColorCodes
-import net.yakclient.graphics.util.YakFont
-import net.yakclient.graphics.util.YakFontFactory.fontOf
+import net.yakclient.graphics.util.TextureFont
+import net.yakclient.graphics.util.FontFactory.fontOf
 import java.util.*
 
 public class TextSpecProps(properties: GuiPropertiesMap?) : SpecifiedProperties(properties!!) {
@@ -19,6 +19,6 @@ public class TextSpecProps(properties: GuiPropertiesMap?) : SpecifiedProperties(
     public val color: Color
         get() = this.get<Color?>("color").or { Optional.of(ColorCodes.WHITE) }
             .get()
-    public val font: YakFont
-        get() = this.get<YakFont>("font").or { Optional.of(fontOf()) }.get()
+    public val font: TextureFont
+        get() = this.get<TextureFont>("font").or { Optional.of(fontOf()) }.get()
 }

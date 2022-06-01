@@ -4,11 +4,20 @@ plugins {
 group = "net.yakclient"
 version = "1.0-SNAPSHOT"
 
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor(0, "seconds")
+}
+
 dependencies {
-    api("net.yakclient:event-api:1.0-SNAPSHOT")
+    api("net.yakclient:event-api:1.0-SNAPSHOT") {
+        isChanging = true
+    }
     api(project(":util"))
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+    api("net.yakclient:common-util:1.0-SNAPSHOT") {
+        isChanging = true
+    }
 }
 
 tasks.test {

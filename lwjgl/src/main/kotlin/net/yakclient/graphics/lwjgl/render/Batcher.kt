@@ -1,7 +1,7 @@
 package net.yakclient.graphics.lwjgl.render
 
 import net.yakclient.graphics.api.render.RenderingContext
-import net.yakclient.graphics.lwjgl.util.YakGL3Texture
+import net.yakclient.graphics.lwjgl.util.LwjglTexture
 import net.yakclient.graphics.util.VacantTexture
 import net.yakclient.graphics.util.buffer.SafeFloatBuffer
 import net.yakclient.graphics.util.buffer.safeFloatBufOf
@@ -17,9 +17,9 @@ internal fun VerticeRenderingContext.couldBatch(other: VerticeRenderingContext):
     val dataTex = data.texture
     val otherDataTex = otherData.texture
 
-    val check2 = dataTex is YakGL3Texture && otherDataTex is YakGL3Texture
+    val check2 = dataTex is LwjglTexture && otherDataTex is LwjglTexture
 
-    val check3 = dataTex is YakGL3Texture && otherDataTex is YakGL3Texture && dataTex.texId == otherDataTex.texId
+    val check3 = dataTex is LwjglTexture && otherDataTex is LwjglTexture && dataTex.texId == otherDataTex.texId
             && dataTex.target == otherDataTex.target
 
     return check1 && (check3 || !check2)

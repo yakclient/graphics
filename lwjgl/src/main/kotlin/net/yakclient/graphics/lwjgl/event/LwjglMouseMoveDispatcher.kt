@@ -2,12 +2,11 @@ package net.yakclient.graphics.lwjgl.event
 
 import net.yakclient.graphics.api.event.MouseMoveData
 import net.yakclient.graphics.api.event.MouseMoveDispatcher
-import net.yakclient.graphics.util.unit.px
 import net.yakclient.graphics.util.use
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.system.MemoryStack.stackPush
 
-public class GL3MouseMoveDispatcher : MouseMoveDispatcher() {
+public class LwjglMouseMoveDispatcher : MouseMoveDispatcher() {
     init {
         var lastX = 0
         var lastY = 0

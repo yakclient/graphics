@@ -1,24 +1,18 @@
 package net.yakclient.graphics.util.impl
 
 import net.yakclient.graphics.util.*
-import net.yakclient.graphics.util.YakTextureFactory.identifyBy
+import net.yakclient.graphics.util.TextureFactory.identifyBy
 import java.awt.Color
 import java.awt.Font
-import java.awt.Graphics2D
 import java.awt.image.BufferedImage
-import java.io.File
-import java.util.Stack
-import java.util.logging.Level
-import java.util.logging.Logger
-import javax.imageio.ImageIO
 
 
 public class YakFontImpl(
     override val type: Font,
     override val name: String,
-    override val meta: YakFont.FontMetaData,
-) : YakFont {
-    private val characters: Map<Char, YakFont.FontCharacterMetaData>
+    override val meta: TextureFont.FontMetaData,
+) : TextureFont {
+    private val characters: Map<Char, TextureFont.FontCharacterMetaData>
     override val chars: Set<Char>
 
     init {
@@ -48,13 +42,13 @@ public class YakFontImpl(
             } else null
         }.filterNot { it.value.width < 1 }
 
-        characters = YakTextureFactory.loadImages(images).asSequence()
-            .map { (id, tex) -> YakFont.FontCharacterMetaData(id.toChar(), tex.width, tex.height, tex) }
+        characters = TextureFactory.loadImages(images).asSequence()
+            .map { (id, tex) -> TextureFont.FontCharacterMetaData(id.toChar(), tex.width, tex.height, tex) }
             .associateBy { it.c }
         chars = characters.keys
     }
 
-    override operator fun get(char: Char): YakFont.FontCharacterMetaData? = characters[char]
+    override operator fun get(char: Char): TextureFont.FontCharacterMetaData? = characters[char]
 
     override fun getWidth(value: String): Int =
         value.fold(0) { acc, char -> acc + (characters[char]?.width ?: 0) }
@@ -63,6 +57,6 @@ public class YakFontImpl(
         value.fold(0) { acc, char -> ((characters[char]?.height) ?: acc).takeIf { it > acc } ?: acc }
 }
 
-public class YakFontProviderImpl : YakFontFactory.FontProvider {
-    override fun load(font: Font, name: String, meta: YakFont.FontMetaData): YakFont = YakFontImpl(font, name, meta)
+public class YakFontProviderImpl : FontFactory.FontProvider {
+    override fun load(font: Font, name: String, meta: TextureFont.FontMetaData): TextureFont = YakFontImpl(font, name, meta)
 }

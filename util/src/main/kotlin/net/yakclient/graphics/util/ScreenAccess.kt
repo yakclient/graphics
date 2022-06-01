@@ -1,6 +1,6 @@
 package net.yakclient.graphics.util
 
-import java.util.ServiceLoader
+import net.yakclient.common.util.immutableLateInit
 
 public interface ScreenAccess {
     public val width: Int
@@ -8,6 +8,6 @@ public interface ScreenAccess {
 
     public companion object {
         @JvmStatic
-        public val access: ScreenAccess = ServiceLoader.load(ScreenAccess::class.java).first()
+        public var access: ScreenAccess by immutableLateInit()
     }
 }

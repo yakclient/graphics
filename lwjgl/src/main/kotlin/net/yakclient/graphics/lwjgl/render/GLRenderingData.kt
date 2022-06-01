@@ -21,7 +21,7 @@ import java.nio.FloatBuffer
  *
  * @see Aggregation
  *
- * @see YakTexture
+ * @see Texture
  */
 public class GLRenderingData @JvmOverloads constructor(
     public val vertices: SafeFloatBuffer,
@@ -32,7 +32,7 @@ public class GLRenderingData @JvmOverloads constructor(
     public val normalStride: Int = 3, // The size of 1 normal : X, Z, Y
     public val texs: SafeFloatBuffer = safeFloatBufOf(),
     public val texStride: Int = 3, // The size of 1 tex coordinate: X, Z, Y
-    public val texture: YakTexture = VacantTexture(),
+    public val texture: Texture = VacantTexture(),
     public val verticeCount: Int = vertices.size / verticeStride,
 ) : Closeable {
     public val verticeBuf: FloatBuffer by vertices::buffer

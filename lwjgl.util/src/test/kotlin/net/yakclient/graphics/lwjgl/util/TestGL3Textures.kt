@@ -1,6 +1,6 @@
 package net.yakclient.graphics.lwjgl.util
 
-import net.yakclient.graphics.util.YakFontFactory
+import net.yakclient.graphics.util.FontFactory
 import net.yakclient.graphics.util.use
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL
@@ -46,7 +46,7 @@ class TestGL3Textures {
         GL11.glOrtho(0.0, 1.0, 1.0, 0.0, 0.0, -1.0)
 
 
-        val tex = YakFontFactory.fontOf()['a']?.backingTexture!!
+        val tex = FontFactory.fontOf()['a']?.backingTexture!!
         val vbo = MemoryStack.stackPush().use { stack ->
             val verts = stack.mallocFloat(8 * 4)
 

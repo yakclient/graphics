@@ -2,7 +2,7 @@ package net.yakclient.graphics.util
 
 import java.awt.Font
 
-public interface YakFont {
+public interface TextureFont {
     public val type: Font
     public val name: String
     public val meta: FontMetaData
@@ -20,6 +20,6 @@ public interface YakFont {
         val c: Char,
         val width: Int,
         val height: Int,
-        val backingTexture: YakTexture
+        val backingTexture: Texture
     )
 }

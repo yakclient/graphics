@@ -5,7 +5,7 @@ import net.yakclient.graphics.util.use
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.system.MemoryStack.stackPush
 
-public class GL3ScreenAccess : ScreenAccess {
+public class LwjglScreenAccess : ScreenAccess {
     private var _width: Int = 0
     private var _height: Int = 0
 

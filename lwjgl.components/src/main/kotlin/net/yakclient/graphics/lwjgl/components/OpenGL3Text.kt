@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL11
 public class OpenGL3Text : Text() {
     override fun renderNatively(props: GuiPropertiesMap): List<RenderingContext> {
         val value = props.requireAs<String>("value")
-        val font: YakFont = props.getAs<YakFont>("font") ?: YakFontFactory.fontOf()
+        val font: TextureFont = props.getAs<TextureFont>("font") ?: FontFactory.fontOf()
         val color: ColorFunction = props.getAs("backgroundColor") ?: ColorCodes.WHITE.toColorFunc()
 
         var x = props.requireAs<Float>("x")

@@ -1,20 +1,14 @@
 package net.yakclient.graphics.util
 
-import net.yakclient.graphics.util.YakFont.FontMetaData
-import net.yakclient.graphics.util.impl.YakFontImpl
+import net.yakclient.graphics.util.TextureFont.FontMetaData
 import net.yakclient.graphics.util.impl.YakFontProviderImpl
 import java.awt.Font
 import java.io.File
-import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.HashMap
 
-public object YakFontFactory {
-    private val fonts: MutableMap<FontMetaData, YakFont> = HashMap()
-    private val provider: FontProvider
-    init {
-        provider = YakFontProviderImpl() //ServiceLoader.load(FontProvider::class.java).firstOrNull() ?: throw IllegalStateException("Failed to find a font provider in the classpath!")
-    }
+public object FontFactory {
+    private val fonts: MutableMap<FontMetaData, TextureFont> = HashMap()
+    private val provider: FontProvider = YakFontProviderImpl()
 
     @JvmOverloads
     public fun fontOf(
@@ -22,7 +16,7 @@ public object YakFontFactory {
         fontSize: Int = 24,
         style: Int = Font.PLAIN,
         aliased: Boolean = false,
-    ) : YakFont {
+    ) : TextureFont {
         val metaData = FontMetaData(name, style, fontSize, aliased)
         if (fonts.containsKey(metaData)) return fonts[metaData]!!
         return fonts[metaData] ?: run {
@@ -39,7 +33,7 @@ public object YakFontFactory {
         fontSize: Int = 24,
         style: Int = Font.PLAIN,
         aliased: Boolean = false,
-    ) : YakFont {
+    ) : TextureFont {
         val metaData = FontMetaData(fontIn.absolutePath, style, fontSize, aliased)
         if (fonts.containsKey(metaData)) return fonts[metaData]!!
         return fonts[metaData] ?: run {
@@ -51,6 +45,6 @@ public object YakFontFactory {
     }
 
     public interface FontProvider {
-        public fun load(font: Font, name: String, meta: FontMetaData) : YakFont
+        public fun load(font: Font, name: String, meta: FontMetaData) : TextureFont
     }
 }

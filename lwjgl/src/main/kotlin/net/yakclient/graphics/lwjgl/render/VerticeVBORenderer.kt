@@ -1,6 +1,6 @@
 package net.yakclient.graphics.lwjgl.render
 
-import net.yakclient.graphics.util.YakGraphicsUtils
+import net.yakclient.graphics.util.GraphicsUtils
 import org.lwjgl.opengl.GL15.*
 
 public class VerticeVBORenderer : VerticeRenderer() {
@@ -28,27 +28,27 @@ public class VerticeVBORenderer : VerticeRenderer() {
 
         val verticesHandle: Int = glGenBuffers()
         glBindBuffer(GL_ARRAY_BUFFER, verticesHandle)
-        glBufferData(GL_ARRAY_BUFFER, YakGraphicsUtils.flipBuf(data.verticeBuf), GL_STATIC_DRAW)
+        glBufferData(GL_ARRAY_BUFFER, GraphicsUtils.flipBuf(data.verticeBuf), GL_STATIC_DRAW)
         glVertexPointer(data.verticeStride, GL_FLOAT, 0, 0)
 
         if (data.hasColors()) {
             val colorsHandle: Int = glGenBuffers()
             glBindBuffer(GL_ARRAY_BUFFER, colorsHandle)
-            glBufferData(GL_ARRAY_BUFFER, YakGraphicsUtils.flipBuf(data.colorBuf), GL_STATIC_DRAW)
+            glBufferData(GL_ARRAY_BUFFER, GraphicsUtils.flipBuf(data.colorBuf), GL_STATIC_DRAW)
             glColorPointer(data.colorStride, GL_FLOAT, 0, 0L)
         }
 
         if (data.hasNormals()) {
             val normalsHandle: Int = glGenBuffers()
             glBindBuffer(GL_ARRAY_BUFFER, normalsHandle)
-            glBufferData(GL_ARRAY_BUFFER, YakGraphicsUtils.flipBuf(data.normalBuf), GL_STATIC_DRAW)
+            glBufferData(GL_ARRAY_BUFFER, GraphicsUtils.flipBuf(data.normalBuf), GL_STATIC_DRAW)
             glNormalPointer(GL_FLOAT, 0, 0L)
         }
 
         if (data.hasTexs()) {
             val texsHandle: Int = glGenBuffers()
             glBindBuffer(GL_ARRAY_BUFFER, texsHandle)
-            glBufferData(GL_ARRAY_BUFFER, YakGraphicsUtils.flipBuf(data.texBuf), GL_STATIC_DRAW)
+            glBufferData(GL_ARRAY_BUFFER, GraphicsUtils.flipBuf(data.texBuf), GL_STATIC_DRAW)
             glTexCoordPointer(data.texStride, GL_FLOAT, 0, 0L)
         }
 

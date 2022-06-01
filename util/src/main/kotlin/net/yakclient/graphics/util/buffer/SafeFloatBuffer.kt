@@ -1,20 +1,20 @@
 package net.yakclient.graphics.util.buffer
 
+import net.yakclient.common.util.immutableLateInit
 import java.nio.FloatBuffer
-import java.util.*
 
 @Suppress("UNCHECKED_CAST")
-private val provider: BufferProvider<SafeFloatBuffer> =
-    ServiceLoader.load(SafeFloatBufferProvider::class.java).firstOrNull() as? BufferProvider<SafeFloatBuffer>
-        ?: throw IllegalStateException("Failed to load a provider for the safe float buffer! Make sure the providing module is on the classpath.")
+public var safeFloatBufferProvider: BufferProvider<SafeFloatBuffer> by immutableLateInit()
+//    ServiceLoader.load(SafeFloatBufferProvider::class.java).firstOrNull() as? BufferProvider<SafeFloatBuffer>
+//        ?: throw IllegalStateException("Failed to load a provider for the safe float buffer! Make sure the providing module is on the classpath.")
 
 public interface SafeFloatBufferProvider : BufferProvider<SafeFloatBuffer>
 
 public typealias SafeFloatBuffer = SafeBuffer<FloatBuffer, Float>
 
-public fun safeFloatBufOf(): SafeFloatBuffer = provider.createNew(0)
+public fun safeFloatBufOf(): SafeFloatBuffer = safeFloatBufferProvider.createNew(0)
 
-public fun safeFloatBufOf(size: Int): SafeFloatBuffer = provider.createNew(size)
+public fun safeFloatBufOf(size: Int): SafeFloatBuffer = safeFloatBufferProvider.createNew(size)
 
 public fun safeFloatBufOf(floats: Array<Float>): SafeFloatBuffer = safeFloatBufOf(floats.size).putAll(floats)
 

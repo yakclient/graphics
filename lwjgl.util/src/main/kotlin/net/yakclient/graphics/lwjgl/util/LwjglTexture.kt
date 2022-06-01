@@ -1,24 +1,24 @@
 package net.yakclient.graphics.lwjgl.util
 
-import net.yakclient.graphics.util.YakGraphicsUtils
-import net.yakclient.graphics.util.YakTexture
-import net.yakclient.graphics.util.YakTextureFactory
+import net.yakclient.graphics.util.GraphicsUtils
+import net.yakclient.graphics.util.Texture
+import net.yakclient.graphics.util.TextureFactory
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL12
 import org.lwjgl.system.MemoryUtil
 import java.awt.image.BufferedImage
 
 
-public data class YakGL3Texture(
+public data class LwjglTexture(
     public val texId: Int,
     public val target: Int,
     override val height: Int,
     override val width: Int,
     override val offsetX: Int,
-    override val offsetY: Int, override val parent: YakTexture?,
-) : YakTexture {
-    override fun subTexture(x: Int, y: Int, width: Int, height: Int): YakTexture =
-        YakGL3Texture(texId, target, height, width, x, y, this)
+    override val offsetY: Int, override val parent: Texture?,
+) : Texture {
+    override fun subTexture(x: Int, y: Int, width: Int, height: Int): Texture =
+        LwjglTexture(texId, target, height, width, x, y, this)
 
     override fun bind() {
         GL11.glEnable(GL11.GL_TEXTURE_2D)
@@ -32,11 +32,11 @@ public data class YakGL3Texture(
 
 private const val BYTES_PER_PIXEL = 4 //3 for RGB, 4 for RGBA
 
-public class YakGL3TextureProvider : YakTextureFactory.TextureProvider {
+public class LwjglTextureProvider : TextureFactory.TextureProvider {
     override val maxTextureLength: Int = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE) // Returns in bytes so we want to convet to piexels
 
     //Credit : https://stackoverflow.com/questions/10801016/lwjgl-textures-and-strings
-    override fun load(image: BufferedImage): YakTexture {
+    override fun load(image: BufferedImage): Texture {
         val hasAlpha = image.colorModel.hasAlpha()
         val buffer = MemoryUtil.memAlloc((image.width * image.height * if (hasAlpha) 4 else 3))
 
@@ -79,11 +79,11 @@ public class YakGL3TextureProvider : YakTextureFactory.TextureProvider {
             0,
             if (hasAlpha) GL11.GL_RGBA else GL11.GL_RGB,
             GL11.GL_UNSIGNED_BYTE,
-            YakGraphicsUtils.flipBuf(buffer)
+            GraphicsUtils.flipBuf(buffer)
         )
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0)
 
-        return YakGL3Texture(textureID, GL11.GL_TEXTURE_2D, image.height, image.width, 0, 0, null)
+        return LwjglTexture(textureID, GL11.GL_TEXTURE_2D, image.height, image.width, 0, 0, null)
     }
 }

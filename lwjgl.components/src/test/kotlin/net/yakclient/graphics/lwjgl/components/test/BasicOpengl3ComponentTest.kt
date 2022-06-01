@@ -8,8 +8,11 @@ import net.yakclient.graphics.api.render.RenderingContext
 import net.yakclient.graphics.api.render.plus
 import net.yakclient.graphics.components.Box
 import net.yakclient.graphics.components.Text
+import net.yakclient.graphics.lwjgl.components.initLwjglComponents
+import net.yakclient.graphics.lwjgl.initLwjgl
+import net.yakclient.graphics.lwjgl.util.initLwjglUtil
 import net.yakclient.graphics.util.ColorCodes
-import net.yakclient.graphics.util.YakFontFactory
+import net.yakclient.graphics.util.FontFactory
 import net.yakclient.graphics.util.rgb
 import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
 import org.lwjgl.glfw.GLFW.*
@@ -46,6 +49,12 @@ class BasicOpengl3ComponentTest {
         glfwMakeContextCurrent(window)
 
         GL.createCapabilities()
+
+
+        this::class.java.module.addReads(ModuleLayer.boot().modules().first{it.name == "yakclient.graphics.lwjgl.util"})
+        initLwjgl()
+        initLwjglComponents()
+        initLwjglUtil()
     }
 
     @Test
@@ -186,7 +195,7 @@ val MinecraftButton: Component = { props ->
         set("onclick") to mouseClick
 
         build(use<Text>(1)) {
-            val font = YakFontFactory.fontOf()
+            val font = FontFactory.fontOf()
             val textWidth = font.getWidth(value)
             val textHeight = font.getHeight(value)
 

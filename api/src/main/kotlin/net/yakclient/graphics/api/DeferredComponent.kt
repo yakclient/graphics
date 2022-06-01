@@ -1,20 +1,16 @@
 package net.yakclient.graphics.api
 
+import net.yakclient.common.util.ServiceListCollector
 import net.yakclient.graphics.api.render.RenderingContext
-import java.util.*
 import kotlin.reflect.KClass
 
-public object DeferredComponentLoader {
-    private val providers: List<DeferredComponentProvider> =
-        ServiceLoader.load(DeferredComponentProvider::class.java)
-            .sortedWith { first, second -> first.priority - second.priority }
-
+public object DeferredComponentLoader : ServiceListCollector<DeferredComponentProvider>() {
     public fun <T : DeferredComponent> find(type: Class<T>): Class<out DeferredComponent> =
-        providers.firstNotNullOfOrNull { it.providesWith(type) }
+        services.firstNotNullOfOrNull { it.providesWith(type) }
             ?: throw IllegalStateException(
-                if (providers.isEmpty())
-                    "Failed to load Deferred component providers, this is most likely an issue with the provider modules not being on your classpath path"
-                else "No deferred component provider loaded manages type: ${type.name}"
+                if (services.isEmpty())
+                    "No registered deferred component provides!"
+                else "No deferred component provider for type: ${type.name}"
             )
 
     public fun <T : DeferredComponent> create(type: Class<T>): T = find(type).let {

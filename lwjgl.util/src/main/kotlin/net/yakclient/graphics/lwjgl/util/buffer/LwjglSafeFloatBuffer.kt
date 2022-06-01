@@ -5,7 +5,7 @@ import net.yakclient.graphics.util.buffer.SafeFloatBuffer
 import org.lwjgl.system.MemoryUtil
 import java.nio.FloatBuffer
 
-internal class OpenGl3SafeFloatBuffer(
+internal class LwjglSafeFloatBuffer(
     override val size: Int
 ) : SafeFloatBuffer {
     override val buffer: FloatBuffer = MemoryUtil.memAllocFloat(size)

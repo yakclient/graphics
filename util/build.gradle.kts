@@ -4,8 +4,15 @@ plugins {
 group = "net.yakclient"
 version = "1.0-SNAPSHOT"
 
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor(0, "seconds")
+}
+
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+    implementation("net.yakclient:common-util:1.0-SNAPSHOT") {
+        isChanging = true
+    }
 }
 
 tasks.jar {

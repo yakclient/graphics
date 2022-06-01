@@ -17,7 +17,7 @@ dependencies {
     val nativeClassifier = properties["lwjgl.natives.classifier"]
     val lwjglVersion = project.ext.get("lwjgl.version")
 
-    implementation(project(":api"))
+    api(project(":api"))
     implementation(project(":components"))
     implementation(project(":util"))
     implementation(project(":lwjgl"))
